@@ -48,5 +48,19 @@ public class TurnManagerTest {
         assertEquals(1, tm.getCurrentPlayerIndex());
     }
 
+    @Test // TC-TM-04
+    void test_SetupEndsAtPlayerZero() {
+        TurnManager tm = new TurnManager(3);
+        // Move through 5 placements (0, 1, 2, 2, 1)
+        for(int i = 0; i < 5; i++) {
+            tm.nextPlacement();
+        }
+
+        // Act: P1 finishes their 2nd house (The 5th house total)
+        // Assert: The next player to place (The 6th house) is P0
+        assertEquals(0, tm.getCurrentPlayerIndex());
+    }
+
+
 
 }
