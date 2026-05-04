@@ -19,18 +19,33 @@ public class TurnManagerTest {
         assertEquals(1, tm.getCurrentPlayerIndex());
     }
 
+    @Test // TC-TM-02
+    void test_PivotAtEndOfFirstRound() {
+        // State: 3 players, 2 placements already done (P1 and P2 finished)
+        TurnManager tm = new TurnManager(3);
+        tm.nextPlacement(); // P1 -> P2
+        tm.nextPlacement(); // P2 -> P3
+
+        // Act: P3 completes their first house (the 3rd placement)
+        tm.nextPlacement();
+
+        // Assert: Index should stay 2 so P3 goes again immediately
+        assertEquals(2, tm.getCurrentPlayerIndex());
+    }
+
     @Test // TC-TM-03
     void test_SnakeTurnReversesAtEnd() {
         // Arrange: Set up a 3-player game
         TurnManager tm = new TurnManager(3);
 
-        // Act: Move through the first 3 placements
+        // Act: Move through the first 4 placements
         tm.nextPlacement(); // P1 done
         tm.nextPlacement(); // P2 done
         tm.nextPlacement(); // P3 done
+        tm.nextPlacement(); // P4 done
 
         // Assert: The BVA states index n-1 should repeat
-        assertEquals(2, tm.getCurrentPlayerIndex());
+        assertEquals(1, tm.getCurrentPlayerIndex());
     }
 
 
