@@ -13,13 +13,15 @@
 1. [Done] All: Weekly meeting:
      - Met as a team, played Catan, familiarized ourselves with ruleset
      - Obtained reference objects
-     - [80% done] Decided on implementing GUI application (considering Java Swing, JavaFX, React??)
+     - [DOne] Decided on implementing GUI application: Decided on JavaFX
 3. [80% Done] All: Documenting functional requirements in project board (https://github.com/orgs/nu-cs-sqe/projects/53?pane=issue&itemId=180919536&issue=nu-cs-sqe%7Ccourse-project-20252603-team-09-20250603%7C7](https://github.com/nu-cs-sqe/course-project-20252603-team-09-20250603/issues/6)
 
-# Week 5 (04/28/2026-XX/XX/2026) 
+# Week 5 (04/28/2026-05/05/2026) 
 **Planning and Progress Tracking**:
-1. [Status] All: Weekly meeting:
-     - 
+1. [Done] All: Weekly meeting:
+     - Looked over classes and methods
+     - Finalized GUI decision
+     - Began BVA documentation and feature development individually
 2. [10% Done] All: Producing the design
 3. [10% Done] All (individually) Splitting tasks and beginning implementation
 
