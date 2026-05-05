@@ -39,14 +39,10 @@ Handles new game player setup, including player count validation, player name va
 
 ### Method under test: `assignColor()`
 
-|              | State of the System | Expected output | Implemented?              |
-|--------------|---------------------|-----------------|---------------------------|
-| Test Case 1  |                     |                 | :x: or :white_check_mark: |
-| Test Case 2  |                     |                 | :x: or :white_check_mark: |
-
-### Method under test: `prepareGame()`
-
-|              | State of the System | Expected output | Implemented?              |
-|--------------|---------------------|-----------------|---------------------------|
-| Test Case 1  |                     |                 | :x: or :white_check_mark: |
-| Test Case 2  |                     |                 | :x: or :white_check_mark: |
+|              | State of the System | Expected output                        | Implemented? |
+|--------------|---------------------|----------------------------------------|--------------|
+| Test Case 19 | Player index = 0    | Assigns just first player with red     | :x:          |
+| Test Case 20 | Player index = 1    | Assigns just second player with blue   | :x:          |
+| Test Case 21 | Player index = 2    | Assigns just third player with orange  | :x:          |
+| Test Case 22 | Player index = 4    | Assigns just fourth player with white  | :x:          |
+| Test Case 23 | Total of 4 players  | All players are assigned unqiue colors | :x:          |
