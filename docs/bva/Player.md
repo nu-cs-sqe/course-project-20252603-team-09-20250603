@@ -23,28 +23,7 @@ Tracks a single player's identity and resources.
 | Test Case 1  |                     |                 | :x: or :white_check_mark: |
 | Test Case 2  |                     |                 | :x: or :white_check_mark: |
 
-### Method under test: `getResourceHand()`
-
-|              | State of the System | Expected output | Implemented?              |
-|--------------|---------------------|-----------------|---------------------------|
-| Test Case 1  |                     |                 | :x: or :white_check_mark: |
-| Test Case 2  |                     |                 | :x: or :white_check_mark: |
-
-### Method under test: `getDevCardHand()`
-
-|              | State of the System | Expected output | Implemented?              |
-|--------------|---------------------|-----------------|---------------------------|
-| Test Case 1  |                     |                 | :x: or :white_check_mark: |
-| Test Case 2  |                     |                 | :x: or :white_check_mark: |
-
 ### Method under test: `getVictoryPoints()`
-
-|              | State of the System | Expected output | Implemented?              |
-|--------------|---------------------|-----------------|---------------------------|
-| Test Case 1  |                     |                 | :x: or :white_check_mark: |
-| Test Case 2  |                     |                 | :x: or :white_check_mark: |
-
-### Method under test: `calculateVicotryPoints()`
 
 |              | State of the System | Expected output | Implemented?              |
 |--------------|---------------------|-----------------|---------------------------|
