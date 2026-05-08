@@ -31,5 +31,4 @@
 1. [In progress] All: Weekly meeting:
       - 
 2. [95% Done] Crystal: Finished feature/new-game-player-setup for game setup phase to handle player object creation and validation (https://github.com/nu-cs-sqe/course-project-20252603-team-09-20250603/pull/17)
-3. [80% done] Person: Task (Links to PR)
-4. [in progress] All: Select GUI library and update README
+3. [in progress] All: Select GUI library and update README
