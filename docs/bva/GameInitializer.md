@@ -8,8 +8,11 @@ Handles new game player setup, including player count validation, player name va
 |-------------|---------------------------------------------------------------------------|------------------------------------------------------------------------------------------|--------------|
 | Test Case 1 | player count = 2, names = ["Cole", "Aryan"]                               | Invalid; does not create players because Catan requires 3 to 4 players                   | :x:          |
 | Test Case 2 | Player count = 3, names = ["Cole", "Aryan", "Alvin"]                      | Valid; creates 3 player objects of the given names and assigns unique colors             | :x:          |
-| Test Case 3 | Player count = 4, names = ["Cole", "Aryan", "Alvin", "Bennita"]           | Valid; creates 4 player objects of the given names and assigns unique colors             | :x:          |
+| Test Case 3 | Player count = 4, names = ["Cole", "Aryan", "Alvin Li", "Bennita"]        | Valid; creates 4 player objects of the given names and assigns unique colors             | :x:          |
 | Test Case 4 | Player count = 5, names = ["Cole", "Aryan", "Alvin", "Bennita", "Chris" ] | Invalid; does not create players because the game can only be played with 3 to 4 players | :x:          |
+| Test Case 5 | Player count = 4, names = ["Cole", "", "Alvin"]                           | Invalid; does not create players because name is blank                                   | :x:          |
+| Test Case 6 | Player count = 0, names = null                                            | Invalid; does not create players because input is null                                   | :x:          |
+| Test Case 7 | Duplicate name in names  input = ["Cole", "Alvin", "Alvin"]               | Invalid; does not create players because names should be unique                          | :x:          |
 
 ### Method under test: `validatePlayerCount()` 
 ### Helper of setupPlayers()
