@@ -2,6 +2,8 @@ package domain;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GameInitializerTests {
@@ -123,6 +125,85 @@ public class GameInitializerTests {
         assertNotEquals(color2, color3);
         assertNotEquals(color2, color4);
         assertNotEquals(color3, color4);
+    }
+
+    @Test
+    void twoPlayers_SetupPlayers_InvalidNoCreation(){
+        GameInitializer initializer = new GameInitializer();
+
+        List<String> names = List.of("Cole", "Aryan");
+
+        assertThrows(IllegalArgumentException.class, ()->initializer.setupPlayers(names));
+    }
+
+    @Test
+    void threePlayers_SetupPlayers_ValidCreateThreePlayers_CorrectlyAssignsColors(){
+        GameInitializer initializer = new GameInitializer();
+
+        List<Player> players = initializer.setupPlayers(List.of("Cole", "Aryan", "Alvin"));
+
+        assertEquals(3, players.size());
+        assertEquals("Cole", players.get(0).getName());
+        assertEquals("Aryan", players.get(1).getName());
+        assertEquals("Alvin", players.get(2).getName());
+
+        assertEquals(PlayerColor.RED, players.get(0).getColor());
+        assertEquals(PlayerColor.BLUE, players.get(1).getColor());
+        assertEquals(PlayerColor.ORANGE, players.get(2).getColor());
+    }
+
+    @Test
+    void fourPlayers_SetupPlayers_ValidCreateFourPlayers_CorrectlyAssignsColors(){
+        GameInitializer initializer = new GameInitializer();
+
+        List<Player> players = initializer.setupPlayers(List.of("Cole", "Aryan", "Alvin Li", "Bennita"));
+
+        assertEquals(4, players.size());
+        assertEquals("Cole", players.get(0).getName());
+        assertEquals("Aryan", players.get(1).getName());
+        assertEquals("Alvin Li", players.get(2).getName());
+        assertEquals("Bennita", players.get(3).getName());
+
+        assertEquals(PlayerColor.RED, players.get(0).getColor());
+        assertEquals(PlayerColor.BLUE, players.get(1).getColor());
+        assertEquals(PlayerColor.ORANGE, players.get(2).getColor());
+        assertEquals(PlayerColor.WHITE, players.get(3).getColor());
+    }
+
+    @Test
+    void fivePlayers_SetupPlayers_InvalidNoCreation(){
+        GameInitializer initializer = new GameInitializer();
+
+        List<String> names = List.of("Cole", "Aryan", "Alvin", "Bennita", "Chris");
+
+        assertThrows(IllegalArgumentException.class, ()->initializer.setupPlayers(names));
+    }
+
+    @Test
+    void setupPlayers_BlankName_InvalidGame(){
+        GameInitializer initializer = new GameInitializer();
+
+        List<String> names = List.of("Cole", "", "Alvin");
+
+        assertThrows(IllegalArgumentException.class, () -> initializer.setupPlayers(names));
+    }
+
+    @Test
+    void setupPlayers_nullInput_InvalidGame(){
+        GameInitializer initializer = new GameInitializer();
+
+        List<String> names = null;
+
+        assertThrows(IllegalArgumentException.class, () -> initializer.setupPlayers(names));
+    }
+
+    @Test
+    void setupPlayers_DuplicateName_InvalidGame(){
+        GameInitializer initializer = new GameInitializer();
+
+        List<String> names = List.of("Cole", "Alvin", "Alvin");
+
+        assertThrows(IllegalArgumentException.class, () -> initializer.setupPlayers(names));
     }
 
 }
