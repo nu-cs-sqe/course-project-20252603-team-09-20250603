@@ -18,4 +18,18 @@ public class PlayerTests {
 
         assertEquals("Jane Doe", player.getName());
     }
+
+    @Test
+    void getColor_Red_ReturnsCorrectly(){
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        assertEquals(PlayerColor.RED, player.getColor());
+    }
+
+    @Test
+    void getColor_BLUE_ReturnsCorrectly(){
+        Player player = new Player(1, "Jane Doe", PlayerColor.BLUE);
+
+        assertEquals(PlayerColor.BLUE, player.getColor());
+    }
 }
