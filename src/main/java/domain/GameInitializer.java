@@ -1,5 +1,10 @@
 package domain;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class GameInitializer {
     private static final PlayerColor[] COLORS = {
             PlayerColor.RED,
@@ -7,6 +12,35 @@ public class GameInitializer {
             PlayerColor.ORANGE,
             PlayerColor.WHITE
     };
+
+    public List<Player> setupPlayers(List<String> names){
+        if (names == null){
+            throw new IllegalArgumentException("No players entered");
+        }
+
+        validatePlayerCount(names.size());
+
+        List<Player> players = new ArrayList<>();
+        Set<String> usedNames = new HashSet<>();
+
+        for(int i = 0; i < names.size(); i++){
+            String name = names.get(i);
+            validatePlayerName(name);
+
+            String normalizedName = name.trim().toLowerCase();
+
+            if(!usedNames.add(normalizedName)){
+                throw new IllegalArgumentException("Player names must be unique");
+            }
+
+            PlayerColor color = assignColor(i);
+            Player player = new Player(i, names.get(i), color);
+
+            players.add(player);
+        }
+
+        return players;
+    }
 
     public void validatePlayerCount(int count){
         if (count < 3 || count > 4){
