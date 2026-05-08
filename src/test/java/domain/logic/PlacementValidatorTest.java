@@ -76,4 +76,32 @@ public class PlacementValidatorTest {
         // 4. Verify
         EasyMock.verify(mockBoard);
     }
+
+    @Test // TC-PV-04
+    void test_InitialRoadFailsWhenNotConnectedToSettlement() {
+        // 1. Arrange: Setup mock and target IDs
+        mockBoard = EasyMock.createMock(Board.class);
+        validator = new PlacementValidator(mockBoard);
+
+        int edgeId = 10;
+        int settlementNodeId = 99; // A node ID that is nowhere near Edge 10
+
+        // In our mock board, Edge 10 only connects nodes 5 and 6
+        List<Integer> validEndpoints = Arrays.asList(5, 6);
+
+        // Tell the mock to return [5, 6] when asked about Edge 10
+        EasyMock.expect(mockBoard.getRoadEndpoints(edgeId)).andReturn(validEndpoints);
+
+        // 2. Replay: Start "Live Mode"
+        EasyMock.replay(mockBoard);
+
+        // 3. Act & Assert: Verify that the exception is thrown
+        // Since 99 is not in the list [5, 6], this should fail
+        assertThrows(IllegalPlacementException.class, () ->
+                        validator.validateInitialRoad(edgeId, settlementNodeId),
+                "Expected validateInitialRoad to throw an exception for disconnected road.");
+
+        // 4. Verify: Ensure the board was actually consulted
+        EasyMock.verify(mockBoard);
+    }
 }
