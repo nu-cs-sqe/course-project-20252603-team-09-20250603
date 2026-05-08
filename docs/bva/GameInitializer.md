@@ -24,20 +24,20 @@ Handles new game player setup, including player count validation, player name va
 ### Method under test: `validatePlayerName()`
 ### Helper of setupPlayers()
 
-|              | State of the System                                                                | Expected output               | Implemented? |
-|--------------|------------------------------------------------------------------------------------|-------------------------------|--------------|
-| Test Case 13 | Name = "Cole"                                                                      | Valid; no errors              | :x:          |
-| Test Case 14 | Name = "Alvin Li"                                                                  | Valid; no errors              | :x:          |
-| Test Case 15 | Name = ""                                                                          | Invalid; blank name           | :x:          |
-| Test Case 16 | Name = " "                                                                         | Invalid; whitespace only name | :x:          |
-| Test Case 17 | Name = null                                                                        | Invalid; name cannot be null  | :x:          |
+|              | State of the System | Expected output               | Implemented?       |
+|--------------|---------------------|-------------------------------|--------------------|
+| Test Case 13 | Name = "Cole"       | Valid; no errors              | :white_checkmark:  |
+| Test Case 14 | Name = "Alvin Li"   | Valid; no errors              | :white_checkmark:  |
+| Test Case 15 | Name = ""           | Invalid; blank name           | :white_checkmark:  |
+| Test Case 16 | Name = " "          | Invalid; whitespace only name | :white_checkmark:  |
+| Test Case 17 | Name = null         | Invalid; name cannot be null  | :white_checkmark:  |
 ### Method under test: `assignColor()`
 
-|              | State of the System | Expected output                        | Implemented? |
-|--------------|---------------------|----------------------------------------|--------------|
-| Test Case 18 | Player index = 0    | Assigns just first player with red     | :x:          |
-| Test Case 19 | Player index = 1    | Assigns just second player with blue   | :x:          |
-| Test Case 20 | Player index = 2    | Assigns just third player with orange  | :x:          |
-| Test Case 21 | Player index = 3    | Assigns just fourth player with white  | :x:          |
-| Test Case 22 | Player index = 4    | Invalid, no fifth player should exist  | :x:          |
-| Test Case 23 | Total of 4 players  | All players are assigned unique colors | :x:          |
+|              | State of the System | Expected output                        | Implemented?       |
+|--------------|---------------------|----------------------------------------|--------------------|
+| Test Case 18 | Player index = 0    | Assigns just first player with red     | :white_checkmark:  |
+| Test Case 19 | Player index = 1    | Assigns just second player with blue   | :white_checkmark:  |
+| Test Case 20 | Player index = 2    | Assigns just third player with orange  | :white_checkmark:  |
+| Test Case 21 | Player index = 3    | Assigns just fourth player with white  | :white_checkmark:  |
+| Test Case 22 | Player index = 4    | Invalid, no fifth player should exist  | :white_checkmark:  |
+| Test Case 23 | Total of 4 players  | All players are assigned unique colors | :white_checkmark:  |
