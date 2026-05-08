@@ -17,4 +17,14 @@ public class PlacementValidator {
             throw new IllegalPlacementException("Placement violates the distance rule.");
         }
     }
+
+    public void validateInitialRoad(int edgeId, int settlementNodeId) {
+        // Fetch the two endpoints of the edge from the board
+        List<Integer> endpoints = board.getRoadEndpoints(edgeId);
+
+        // If the board returns null or the list doesn't contain our node, it's illegal
+        if (endpoints == null || !endpoints.contains(settlementNodeId)) {
+            throw new IllegalPlacementException("Road must be connected to the newly placed settlement.");
+        }
+    }
 }

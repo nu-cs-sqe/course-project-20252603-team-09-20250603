@@ -10,7 +10,7 @@
 
 ### Method under test: `validateInitialRoad(int edgeId, int settlementNodeId)`
 
-| Test Case ID | State of the System | Expected output | Implemented? |
-|--------------|---------------------|-----------------|:------------:|
-| **TC-PV-03** | Edge connects to the given Settlement Node | Success (No Exception) | :x: |
-| **TC-PV-04** | Edge does NOT connect to the Settlement Node | Throw `IllegalPlacementException` | :x: |
+| Test Case ID | State of the System | Expected output |   Implemented?    |
+|--------------|---------------------|-----------------|:-----------------:|
+| **TC-PV-03** | Edge connects to the given Settlement Node | Success (No Exception) | :white_checkmark: |
+| **TC-PV-04** | Edge does NOT connect to the Settlement Node | Throw `IllegalPlacementException` |        :x:        |

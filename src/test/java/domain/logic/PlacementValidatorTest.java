@@ -3,6 +3,8 @@ import domain.models.Board;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PlacementValidatorTest {
@@ -44,6 +46,32 @@ public class PlacementValidatorTest {
         // assertDoesNotThrow verifies that the code runs without an exception
         assertDoesNotThrow(() -> validator.validateSettlementPlacement(targetNode),
                 "Should not throw an exception when the distance rule is satisfied.");
+
+        // 4. Verify
+        EasyMock.verify(mockBoard);
+    }
+
+    @Test // TC-PV-03
+    void test_InitialRoadAdjacencySuccess() {
+        // 1. Arrange
+        mockBoard = EasyMock.createMock(Board.class);
+        validator = new PlacementValidator(mockBoard);
+
+        int edgeId = 10;
+        int settlementNodeId = 5;
+        // Simulate that Edge 10 connects Node 5 and Node 6
+        List<Integer> validEndpoints = Arrays.asList(5, 6);
+
+        // Expectation: Validator asks for endpoints, Board returns 5 and 6
+        EasyMock.expect(mockBoard.getRoadEndpoints(edgeId)).andReturn(validEndpoints);
+
+        // 2. Replay
+        EasyMock.replay(mockBoard);
+
+        // 3. Act & Assert
+        // Since settlementNodeId (5) is in the endpoints list, this should pass
+        assertDoesNotThrow(() -> validator.validateInitialRoad(edgeId, settlementNodeId),
+                "Should not throw an exception when the road is connected to the settlement.");
 
         // 4. Verify
         EasyMock.verify(mockBoard);
