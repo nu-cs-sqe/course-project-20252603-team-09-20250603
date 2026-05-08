@@ -30,4 +30,8 @@ public class Player {
     public PlayerColor getColor(){
         return color;
     }
+
+    public Map<String, Integer> getInventory() {
+        return inventory;
+    }
 }
