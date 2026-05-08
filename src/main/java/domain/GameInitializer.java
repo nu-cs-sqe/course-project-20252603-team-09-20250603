@@ -6,4 +6,10 @@ public class GameInitializer {
             throw new IllegalArgumentException("Catan requires players of 3 or 4");
         }
     }
+
+    public void validatePlayerName(String name){
+        if (name == null || name.trim().isBlank()){
+            throw new IllegalArgumentException("Player name invalid, please input a name");
+        }
+    }
 }
