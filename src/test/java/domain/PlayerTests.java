@@ -34,11 +34,19 @@ public class PlayerTests {
     }
 
     @Test
-    void getStartingInventory(){
+    void getStartingInventory_ReturnsCorrectly(){
         Player player = new Player(0, "Bob", PlayerColor.RED);
 
         assertEquals(15, player.getInventory().get("roads"));
         assertEquals(5, player.getInventory().get("settlements"));
         assertEquals(4, player.getInventory().get("cities"));
     }
+
+    @Test
+    void getStartingNewPlayerVictoryPoints_ReturnsZero(){
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        assertEquals(0, player.getVictoryPoints());
+    }
+
 }
