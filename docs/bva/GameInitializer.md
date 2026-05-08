@@ -16,12 +16,12 @@ Handles new game player setup, including player count validation, player name va
 ### Method under test: `validatePlayerCount()` 
 ### Helper of setupPlayers()
 
-|              | State of the System | Expected output                                       | Implemented? |
-|--------------|---------------------|-------------------------------------------------------|--------------|
-| Test Case 7  | Player count = 2    | Invalid; throws error "Must have 3-4 players to play" | :x:          |
-| Test Case 8  | Player count = 3    | Valid; no error                                       | :x:          |
-| Test Case 9  | Player count = 4    | Valid; no error                                       | :x:          |
-| Test Case 10 | Player count = 5    | Invalid; throws error "Only 3-4 players to play"      | :x:          |
+|              | State of the System | Expected output                                       | Implemented?      |
+|--------------|---------------------|-------------------------------------------------------|-------------------|
+| Test Case 7  | Player count = 2    | Invalid; throws error "Must have 3-4 players to play" | :white_checkmark: |
+| Test Case 8  | Player count = 3    | Valid; no error                                       | :white_checkmark: |
+| Test Case 9  | Player count = 4    | Valid; no error                                       | :white_checkmark: |
+| Test Case 10 | Player count = 5    | Invalid; throws error "Only 3-4 players to play"      | :white_checkmark: |
 
 ### Method under test: `validatePlayerNames()`
 ### Helper of setupPlayers()
