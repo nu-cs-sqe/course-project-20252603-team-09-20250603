@@ -32,4 +32,13 @@ public class PlayerTests {
 
         assertEquals(PlayerColor.BLUE, player.getColor());
     }
+
+    @Test
+    void getStartingInventory(){
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        assertEquals(15, player.getInventory().get("roads"));
+        assertEquals(5, player.getInventory().get("settlements"));
+        assertEquals(4, player.getInventory().get("cities"));
+    }
 }
