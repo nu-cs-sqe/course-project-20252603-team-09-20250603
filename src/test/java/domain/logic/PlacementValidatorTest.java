@@ -26,4 +26,26 @@ public class PlacementValidatorTest {
 
         EasyMock.verify(mockBoard);
     }
+
+    @Test // TC-PV-02
+    void test_DistanceRulePassesWhenNeighborsEmpty() {
+        // 1. Arrange
+        mockBoard = EasyMock.createMock(Board.class);
+        validator = new PlacementValidator(mockBoard);
+        int targetNode = 10;
+
+        // We expect the board to say the distance rule is satisfied (true)
+        EasyMock.expect(mockBoard.checkDistanceRule(targetNode)).andReturn(true);
+
+        // 2. Replay
+        EasyMock.replay(mockBoard);
+
+        // 3. Act & Assert
+        // assertDoesNotThrow verifies that the code runs without an exception
+        assertDoesNotThrow(() -> validator.validateSettlementPlacement(targetNode),
+                "Should not throw an exception when the distance rule is satisfied.");
+
+        // 4. Verify
+        EasyMock.verify(mockBoard);
+    }
 }

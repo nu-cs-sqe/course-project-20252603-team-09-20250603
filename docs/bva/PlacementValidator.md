@@ -6,7 +6,7 @@
 | Test Case ID | State of the System | Expected output |   Implemented?    |
 |--------------|---------------------|-----------------|:-----------------:|
 | **TC-PV-01** | Target Node is adjacent to an occupied Node | Throw `IllegalPlacementException` | :white_checkmark: |
-| **TC-PV-02** | Target Node and all neighbors are empty | Success (No Exception) |        :x:        |
+| **TC-PV-02** | Target Node and all neighbors are empty | Success (No Exception) | :white_checkmark: |
 
 ### Method under test: `validateInitialRoad(int edgeId, int settlementNodeId)`
 
