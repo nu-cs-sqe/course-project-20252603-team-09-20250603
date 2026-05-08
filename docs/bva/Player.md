@@ -27,4 +27,3 @@ Tracks a single player's identity and resources.
 |             | State of the System                    | Expected output | Implemented? |
 |-------------|----------------------------------------|-----------------|--------------|
 | Test Case 6 | New player is created                  | Return 0        | :x:          |
-| Test Case 7 | Player has no buildings or bonuses yet | Return 0        | :x:          |
