@@ -34,4 +34,8 @@ public class Player {
     public Map<String, Integer> getInventory() {
         return inventory;
     }
+
+    public int getVictoryPoints(){
+        return victoryPoints;
+    }
 }
