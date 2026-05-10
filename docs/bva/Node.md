@@ -84,9 +84,9 @@ TODO: distance rule? idk if the check belongs here
   - **State of the system**: Node.occupant == 1, Node.infraType == "settlement"
   - **Expected output**: Node.occupant == 1, Node.infraType == "city"
 
-- **TC2: Unsuccessful upgrade city to city** ( :x: or :white_check_mark: )
-  - **State of the system**: Node.occupant == 2, Node.infraType == "city"
-  - **Expected output**: Node.occupant == 2, Node.infraType == "city", IllegalStateException: "Cannot upgrade a city further."
+- **TC2: Unsuccessful upgrade city to city** ( :white_check_mark: )
+  - **State of the system**: Node.occupant == 1, Node.infraType == "city"
+  - **Expected output**: Node.occupant == 1, Node.infraType == "city", IllegalStateException: "Cannot upgrade a city further."
 
 - **TC3: Unsuccessful upgrade unoccupied node to city** ( :x: or :white_check_mark: )
   - **State of the system**: Node.occupant == 0, Node.infraType == ""

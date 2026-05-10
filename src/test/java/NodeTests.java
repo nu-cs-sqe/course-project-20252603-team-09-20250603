@@ -49,4 +49,21 @@ public class NodeTests {
         assertEquals("city", n.getInfraType());
         assertEquals(1, n.getNodeOccupant());
     }
+
+    @Test public void BuildCity_UnsuccessfulUpgradeCityToCity() {
+        Node n = new Node(1);
+
+        n.buildSettlement(1);
+        n.buildCity(1);
+
+        // try to build a city on a city
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> n.buildCity(1)
+        );
+
+        assertEquals("city", n.getInfraType());
+        assertEquals(1, n.getNodeOccupant());
+        assertEquals("Cannot upgrade a city further.", exception.getMessage());
+    }
 }

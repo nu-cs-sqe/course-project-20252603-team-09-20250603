@@ -23,7 +23,11 @@ public class Node {
     }
 
     public void buildCity(int playerId) {
-        infraType = "city";
+        if (infraType == "city") {
+            throw new IllegalStateException("Cannot upgrade a city further.");
+        } else {
+            infraType = "city";
+        }
     }
 
     public String getInfraType() {
