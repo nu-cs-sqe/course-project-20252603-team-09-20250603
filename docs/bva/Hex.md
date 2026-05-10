@@ -39,15 +39,17 @@ Step 4:
 
 |              | State of the System | Expected output | Implemented?              |
 |--------------|---------------------|-----------------|---------------------------|
-| Test Case 1  |                     |                 | :x: or :white_check_mark: |
-| Test Case 2  |                     |                 | :x: or :white_check_mark: |
+| Test Case 1  | TokenNumber = 0     | 0               | :white_check_mark:        |
+| Test Case 2  | TokenNumber = 2     | 2               | :white_check_mark:        |
+| Test Case 3  | TokenNumber = 12    | 12              | :white_check_mark:        |
 
 ### Method under test: `setTokenNumber()`
 
 |              | State of the System | Expected output | Implemented?              |
 |--------------|---------------------|-----------------|---------------------------|
-| Test Case 1  |                     |                 | :x: or :white_check_mark: |
-| Test Case 2  |                     |                 | :x: or :white_check_mark: |
-
+| Test Case 1  | setTokenNumber(1)   | IllegalArgumentException | :white_check_mark: |
+| Test Case 2  | setTokenNumber(2)   | TokenNumber 2   | :white_check_mark:        |
+| Test Case 3  | setTokenNumber(12)  | TokenNumber 12  | :white_check_mark:        |
+| Test Case 4  | setTokenNumber(13)  | IllegalArgumentException | :white_check_mark: |
 
 
