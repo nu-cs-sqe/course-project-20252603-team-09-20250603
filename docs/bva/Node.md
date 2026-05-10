@@ -20,11 +20,11 @@ getInfraType() -> returns "settlement" or "city" or ""
   - Type: cases
   - Candidates: 0, 1, 2, 3, 4
 
-- **TC1: Unoccupied node, return 0** ( :x: or :white_check_mark: )
+- **TC1: Unoccupied node, return 0** ( :white_check_mark: )
     - **State of the system**: Node.occupant == 0
     - **Expected output**: 0
 
-- **TC2: Node occupied by 1, return 1** ( :x: or :white_check_mark: )
+- **TC2: Node occupied by 1, return 1** ( :white_check_mark: )
     - **State of the system**: Node.occupant == 1
     - **Expected output**: 1
 
@@ -48,7 +48,7 @@ TODO: distance rule? idk if the check belongs here
   - Type: cases
   - IllegalStateException: "Cannot settle on an already-settled node."
 
-- **TC1: Successful build settlement** ( :x: or :white_check_mark: )
+- **TC1: Successful build settlement** ( :white_check_mark: )
     - **State of the system**: Node.occupant == 0, playerId == 1
     - **Expected output**: Node.occupant == 1, Node.infraType == "settlement"
 
@@ -97,3 +97,15 @@ TODO: distance rule? idk if the check belongs here
 - infraType
   - Type: cases
   - Candidates: "settlement", "city", ""
+
+- **TC1: Unoccupied node, return empty string** ( :x: or :white_check_mark: )
+  - **State of the system**: Node.infraType == ""
+  - **Expected output**: ""
+
+- **TC2: Node occupied by settlement, return settlement** ( :x: or :white_check_mark: )
+  - **State of the system**: Node.infraType == "settlement"
+  - **Expected output**: "settlement"
+
+- **TC3: Node occupied by city, return city** ( :x: or :white_check_mark: )
+  - **State of the system**: Node.infraType == "city"
+  - **Expected output**: "city"
