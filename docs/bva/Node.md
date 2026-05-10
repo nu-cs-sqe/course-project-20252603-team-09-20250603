@@ -56,7 +56,7 @@ TODO: distance rule? idk if the check belongs here
     - **State of the system**: Node.occupant == 1, playerId == 2
     - **Expected output**: Node.occupant == 1, IllegalStateException: "Cannot settle on an already-settled node."
 
-### Method under test: `buildCity()`
+### Method under test: `buildCity(int playerId)`
 #### Inputs:
 - State of the node -> value of the node occupant
   - Type: cases
@@ -64,6 +64,9 @@ TODO: distance rule? idk if the check belongs here
 - State of the node -> value of the node infraType
   - Type: cases
   - Candidates: "settlement", "city", ""
+- Input player id
+  - Type: cases
+  - Cases: 1, 2, 3, 4
 #### Outputs:
 - State of the node -> node occupant should stay the same
   - Type: cases
@@ -75,6 +78,7 @@ TODO: distance rule? idk if the check belongs here
   - Type: cases
   - IllegalStateException: "Cannot upgrade an unsettled node to city."
   - IllegalStateException: "Cannot upgrade a city further."
+  - IllegalStateException: "Cannot build a city on an already-settled node."
 
 - **TC1: Successful upgrade settlement to city"** ( :x: or :white_check_mark: )
   - **State of the system**: Node.occupant == 1, Node.infraType == "settlement"
@@ -84,9 +88,13 @@ TODO: distance rule? idk if the check belongs here
   - **State of the system**: Node.occupant == 2, Node.infraType == "city"
   - **Expected output**: Node.occupant == 2, Node.infraType == "city", IllegalStateException: "Cannot upgrade a city further."
 
-- **TC3: Unsuccessful upgrade city to city** ( :x: or :white_check_mark: )
+- **TC3: Unsuccessful upgrade unoccupied node to city** ( :x: or :white_check_mark: )
   - **State of the system**: Node.occupant == 0, Node.infraType == ""
   - **Expected output**: Node.occupant == 0, Node.infraType == "", IllegalStateException: "Cannot upgrade an unsettled node to city."
+
+- **TC4: Unsuccessful upgrade city on someone else's settlement** ( :x: or :white_check_mark: )
+  - **State of the system**: Node.occupant == 1, Node.infraType == "settlement", playerId == 2
+  - **Expected output**: Node.occupant == 1, Node.infraType == "settlement", IllegalStateException: "Cannot build a city on an already-settled node."
 
 ### Method under test: `getInfraType()`
 #### Inputs:
