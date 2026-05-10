@@ -12,5 +12,8 @@ public class Hex {
     public boolean getHasRobber() {
         return this.hasRobber;
     }
-}
 
+    public void setHasRobber(boolean hasRobber) {
+        this.hasRobber = hasRobber;
+    }
+}

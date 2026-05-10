@@ -11,15 +11,15 @@ Step 4:
 
 |              | State of the System | Expected output | Implemented?              |
 |--------------|---------------------|-----------------|---------------------------|
-| Test Case 1  | HasRobber =  True   | True            | :x: or :white_check_mark: |
-| Test Case 2  | HasRobber = False   | False           | :x: or :white_check_mark: |
+| Test Case 1  | HasRobber = True    | True            | :white_check_mark:        |
+| Test Case 2  | HasRobber = False   | False           | :white_check_mark:        |
 
 ### Method under test: `setHasRobber()`
 
 |              | State of the System | Expected output | Implemented?              |
 |--------------|---------------------|-----------------|---------------------------|
-| Test Case 1  |                     |                 | :x: or :white_check_mark: |
-| Test Case 2  |                     |                 | :x: or :white_check_mark: |
+| Test Case 1  | setHasRobber(true)  | HasRobber true  | :white_check_mark:        |
+| Test Case 2  | setHasRobber(false) | HasRobber false | :white_check_mark:        |
 
 ### Method under test: `getTerrainType()`
 
@@ -48,7 +48,6 @@ Step 4:
 |--------------|---------------------|-----------------|---------------------------|
 | Test Case 1  |                     |                 | :x: or :white_check_mark: |
 | Test Case 2  |                     |                 | :x: or :white_check_mark: |
-
 
 
 

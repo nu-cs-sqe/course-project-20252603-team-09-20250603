@@ -17,4 +17,20 @@ public class HexTest {
         assertFalse(hex.getHasRobber(), "A new hex should not start with the robber.");
     }
 
+    @Test
+    public void testSetHasRobberCanPlaceRobber() {
+        hex.setHasRobber(true);
+
+        assertTrue(hex.getHasRobber(), "setHasRobber(true) should place the robber on the hex.");
+    }
+
+    @Test
+    public void testSetHasRobberCanRemoveRobber() {
+        hex.setHasRobber(true);
+
+        hex.setHasRobber(false);
+
+        assertFalse(hex.getHasRobber(), "setHasRobber(false) should remove the robber from the hex.");
+    }
+
 }
