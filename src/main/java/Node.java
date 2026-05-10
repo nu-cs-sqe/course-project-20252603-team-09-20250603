@@ -12,4 +12,13 @@ public class Node {
     public int getNodeOccupant() {
         return occupant;
     }
+
+    public void buildSettlement(int playerId) {
+        occupant = playerId;
+        infraType = "settlement";
+    }
+
+    public String getInfraType() {
+        return infraType;
+    }
 }

@@ -102,7 +102,7 @@ TODO: distance rule? idk if the check belongs here
   - **State of the system**: Node.infraType == ""
   - **Expected output**: ""
 
-- **TC2: Node occupied by settlement, return settlement** ( :x: or :white_check_mark: )
+- **TC2: Node occupied by settlement, return settlement** ( :white_check_mark: )
   - **State of the system**: Node.infraType == "settlement"
   - **Expected output**: "settlement"
 

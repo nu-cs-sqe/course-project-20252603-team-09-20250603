@@ -11,4 +11,15 @@ public class NodeTests {
         int actual = n.getNodeOccupant();
         assertEquals(expected, actual);
     }
+
+    @Test public void buildSettlement_getNodeOccupant_getInfraType_Player1_Return1AndSettlement() {
+        Node n = new Node(1);
+
+        n.buildSettlement(1);
+        int expected = 1;
+        int actual = n.getNodeOccupant();
+        assertEquals(expected, actual);
+
+        assertEquals("settlement", n.getInfraType());
+    }
 }
