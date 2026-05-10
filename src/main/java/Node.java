@@ -22,6 +22,10 @@ public class Node {
         }
     }
 
+    public void buildCity(int playerId) {
+        infraType = "city";
+    }
+
     public String getInfraType() {
         return infraType;
     }

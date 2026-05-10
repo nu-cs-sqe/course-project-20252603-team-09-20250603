@@ -80,7 +80,7 @@ TODO: distance rule? idk if the check belongs here
   - IllegalStateException: "Cannot upgrade a city further."
   - IllegalStateException: "Cannot build a city on an already-settled node."
 
-- **TC1: Successful upgrade settlement to city"** ( :x: or :white_check_mark: )
+- **TC1: Successful upgrade settlement to city"** ( :white_check_mark: )
   - **State of the system**: Node.occupant == 1, Node.infraType == "settlement"
   - **Expected output**: Node.occupant == 1, Node.infraType == "city"
 
@@ -114,6 +114,6 @@ TODO: distance rule? idk if the check belongs here
   - **State of the system**: Node.infraType == "settlement"
   - **Expected output**: "settlement"
 
-- **TC3: Node occupied by city, return city** ( :x: or :white_check_mark: )
+- **TC3: Node occupied by city, return city** ( :white_check_mark: )
   - **State of the system**: Node.infraType == "city"
   - **Expected output**: "city"

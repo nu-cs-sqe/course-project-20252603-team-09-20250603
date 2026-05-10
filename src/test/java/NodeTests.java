@@ -39,4 +39,14 @@ public class NodeTests {
         assertEquals("Cannot settle on an already-settled node.", exception.getMessage());
         assertEquals(1, n.getNodeOccupant());
     }
+
+    @Test public void BuildCity_GetInfraType_SuccessfulUpgradeSettlementToCity() {
+        Node n = new Node(1);
+
+        n.buildSettlement(1);
+        n.buildCity(1);
+
+        assertEquals("city", n.getInfraType());
+        assertEquals(1, n.getNodeOccupant());
+    }
 }
