@@ -45,6 +45,12 @@ Manages the count of physical pieces on the board.
 | Test Case 2  |                     |                 | :x: or :white_check_mark: |
 
 
+### Method under test: `distributeResources`
+
+|              | State of the System | Expected output | Implemented?              |
+|--------------|---------------------|-----------------|---------------------------|
+| Test Case 1  |                     |                 | :x: or :white_check_mark: |
+| Test Case 2  |                     |                 | :x: or :white_check_mark: |
 
 
 

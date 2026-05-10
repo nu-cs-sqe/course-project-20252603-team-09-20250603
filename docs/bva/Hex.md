@@ -53,3 +53,17 @@ Step 4:
 | Test Case 4  | setTokenNumber(13)  | IllegalArgumentException | :white_check_mark: |
 
 
+### Method under test: `distributeResources()`
+
+1. Domain: State of object (Hex class instance), Output: Void, Call to player class method - for player to collect resources
+2. Equivalence Classes: Input: Hex class object, Cases: Hex has robber, Hex has no robber, Hex corner nodes are empty, 1 full, all full, Output: Void, Call to player class method - for player to collect resources
+3. Test Cases: Hex with no robber, Hex with robber, Hex with no terrain type ...
+
+|              | State of the System | Expected output | Implemented?              |
+|--------------|---------------------|-----------------|---------------------------|
+| Test Case 1  | HasRobber = false, TerrainType = Forest, 1 adjacent node occupied | Occupied node owner collects 1 Forest resource | :white_check_mark: |
+| Test Case 2  | HasRobber = true, TerrainType = Forest, 1 adjacent node occupied | No player collects resources | :white_check_mark: |
+| Test Case 3  | HasRobber = false, TerrainType = Forest, adjacent nodes empty | No player collects resources | :white_check_mark: |
+| Test Case 4  | HasRobber = false, TerrainType = Fields, all 6 adjacent nodes occupied | Each occupied node owner collects resources | :white_check_mark: |
+| Test Case 5  | HasRobber = false, TerrainType = null, 1 adjacent node occupied | No player collects resources | :white_check_mark: |
+| Test Case 6  | HasRobber = false, TerrainType = Mountains, 1 adjacent city node occupied | Occupied node owner collects 2 Mountains resources | :white_check_mark: |
