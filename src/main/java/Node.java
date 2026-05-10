@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public class Node {
     private int id;
     private int occupant;
@@ -23,11 +25,12 @@ public class Node {
     }
 
     public void buildCity(int playerId) {
-        if (infraType == "city") {
+        if (Objects.equals(infraType, "city")) {
             throw new IllegalStateException("Cannot upgrade a city further.");
-        } else {
-            infraType = "city";
+        } else if (Objects.equals(infraType, "")) {
+            throw new IllegalStateException("Cannot upgrade an unsettled node to city.");
         }
+        infraType = "city";
     }
 
     public String getInfraType() {
