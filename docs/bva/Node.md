@@ -92,7 +92,7 @@ TODO: distance rule? idk if the check belongs here
   - **State of the system**: Node.occupant == 0, Node.infraType == ""
   - **Expected output**: Node.occupant == 0, Node.infraType == "", IllegalStateException: "Cannot upgrade an unsettled node to city."
 
-- **TC4: Unsuccessful upgrade city on someone else's settlement** ( :x: or :white_check_mark: )
+- **TC4: Unsuccessful upgrade city on someone else's settlement** ( :white_check_mark: )
   - **State of the system**: Node.occupant == 1, Node.infraType == "settlement", playerId == 2
   - **Expected output**: Node.occupant == 1, Node.infraType == "settlement", IllegalStateException: "Cannot build a city on an already-settled node."
 

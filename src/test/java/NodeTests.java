@@ -80,4 +80,19 @@ public class NodeTests {
         assertEquals(0, n.getNodeOccupant());
         assertEquals("Cannot upgrade an unsettled node to city.", exception.getMessage());
     }
+
+    @Test public void BuildCity_UnsuccessfulUpgradeOpponentToCity() {
+        Node n = new Node(1);
+
+        n.buildSettlement(1);
+        n.buildCity(1);
+
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> n.buildCity(2)
+        );
+
+        assertEquals(1, n.getNodeOccupant());
+        assertEquals("Cannot build a city on an already-settled node.", exception.getMessage());
+    }
 }
