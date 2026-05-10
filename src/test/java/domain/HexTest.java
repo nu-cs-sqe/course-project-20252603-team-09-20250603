@@ -33,4 +33,16 @@ public class HexTest {
         assertFalse(hex.getHasRobber(), "setHasRobber(false) should remove the robber from the hex.");
     }
 
+    @Test
+    public void testInitialTerrainTypeIsNull() {
+        assertNull(hex.getTerrainType(), "A new hex should not have terrain until the board generator assigns it.");
+    }
+
+    @Test
+    public void testSetTerrainTypeStoresTerrain() {
+        hex.setTerrainType("Forest");
+
+        assertEquals("Forest", hex.getTerrainType(), "setTerrainType should store the assigned terrain.");
+    }
+
 }

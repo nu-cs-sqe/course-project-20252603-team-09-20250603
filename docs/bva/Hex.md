@@ -25,15 +25,15 @@ Step 4:
 
 |              | State of the System | Expected output | Implemented?              |
 |--------------|---------------------|-----------------|---------------------------|
-| Test Case 1  |                     |                 | :x: or :white_check_mark: |
-| Test Case 2  |                     |                 | :x: or :white_check_mark: |
+| Test Case 1  | TerrainType = null  | null            | :white_check_mark:        |
+| Test Case 2  | TerrainType = Forest| Forest          | :white_check_mark:        |
 
 ### Method under test: `setTerrainType()`
 
 |              | State of the System | Expected output | Implemented?              |
 |--------------|---------------------|-----------------|---------------------------|
-| Test Case 1  |                     |                 | :x: or :white_check_mark: |
-| Test Case 2  |                     |                 | :x: or :white_check_mark: |
+| Test Case 1  | setTerrainType("Forest") | TerrainType Forest | :white_check_mark:   |
+| Test Case 2  | setTerrainType(null) | TerrainType null | :x:                       |
 
 ### Method under test: `getTokenNumber()`
 
@@ -48,7 +48,6 @@ Step 4:
 |--------------|---------------------|-----------------|---------------------------|
 | Test Case 1  |                     |                 | :x: or :white_check_mark: |
 | Test Case 2  |                     |                 | :x: or :white_check_mark: |
-
 
 
 
