@@ -52,7 +52,7 @@ TODO: distance rule? idk if the check belongs here
     - **State of the system**: Node.occupant == 0, playerId == 1
     - **Expected output**: Node.occupant == 1, Node.infraType == "settlement"
 
-- **TC2: Unsuccessful build settlement** ( :x: or :white_check_mark: )
+- **TC2: Unsuccessful build settlement** ( :white_check_mark: )
     - **State of the system**: Node.occupant == 1, playerId == 2
     - **Expected output**: Node.occupant == 1, IllegalStateException: "Cannot settle on an already-settled node."
 

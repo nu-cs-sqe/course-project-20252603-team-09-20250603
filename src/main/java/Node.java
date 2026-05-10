@@ -14,8 +14,12 @@ public class Node {
     }
 
     public void buildSettlement(int playerId) {
-        occupant = playerId;
-        infraType = "settlement";
+        if (occupant == 0) {
+            occupant = playerId;
+            infraType = "settlement";
+        } else {
+            throw new IllegalStateException("Cannot settle on an already-settled node.");
+        }
     }
 
     public String getInfraType() {
