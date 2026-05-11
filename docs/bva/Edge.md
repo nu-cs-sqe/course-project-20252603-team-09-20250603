@@ -45,6 +45,6 @@ TODO: validation of cases for edge placement (e.g. floating road, going through 
     - **State of the system**: Edge.occupant == 0, playerId == 1
     - **Expected output**: Edge.occupant == 1
 
-- **TC2: Unsuccessful build road** ( :x: or :white_check_mark: )
+- **TC2: Unsuccessful build road** ( :white_check_mark: )
     - **State of the system**: Edge.occupant == 1, playerId == 2
     - **Expected output**: Edge.occupant == 1, IllegalStateException: "Cannot build a road on an occupied edge."

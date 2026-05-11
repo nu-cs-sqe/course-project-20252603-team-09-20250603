@@ -12,6 +12,10 @@ public class Edge {
     }
 
     public void buildRoad(int playerId) {
+        if (occupant != 0) {
+            throw new IllegalStateException("Cannot build a road on an occupied edge.");
+        }
+
         occupant = playerId;
     }
 }
