@@ -10,4 +10,8 @@ public class Edge {
     public int getEdgeOccupant() {
         return occupant;
     }
+
+    public void buildRoad(int playerId) {
+        occupant = playerId;
+    }
 }

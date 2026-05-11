@@ -20,7 +20,7 @@ buildRoad(int playerId) (setter for edge occupant)
     - **State of the system**: Edge.occupant == 0
     - **Expected output**: 0
 
-- **TC2: Edge occupied by 1, return 1** ( :x: or :white_check_mark: )
+- **TC2: Edge occupied by 1, return 1** ( :white_check_mark: )
     - **State of the system**: Edge.occupant == 1
     - **Expected output**: 1
 
@@ -41,7 +41,7 @@ TODO: validation of cases for edge placement (e.g. floating road, going through 
     - Type: cases
     - IllegalStateException: "Cannot build a road on an occupied edge."
 
-- **TC1: Successful build road** ( :x: or :white_check_mark: )
+- **TC1: Successful build road** ( :white_check_mark: )
     - **State of the system**: Edge.occupant == 0, playerId == 1
     - **Expected output**: Edge.occupant == 1
 

@@ -11,4 +11,12 @@ public class EdgeTests {
         int actual = e.getEdgeOccupant();
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void BuildRoad_GetEdgeOccupant_Successful() {
+        Edge e = new Edge(1);
+
+        e.buildRoad(1);
+        assertEquals(1, e.getEdgeOccupant());
+    }
 }
