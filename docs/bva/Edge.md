@@ -16,7 +16,7 @@ buildRoad(int playerId) (setter for edge occupant)
     - Type: cases
     - Candidates: 0, 1, 2, 3, 4
 
-- **TC1: Unoccupied edge, return 0** ( :x: or :white_check_mark: )
+- **TC1: Unoccupied edge, return 0** ( :white_check_mark: )
     - **State of the system**: Edge.occupant == 0
     - **Expected output**: 0
 
