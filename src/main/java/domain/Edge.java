@@ -2,22 +2,22 @@ package domain;
 
 public class Edge {
     private int id;
-    private int occupant;
+    private Player occupant;
 
     public Edge(int id) {
         this.id = id;
-        this.occupant = 0;
+        this.occupant = null;
     }
 
-    public int getEdgeOccupant() {
+    public Player getEdgeOccupant() {
         return occupant;
     }
 
-    public void buildRoad(int playerId) {
-        if (occupant != 0) {
+    public void buildRoad(Player player) {
+        if (occupant != null) {
             throw new IllegalStateException("Cannot build a road on an occupied edge.");
         }
 
-        occupant = playerId;
+        occupant = player;
     }
 }
