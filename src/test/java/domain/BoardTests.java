@@ -75,5 +75,16 @@ public class BoardTests {
         assertEquals("The node object is not valid", exception.getMessage());
     }
 
+    @Test
+    public void GetHexesFromNode_NodeMax_ReturnsOneHex() {
+        Node node0 = new Node(53);
+
+        List<Hex> hexes = board.getHexesFromNode(node0);
+
+        assertEquals(1, hexes.size());
+        assertEquals(18, hexes.get(0).getId());
+    }
+
+
 
 }
