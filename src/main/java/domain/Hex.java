@@ -9,7 +9,6 @@ public class Hex {
     private static final int MAX_TOKEN_NUMBER = 12;
 
     private int id;
-    // TODO: Replace String with TerrainType enum when that dependency exists.
     private ResourceType resourceType;
     private int tokenNumber;
     private boolean hasRobber;
@@ -48,6 +47,8 @@ public class Hex {
     public int getTokenNumber() {
         return this.tokenNumber;
     }
+
+    public int getId() { return this.id; }
 
     public void setTokenNumber(int tokenNumber) {
         if (tokenNumber != NO_TOKEN && (tokenNumber < MIN_TOKEN_NUMBER || tokenNumber > MAX_TOKEN_NUMBER)) {
