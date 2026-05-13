@@ -145,7 +145,7 @@ TODO: distance rule? idk if the check belongs here
   - **State of the system**: `node1.id == 0`, `node2.id == 0`
   - **Expected output**: `true`
 
-- **TC2: Nodes with same maximum ID are equal** (:x: or :white_check_mark:)
+- **TC2: Nodes with same maximum ID are equal** (:white_check_mark:)
   - **State of the system**: `node1.id == 53`, `node2.id == 53`
   - **Expected output**: `true`
 

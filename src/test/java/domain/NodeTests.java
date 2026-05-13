@@ -126,4 +126,13 @@ public class NodeTests {
         assertEquals(node1, node2);
     }
 
+
+    @Test
+    public void equals_SameMaximumId_ReturnsTrue() {
+        Node node1 = new Node(53);
+        Node node2 = new Node(53);
+
+        assertEquals(node1, node2);
+    }
+
 }
