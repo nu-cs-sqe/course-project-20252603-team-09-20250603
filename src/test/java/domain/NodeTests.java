@@ -1,3 +1,6 @@
+package domain;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,7 +24,7 @@ public class NodeTests {
         int actual = n.getNodeOccupant();
         assertEquals(expected, actual);
 
-        assertEquals("settlement", n.getInfraType());
+        Assertions.assertEquals("settlement", n.getInfraType());
     }
 
     @Test public void BuildSettlement_UnsuccessfulBuild() {
@@ -37,7 +40,7 @@ public class NodeTests {
         );
 
         assertEquals("Cannot settle on an already-settled node.", exception.getMessage());
-        assertEquals(1, n.getNodeOccupant());
+        Assertions.assertEquals(1, n.getNodeOccupant());
     }
 
     @Test public void BuildCity_GetInfraType_SuccessfulUpgradeSettlementToCity() {
@@ -46,8 +49,8 @@ public class NodeTests {
         n.buildSettlement(1);
         n.buildCity(1);
 
-        assertEquals("city", n.getInfraType());
-        assertEquals(1, n.getNodeOccupant());
+        Assertions.assertEquals("city", n.getInfraType());
+        Assertions.assertEquals(1, n.getNodeOccupant());
     }
 
     @Test public void BuildCity_UnsuccessfulUpgradeCityToCity() {
@@ -62,8 +65,8 @@ public class NodeTests {
                 () -> n.buildCity(1)
         );
 
-        assertEquals("city", n.getInfraType());
-        assertEquals(1, n.getNodeOccupant());
+        Assertions.assertEquals("city", n.getInfraType());
+        Assertions.assertEquals(1, n.getNodeOccupant());
         assertEquals("Cannot upgrade a city further.", exception.getMessage());
     }
 
@@ -76,8 +79,8 @@ public class NodeTests {
                 () -> n.buildCity(1)
         );
 
-        assertEquals("", n.getInfraType());
-        assertEquals(0, n.getNodeOccupant());
+        Assertions.assertEquals("", n.getInfraType());
+        Assertions.assertEquals(0, n.getNodeOccupant());
         assertEquals("Cannot upgrade an unsettled node to city.", exception.getMessage());
     }
 
@@ -92,7 +95,7 @@ public class NodeTests {
                 () -> n.buildCity(2)
         );
 
-        assertEquals(1, n.getNodeOccupant());
+        Assertions.assertEquals(1, n.getNodeOccupant());
         assertEquals("Cannot build a city on an already-settled node.", exception.getMessage());
     }
 }

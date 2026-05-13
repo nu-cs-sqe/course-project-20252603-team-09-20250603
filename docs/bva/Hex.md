@@ -1,11 +1,11 @@
-# Hex BVA
+# domain.Hex BVA
 
 Represents a single tile on the board.
 
 ### Method under test: `getHasRobber()`
 
-Step 1: Domain: State of object (Hex class instance), Output: Yes/No, (we will use a Boolean datatype so we cannot have a Null or non True/False value)
-Step 2: Equivalence Classes: Input: Hex class object, Output: Boolean value (True/False)
+Step 1: Domain: State of object (domain.Hex class instance), Output: Yes/No, (we will use a Boolean datatype so we cannot have a Null or non True/False value)
+Step 2: Equivalence Classes: Input: domain.Hex class object, Output: Boolean value (True/False)
 Step 3: Test Cases: True value, False value, some other value that is neither true nor false (not valid)
 Step 4:
 
@@ -55,9 +55,9 @@ Step 4:
 
 ### Method under test: `distributeResources()`
 
-1. Domain: State of object (Hex class instance), Output: Void, Call to player class method - for player to collect resources
-2. Equivalence Classes: Input: Hex class object, Cases: Hex has robber, Hex has no robber, Hex corner nodes are empty, 1 full, all full, Output: Void, Call to player class method - for player to collect resources
-3. Test Cases: Hex with no robber, Hex with robber, Hex with no terrain type ...
+1. Domain: State of object (domain.Hex class instance), Output: Void, Call to player class method - for player to collect resources
+2. Equivalence Classes: Input: domain.Hex class object, Cases: domain.Hex has robber, domain.Hex has no robber, domain.Hex corner nodes are empty, 1 full, all full, Output: Void, Call to player class method - for player to collect resources
+3. Test Cases: domain.Hex with no robber, domain.Hex with robber, domain.Hex with no terrain type ...
 
 |              | State of the System | Expected output | Implemented?              |
 |--------------|---------------------|-----------------|---------------------------|

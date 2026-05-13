@@ -1,3 +1,5 @@
+package domain;
+
 public class Edge {
     private int id;
     private int occupant;

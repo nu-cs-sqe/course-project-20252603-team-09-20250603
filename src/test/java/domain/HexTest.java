@@ -1,7 +1,8 @@
-import static org.junit.jupiter.api.Assertions.*;
-import static org.easymock.EasyMock.*;
-import java.util.Arrays;
+package domain;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -15,14 +16,14 @@ public class HexTest {
 
     @Test
     public void getHasRobber_NewHex_ReturnsFalse() {
-        assertFalse(hex.getHasRobber(), "A new hex should not start with the robber.");
+        Assertions.assertFalse(hex.getHasRobber(), "A new hex should not start with the robber.");
     }
 
     @Test
     public void setHasRobber_GivenTrue_PlacesRobber() {
         hex.setHasRobber(true);
 
-        assertTrue(hex.getHasRobber(), "setHasRobber(true) should place the robber on the hex.");
+        Assertions.assertTrue(hex.getHasRobber(), "setHasRobber(true) should place the robber on the hex.");
     }
 
     @Test
@@ -31,38 +32,38 @@ public class HexTest {
 
         hex.setHasRobber(false);
 
-        assertFalse(hex.getHasRobber(), "setHasRobber(false) should remove the robber from the hex.");
+        Assertions.assertFalse(hex.getHasRobber(), "setHasRobber(false) should remove the robber from the hex.");
     }
 
     @Test
     public void getTerrainType_NewHex_ReturnsNull() {
-        assertNull(hex.getTerrainType(), "A new hex should not have terrain until the board generator assigns it.");
+        Assertions.assertNull(hex.getTerrainType(), "A new hex should not have terrain until the board generator assigns it.");
     }
 
     @Test
     public void setTerrainType_GivenForest_StoresForest() {
         hex.setTerrainType("Forest");
 
-        assertEquals("Forest", hex.getTerrainType(), "setTerrainType should store the assigned terrain.");
+        Assertions.assertEquals("Forest", hex.getTerrainType(), "setTerrainType should store the assigned terrain.");
     }
 
     @Test
     public void getTokenNumber_NewHex_ReturnsZero() {
-        assertEquals(0, hex.getTokenNumber(), "A new hex should not have a number token until one is assigned.");
+        Assertions.assertEquals(0, hex.getTokenNumber(), "A new hex should not have a number token until one is assigned.");
     }
 
     @Test
     public void setTokenNumber_GivenMinimumValidToken_StoresTokenNumber() {
         hex.setTokenNumber(2);
 
-        assertEquals(2, hex.getTokenNumber(), "2 is the lowest valid Catan number token.");
+        Assertions.assertEquals(2, hex.getTokenNumber(), "2 is the lowest valid Catan number token.");
     }
 
     @Test
     public void setTokenNumber_GivenMaximumValidToken_StoresTokenNumber() {
         hex.setTokenNumber(12);
 
-        assertEquals(12, hex.getTokenNumber(), "12 is the highest valid Catan number token.");
+        Assertions.assertEquals(12, hex.getTokenNumber(), "12 is the highest valid Catan number token.");
     }
 
     @Test
