@@ -25,7 +25,7 @@
 | Test 2  | Node object 9, 3 adjacent hex  | Hex #3, 0, 4          | :white_check_mark:        |
 | Test 3  | null node object               | IllegalStateException | :white_check_mark:        |
 | Test 4  | Node object -1                 | IllegalStateException | :white_check_mark:        |
-| Test 5  | Node object 54                 | IllegalStateException | :x: or :white_check_mark: |
+| Test 5  | Node object 54                 | IllegalStateException | :white_check_mark:        |
 | Test 6  | Node object 53, 1 adjacent hex | hex #18               | :x: or :white_check_mark: |
 
 ### Method under test: `public Map<ResourceType, Integer> getAdjacentResources(int nodeId)`
