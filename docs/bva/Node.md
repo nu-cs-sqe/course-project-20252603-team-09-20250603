@@ -126,11 +126,11 @@ TODO: distance rule? idk if the check belongs here
 #### Inputs:
 - ID of first node
   - Type: interval
-  - Candidates: MIN (0), nominal value, MAX (53)
+  - Candidates: MIN (0),MAX (53)
 
 - ID of second node
   - Type: interval
-  - Candidates: MIN (0), nominal value, MAX (53)
+  - Candidates: MIN (0), MAX (53)
 
 - Equality relationship between IDs
   - Type: cases
@@ -152,3 +152,33 @@ TODO: distance rule? idk if the check belongs here
 - **TC3: Nodes with different IDs are not equal** (:white_check_mark:)
   - **State of the system**: `node1.id == 0`, `node2.id == 1`
   - **Expected output**: `false`
+- 
+### Method under test: `hashCode()`
+
+*Returns a hash code for the node based on its ID, so nodes with the same ID can be used correctly as keys.*
+
+#### Inputs:
+- State of the node -> value of `id`
+  - Type: interval
+  - Candidates: MIN (0), MAX (53)
+
+- Equality relationship between node IDs
+  - Type: cases
+  - Candidates: same ID, different ID
+
+#### Outputs:
+- Hash code
+  - Type: case
+  - Candidates: same for equal nodes, unspecified for unequal nodes
+
+- **TC1: Nodes with same minimum ID return same hash code** (:x: or :white_check_mark:)
+  - **State of the system**: `node1.id == 0`, `node2.id == 0`
+  - **Expected output**: `node1.hashCode() == node2.hashCode()`
+
+- **TC2: Nodes with same maximum ID return same hash code** (:x: or :white_check_mark:)
+  - **State of the system**: `node1.id == 53`, `node2.id == 53`
+  - **Expected output**: `node1.hashCode() == node2.hashCode()`
+
+- **TC3: Nodes with different IDs may return different hash codes** (:x: or :white_check_mark:)
+  - **State of the system**: `node1.id == 0`, `node2.id == 1`
+  - **Expected output**: hash codes are different

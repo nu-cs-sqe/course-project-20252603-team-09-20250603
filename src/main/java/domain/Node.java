@@ -22,7 +22,10 @@ public class Node {
         return id == node.id;
     }
 
-
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id);
+    }
 
 
     public Player getNodeOccupant() {

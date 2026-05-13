@@ -143,4 +143,13 @@ public class NodeTests {
         assertNotEquals(node1, node2);
     }
 
+    @Test
+    public void hashCode_SameMinimumId_ReturnsSameHashCode() {
+        Node node1 = new Node(0);
+        Node node2 = new Node(0);
+
+        assertEquals(node1.hashCode(), node2.hashCode());
+    }
+
+
 }
