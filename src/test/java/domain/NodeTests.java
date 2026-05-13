@@ -24,7 +24,7 @@ public class NodeTests {
         Player actual = n.getNodeOccupant();
         assertSame(mockPlayer, actual);
 
-        assertEquals("settlement", n.getInfraType());
+        assertEquals(InfraType.SETTLEMENT, n.getInfraType());
     }
 
     @Test public void BuildSettlement_UnsuccessfulBuild() {
@@ -57,7 +57,7 @@ public class NodeTests {
         n.buildSettlement(mockPlayer);
         n.buildCity(mockPlayer);
 
-        assertEquals("city", n.getInfraType());
+        assertEquals(InfraType.CITY, n.getInfraType());
         assertSame(mockPlayer, n.getNodeOccupant());
     }
 
@@ -76,7 +76,7 @@ public class NodeTests {
                 () -> n.buildCity(mockPlayer)
         );
 
-        assertEquals("city", n.getInfraType());
+        assertEquals(InfraType.CITY, n.getInfraType());
         assertSame(mockPlayer, n.getNodeOccupant());
         assertEquals("Cannot upgrade a city further.", exception.getMessage());
     }
@@ -93,7 +93,7 @@ public class NodeTests {
                 () -> n.buildCity(mockPlayer)
         );
 
-        assertEquals("", n.getInfraType());
+        assertNull(n.getInfraType());
         assertNull(n.getNodeOccupant());
         assertEquals("Cannot upgrade an unsettled node to city.", exception.getMessage());
     }

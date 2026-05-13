@@ -5,12 +5,12 @@ import java.util.Objects;
 public class Node {
     private int id;
     private Player occupant;
-    private String infraType;
+    private InfraType infraType;
 
     public Node(int id) {
         this.id = id;
         this.occupant = null;
-        this.infraType = "";
+        this.infraType = null;
     }
 
     public Player getNodeOccupant() {
@@ -20,7 +20,7 @@ public class Node {
     public void buildSettlement(Player player) {
         if (occupant == null) {
             occupant = player;
-            infraType = "settlement";
+            infraType = InfraType.SETTLEMENT;
         } else {
             throw new IllegalStateException("Cannot settle on an already-settled node.");
         }
@@ -31,16 +31,16 @@ public class Node {
             throw new IllegalStateException("Cannot build a city on an already-settled node.");
         }
 
-        if (Objects.equals(infraType, "city")) {
+        if (infraType == InfraType.CITY) {
             throw new IllegalStateException("Cannot upgrade a city further.");
-        } else if (Objects.equals(infraType, "")) {
+        } else if (infraType == null) {
             throw new IllegalStateException("Cannot upgrade an unsettled node to city.");
         }
 
-        infraType = "city";
+        infraType = InfraType.CITY;
     }
 
-    public String getInfraType() {
+    public InfraType getInfraType() {
         return infraType;
     }
 }
