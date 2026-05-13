@@ -14,7 +14,7 @@ public class NodeTests {
         assertNull(n.getNodeOccupant());
     }
 
-    @Test public void BuildSettlement_GetNodeOccupant_GetInfraType_Player1_Return1AndSettlement() {
+    @Test public void BuildSettlement_GetNodeOccupant_GetInfraType_SuccessfulReturnPlayerAndSettlement() {
         Node n = new Node(1);
         Player mockPlayer = EasyMock.createMock(Player.class);
 
