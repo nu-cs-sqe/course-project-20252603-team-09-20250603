@@ -36,15 +36,15 @@ public class HexTest {
     }
 
     @Test
-    public void getTerrainType_NewHex_ReturnsNull() {
-        Assertions.assertNull(hex.getTerrainType(), "A new hex should not have terrain until the board generator assigns it.");
+    public void getResourceType_NewHex_ReturnsNull() {
+        Assertions.assertNull(hex.getResourceType(), "A new hex should not have resource until the board generator assigns it.");
     }
 
     @Test
-    public void setTerrainType_GivenForest_StoresForest() {
-        hex.setTerrainType("Forest");
+    public void setResourceType_GivenForest_StoresForest() {
+        hex.setResourceType(ResourceType.WOOD);
 
-        Assertions.assertEquals("Forest", hex.getTerrainType(), "setTerrainType should store the assigned terrain.");
+        Assertions.assertEquals(ResourceType.WOOD, hex.getResourceType(), "setResourceType should store the assigned resource.");
     }
 
     @Test

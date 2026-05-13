@@ -10,7 +10,7 @@ public class Hex {
 
     private int id;
     // TODO: Replace String with TerrainType enum when that dependency exists.
-    private String terrainType;
+    private ResourceType resourceType;
     private int tokenNumber;
     private boolean hasRobber;
     private List<Node> adjacentNodes;
@@ -23,7 +23,7 @@ public class Hex {
     Hex(int id, List<Node> adjacentNodes)
     {
         this.id = id;
-        this.terrainType = null;
+        this.resourceType = null;
         this.tokenNumber = NO_TOKEN;
         this.hasRobber = false;
         this.adjacentNodes = new ArrayList<>(adjacentNodes);
@@ -37,12 +37,12 @@ public class Hex {
         this.hasRobber = hasRobber;
     }
 
-    public String getTerrainType() {
-        return this.terrainType;
+    public ResourceType getResourceType() {
+        return this.resourceType;
     }
 
-    public void setTerrainType(String terrainType) {
-        this.terrainType = terrainType;
+    public void setResourceType(ResourceType resourceType) {
+        this.resourceType = resourceType;
     }
 
     public int getTokenNumber() {
