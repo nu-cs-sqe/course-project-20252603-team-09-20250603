@@ -135,4 +135,12 @@ public class NodeTests {
         assertEquals(node1, node2);
     }
 
+    @Test
+    public void equals_DifferentIds_ReturnsFalse() {
+        Node node1 = new Node(0);
+        Node node2 = new Node(1);
+
+        assertNotEquals(node1, node2);
+    }
+
 }
