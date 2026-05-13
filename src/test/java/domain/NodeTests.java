@@ -119,7 +119,7 @@ public class NodeTests {
     }
 
     @Test
-    public void equals_SameMinimumId_ReturnsTrue() {
+    public void Equals_SameMinimumId_ReturnsTrue() {
         Node node1 = new Node(0);
         Node node2 = new Node(0);
 
@@ -128,7 +128,7 @@ public class NodeTests {
 
 
     @Test
-    public void equals_SameMaximumId_ReturnsTrue() {
+    public void Equals_SameMaximumId_ReturnsTrue() {
         Node node1 = new Node(53);
         Node node2 = new Node(53);
 
@@ -136,7 +136,7 @@ public class NodeTests {
     }
 
     @Test
-    public void equals_DifferentIds_ReturnsFalse() {
+    public void Equals_DifferentIds_ReturnsFalse() {
         Node node1 = new Node(0);
         Node node2 = new Node(1);
 
@@ -144,7 +144,7 @@ public class NodeTests {
     }
 
     @Test
-    public void hashCode_SameMinimumId_ReturnsSameHashCode() {
+    public void HashCode_SameMinimumId_ReturnsSameHashCode() {
         Node node1 = new Node(0);
         Node node2 = new Node(0);
 
@@ -152,11 +152,19 @@ public class NodeTests {
     }
 
     @Test
-    public void hashCode_SameMaximumId_ReturnsSameHashCode() {
+    public void HashCode_SameMaximumId_ReturnsSameHashCode() {
         Node node1 = new Node(53);
         Node node2 = new Node(53);
 
         assertEquals(node1.hashCode(), node2.hashCode());
+    }
+
+    @Test
+    public void HashCode_DifferentIds_NotEqual() {
+        Node node1 = new Node(0);
+        Node node2 = new Node(1);
+
+        assertNotEquals(node1.hashCode(), node2.hashCode());
     }
 
 

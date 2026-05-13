@@ -179,6 +179,6 @@ TODO: distance rule? idk if the check belongs here
   - **State of the system**: `node1.id == 53`, `node2.id == 53`
   - **Expected output**: `node1.hashCode() == node2.hashCode()`
 
-- **TC3: Nodes with different IDs may return different hash codes** (:x: or :white_check_mark:)
+- **TC3: Nodes with different IDs may return different hash codes** (:white_check_mark:)
   - **State of the system**: `node1.id == 0`, `node2.id == 1`
   - **Expected output**: hash codes are different
