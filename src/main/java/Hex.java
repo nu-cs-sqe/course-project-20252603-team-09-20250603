@@ -1,5 +1,3 @@
-package domain;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,33 +6,19 @@ public class Hex {
     private static final int MIN_TOKEN_NUMBER = 2;
     private static final int MAX_TOKEN_NUMBER = 12;
 
-    // TODO: Replace ResourceCollector with Player when Player exists.
-    public interface ResourceCollector {
-        void collectResources(String terrainType, int productionAmount);
-    }
-
-    // TODO: Replace ResourceNode with Node when Node exists.
-    public interface ResourceNode {
-        boolean isOccupied();
-
-        ResourceCollector getOwner();
-
-        int getProductionAmount();
-    }
-
     private int id;
     // TODO: Replace String with TerrainType enum when that dependency exists.
     private String terrainType;
     private int tokenNumber;
     private boolean hasRobber;
-    private List<ResourceNode> adjacentNodes;
+    private List<Node> adjacentNodes;
 
     public Hex(int id)
     {
         this(id, new ArrayList<>());
     }
 
-    Hex(int id, List<ResourceNode> adjacentNodes)
+    Hex(int id, List<Node> adjacentNodes)
     {
         this.id = id;
         this.terrainType = null;
@@ -69,17 +53,5 @@ public class Hex {
         }
 
         this.tokenNumber = tokenNumber;
-    }
-
-    public void distributeResources() {
-        if (this.hasRobber || this.terrainType == null) {
-            return;
-        }
-
-        for (ResourceNode node : this.adjacentNodes) {
-            if (node.isOccupied()) {
-                node.getOwner().collectResources(this.terrainType, node.getProductionAmount());
-            }
-        }
     }
 }
