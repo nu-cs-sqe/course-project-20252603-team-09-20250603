@@ -3,6 +3,7 @@ package domain;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -83,6 +84,16 @@ public class BoardTests {
 
         assertEquals(1, hexes.size());
         assertEquals(18, hexes.get(0).getId());
+    }
+
+    @Test
+    public void GetAdjacentResources_NodeMin_ReturnsOneResource() {
+        Node node0 = new Node(0);
+
+        Map<ResourceType, Integer> resources = board.getAdjacentResources(node0);
+
+        assertEquals(1, resources.size());
+        assertEquals(1, resources.get(ResourceType.BRICK));
     }
 
 

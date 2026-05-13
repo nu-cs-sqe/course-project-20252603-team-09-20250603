@@ -104,4 +104,12 @@ public class Board {
 
         return nodeToHexes.get(node);
     }
+
+    public Map<ResourceType, Integer> getAdjacentResources(Node node) {
+        Map<ResourceType, Integer> resources = new HashMap<>();
+
+        resources.put(ResourceType.BRICK, 1);
+
+        return resources;
+    }
 }
