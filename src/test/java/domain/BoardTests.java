@@ -53,5 +53,16 @@ public class BoardTests {
         assertEquals("The node object is null", exception.getMessage());
     }
 
+    @Test
+    public void GetHexesFromNode_InvalidNodeId_ThrowsIllegalStateException() {
+        Node nodeNegative = new Node(-1);
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> board.getHexesFromNode(nodeNegative)
+        );
+
+        assertEquals("The node object is not valid", exception.getMessage());
+    }
+
 
 }

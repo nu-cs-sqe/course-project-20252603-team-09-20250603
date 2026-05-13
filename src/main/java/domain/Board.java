@@ -98,6 +98,10 @@ public class Board {
             throw new IllegalStateException("The node object is null");
         }
 
+        if (!nodeToHexes.containsKey(node)) {
+            throw new IllegalStateException("The node object is not valid");
+        }
+
         return nodeToHexes.get(node);
     }
 }
