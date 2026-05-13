@@ -27,7 +27,7 @@ public class BoardTests {
     }
 
     @Test
-    public void getHexesFromNode_NodeNine_ReturnsThreeAdjacentHexes() {
+    public void GetHexesFromNode_NodeNine_ReturnsThreeAdjacentHexes() {
         Node node9 = new Node(9);
 
         List<Hex> hexes = board.getHexesFromNode(node9);
@@ -41,6 +41,16 @@ public class BoardTests {
         assertTrue(hexIds.contains(3));
         assertTrue(hexIds.contains(0));
         assertTrue(hexIds.contains(4));
+    }
+
+    @Test
+    public void GetHexesFromNode_NullNode_ThrowsIllegalStateException() {
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> board.getHexesFromNode(null)
+        );
+
+        assertEquals("The node object is null", exception.getMessage());
     }
 
 

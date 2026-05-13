@@ -94,6 +94,10 @@ public class Board {
     }
 
     public List<Hex> getHexesFromNode(Node node) {
+        if (node == null) {
+            throw new IllegalStateException("The node object is null");
+        }
+
         return nodeToHexes.get(node);
     }
 }
