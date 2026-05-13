@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EdgeTests {
     @Test
-    public void GetEdgeOccupant_UnoccupiedEdge_Return0() {
+    public void GetEdgeOccupant_UnoccupiedEdge_ReturnNull() {
         Edge e = new Edge(1);
 
         assertNull(e.getEdgeOccupant());
