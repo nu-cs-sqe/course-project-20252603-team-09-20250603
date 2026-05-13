@@ -22,7 +22,7 @@
 | Test   | System under test              | Expected output       | Implemented?              |
 |--------|--------------------------------|-----------------------|---------------------------|
 | Test 1 | Node object 0, 1 adjacent hex  | hex #0                | :white_check_mark:        |
-| Test 2 | Node object 9, 3 adjacent hex  | Hex #3, 0, 1          | :x: or :white_check_mark: |
+| Test 2 | Node object 9, 3 adjacent hex  | Hex #3, 0, 4          | :white_check_mark:        |
 | Test 3 | null node object               | IllegalStateException | :x: or :white_check_mark: |
 | Test 4 | Node object -1                 | IllegalStateException | :x: or :white_check_mark: |
 | Test 2 | Node object 54                 | IllegalStateException | :x: or :white_check_mark: |

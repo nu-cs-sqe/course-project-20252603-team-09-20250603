@@ -3,6 +3,7 @@ package domain;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,13 +17,30 @@ public class BoardTests {
     }
 
     @Test
-    public void getHexesFromNode_NodeZero_ReturnsOneHex() {
+    public void GetHexesFromNode_NodeZero_ReturnsOneHex() {
         Node node0 = new Node(0);
 
         List<Hex> hexList = board.getHexesFromNode(node0);
 
         assertEquals(1, hexList.size());
         assertEquals(0, hexList.get(0).getId());
+    }
+
+    @Test
+    public void getHexesFromNode_NodeNine_ReturnsThreeAdjacentHexes() {
+        Node node9 = new Node(9);
+
+        List<Hex> hexes = board.getHexesFromNode(node9);
+
+        assertEquals(3, hexes.size());
+
+        List<Integer> hexIds = hexes.stream()
+                .map(Hex::getId)
+                .collect(Collectors.toList());
+
+        assertTrue(hexIds.contains(3));
+        assertTrue(hexIds.contains(0));
+        assertTrue(hexIds.contains(4));
     }
 
 
