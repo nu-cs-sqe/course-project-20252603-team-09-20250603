@@ -171,11 +171,11 @@ TODO: distance rule? idk if the check belongs here
   - Type: case
   - Candidates: same for equal nodes, unspecified for unequal nodes
 
-- **TC1: Nodes with same minimum ID return same hash code** (:x: or :white_check_mark:)
+- **TC1: Nodes with same minimum ID return same hash code** (:white_check_mark:)
   - **State of the system**: `node1.id == 0`, `node2.id == 0`
   - **Expected output**: `node1.hashCode() == node2.hashCode()`
 
-- **TC2: Nodes with same maximum ID return same hash code** (:x: or :white_check_mark:)
+- **TC2: Nodes with same maximum ID return same hash code** (:white_check_mark:)
   - **State of the system**: `node1.id == 53`, `node2.id == 53`
   - **Expected output**: `node1.hashCode() == node2.hashCode()`
 

@@ -151,5 +151,15 @@ public class NodeTests {
         assertEquals(node1.hashCode(), node2.hashCode());
     }
 
+    @Test
+    public void hashCode_SameMaximumId_ReturnsSameHashCode() {
+        Node node1 = new Node(53);
+        Node node2 = new Node(53);
+
+        assertEquals(node1.hashCode(), node2.hashCode());
+    }
+
+
+
 
 }
