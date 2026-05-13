@@ -117,3 +117,38 @@ TODO: distance rule? idk if the check belongs here
 - **TC3: domain.Node occupied by city, return city** ( :white_check_mark: )
   - **State of the system**: Node.infraType == city
   - **Expected output**: city
+
+
+### Method under test: `equals(Object o)`
+
+*Returns whether two Node objects are considered equal based on their IDs.*
+
+#### Inputs:
+- ID of first node
+  - Type: interval
+  - Candidates: MIN (0), nominal value, MAX (53)
+
+- ID of second node
+  - Type: interval
+  - Candidates: MIN (0), nominal value, MAX (53)
+
+- Equality relationship between IDs
+  - Type: cases
+  - Candidates: same ID, different ID
+
+#### Outputs:
+- Equality result
+  - Type: boolean
+  - Candidates: true, false
+
+- **TC1: Nodes with same minimum ID are equal** (:white_check_mark:)
+  - **State of the system**: `node1.id == 0`, `node2.id == 0`
+  - **Expected output**: `true`
+
+- **TC2: Nodes with same maximum ID are equal** (:x: or :white_check_mark:)
+  - **State of the system**: `node1.id == 53`, `node2.id == 53`
+  - **Expected output**: `true`
+
+- **TC3: Nodes with different IDs are not equal** (:x: or :white_check_mark:)
+  - **State of the system**: `node1.id == 0`, `node2.id == 1`
+  - **Expected output**: `false`

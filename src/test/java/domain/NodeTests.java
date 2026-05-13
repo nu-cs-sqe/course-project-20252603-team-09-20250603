@@ -117,4 +117,13 @@ public class NodeTests {
         assertEquals(mockPlayer1, n.getNodeOccupant());
         assertEquals("Cannot build a city on an already-settled node.", exception.getMessage());
     }
+
+    @Test
+    public void equals_SameMinimumId_ReturnsTrue() {
+        Node node1 = new Node(0);
+        Node node2 = new Node(0);
+
+        assertEquals(node1, node2);
+    }
+
 }
