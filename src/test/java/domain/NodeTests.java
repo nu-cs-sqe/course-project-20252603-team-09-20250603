@@ -1,101 +1,120 @@
 package domain;
 
+import org.easymock.EasyMock;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeTests {
     @Test
     public void GetNodeOccupant_UnoccupiedNode_Return0() {
         Node n = new Node(1);
 
-        int expected = 0;
-        int actual = n.getNodeOccupant();
-        assertEquals(expected, actual);
+        assertNull(n.getNodeOccupant());
     }
 
     @Test public void BuildSettlement_GetNodeOccupant_GetInfraType_Player1_Return1AndSettlement() {
         Node n = new Node(1);
+        Player mockPlayer = EasyMock.createMock(Player.class);
 
-        n.buildSettlement(1);
-        int expected = 1;
-        int actual = n.getNodeOccupant();
-        assertEquals(expected, actual);
+        EasyMock.replay(mockPlayer);
 
-        Assertions.assertEquals("settlement", n.getInfraType());
+        n.buildSettlement(mockPlayer);
+        Player actual = n.getNodeOccupant();
+        assertSame(mockPlayer, actual);
+
+        assertEquals("settlement", n.getInfraType());
     }
 
     @Test public void BuildSettlement_UnsuccessfulBuild() {
         Node n = new Node(1);
+        Player mockPlayer1 = EasyMock.createMock(Player.class);
+        Player mockPlayer2 = EasyMock.createMock(Player.class);
+
+        EasyMock.replay(mockPlayer1);
+        EasyMock.replay(mockPlayer2);
 
         // player 1 builds a settlement
-        n.buildSettlement(1);
+        n.buildSettlement(mockPlayer1);
 
         // player 2 tries to build a settlement
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
-                () -> n.buildSettlement(2)
+                () -> n.buildSettlement(mockPlayer2)
         );
 
         assertEquals("Cannot settle on an already-settled node.", exception.getMessage());
-        Assertions.assertEquals(1, n.getNodeOccupant());
+        assertSame(mockPlayer1, n.getNodeOccupant());
     }
 
     @Test public void BuildCity_GetInfraType_SuccessfulUpgradeSettlementToCity() {
         Node n = new Node(1);
+        Player mockPlayer = EasyMock.createMock(Player.class);
 
-        n.buildSettlement(1);
-        n.buildCity(1);
+        EasyMock.replay(mockPlayer);
 
-        Assertions.assertEquals("city", n.getInfraType());
-        Assertions.assertEquals(1, n.getNodeOccupant());
+        n.buildSettlement(mockPlayer);
+        n.buildCity(mockPlayer);
+
+        assertEquals("city", n.getInfraType());
+        assertSame(mockPlayer, n.getNodeOccupant());
     }
 
     @Test public void BuildCity_UnsuccessfulUpgradeCityToCity() {
         Node n = new Node(1);
+        Player mockPlayer = EasyMock.createMock(Player.class);
 
-        n.buildSettlement(1);
-        n.buildCity(1);
+        EasyMock.replay(mockPlayer);
+
+        n.buildSettlement(mockPlayer);
+        n.buildCity(mockPlayer);
 
         // try to build a city on a city
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
-                () -> n.buildCity(1)
+                () -> n.buildCity(mockPlayer)
         );
 
-        Assertions.assertEquals("city", n.getInfraType());
-        Assertions.assertEquals(1, n.getNodeOccupant());
+        assertEquals("city", n.getInfraType());
+        assertSame(mockPlayer, n.getNodeOccupant());
         assertEquals("Cannot upgrade a city further.", exception.getMessage());
     }
 
     @Test public void BuildCity_GetInfraType_UnsuccessfulUpdateEmptyNodeToCity() {
         Node n = new Node(1);
+        Player mockPlayer = EasyMock.createMock(Player.class);
+
+        EasyMock.replay(mockPlayer);
 
         // try to build a city on an unoccupied node
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
-                () -> n.buildCity(1)
+                () -> n.buildCity(mockPlayer)
         );
 
-        Assertions.assertEquals("", n.getInfraType());
-        Assertions.assertEquals(0, n.getNodeOccupant());
+        assertEquals("", n.getInfraType());
+        assertNull(n.getNodeOccupant());
         assertEquals("Cannot upgrade an unsettled node to city.", exception.getMessage());
     }
 
     @Test public void BuildCity_UnsuccessfulUpgradeOpponentToCity() {
         Node n = new Node(1);
+        Player mockPlayer1 = EasyMock.createMock(Player.class);
+        Player mockPlayer2 = EasyMock.createMock(Player.class);
 
-        n.buildSettlement(1);
-        n.buildCity(1);
+        EasyMock.replay(mockPlayer1);
+        EasyMock.replay(mockPlayer2);
+
+        n.buildSettlement(mockPlayer1);
+        n.buildCity(mockPlayer1);
 
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
-                () -> n.buildCity(2)
+                () -> n.buildCity(mockPlayer2)
         );
 
-        Assertions.assertEquals(1, n.getNodeOccupant());
+        assertEquals(mockPlayer1, n.getNodeOccupant());
         assertEquals("Cannot build a city on an already-settled node.", exception.getMessage());
     }
 }

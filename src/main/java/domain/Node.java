@@ -4,30 +4,30 @@ import java.util.Objects;
 
 public class Node {
     private int id;
-    private int occupant;
+    private Player occupant;
     private String infraType;
 
     public Node(int id) {
         this.id = id;
-        this.occupant = 0;
+        this.occupant = null;
         this.infraType = "";
     }
 
-    public int getNodeOccupant() {
+    public Player getNodeOccupant() {
         return occupant;
     }
 
-    public void buildSettlement(int playerId) {
-        if (occupant == 0) {
-            occupant = playerId;
+    public void buildSettlement(Player player) {
+        if (occupant == null) {
+            occupant = player;
             infraType = "settlement";
         } else {
             throw new IllegalStateException("Cannot settle on an already-settled node.");
         }
     }
 
-    public void buildCity(int playerId) {
-        if (occupant != 0 && occupant != playerId) {
+    public void buildCity(Player player) {
+        if (occupant != null && occupant != player) {
             throw new IllegalStateException("Cannot build a city on an already-settled node.");
         }
 
