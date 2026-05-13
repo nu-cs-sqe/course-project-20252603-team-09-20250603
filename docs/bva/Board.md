@@ -29,3 +29,15 @@
 | Test 6  | Node object 53, 1 adjacent hex | hex #18               | :white_check_mark: |
 
 ### Method under test: `public Map<ResourceType, Integer> getAdjacentResources(int nodeId)`
+
+|          | Step 1                              | Step 2   | Step 3                                                                                             |
+|----------|-------------------------------------|----------|----------------------------------------------------------------------------------------------------|
+| Input 1  | Node occupant (state of node)       | Cases    | - Node object, null                                                                                |
+| Input 2  | Node id                             | Interval | - MIN (0), MIN -1, MAX (53), MAX + 1                                                               |
+| Input 3  | Adjacent number of hexes            | Interval | - MIN (1), MAX (3)                                                                                 |
+| Output 1 | Signaling of unsuccessful operation | Cases    | -  IllegalStateException, "The node object is not valid" or "The node object is null"              |
+| Output 2 | Type of resources                   | Cases    | -  ResourceType.WOOD, ResourceType.BRICK, ResourceType.SHEEP, ResourceType.WHEAT, ResourceType.ORE |
+| Output 3 | Quantity of resources               | Interval | - MIN (1), MAX (3)                                                                                 |
+
+
+### Step 4
