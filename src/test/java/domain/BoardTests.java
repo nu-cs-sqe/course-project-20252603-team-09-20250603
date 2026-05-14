@@ -153,6 +153,21 @@ public class BoardTests {
         assertEquals(2, resources.get(ResourceType.WOOD));
     }
 
+    @Test
+    public void getAdjacentResources_NodeFortyFour_ReturnsOneBrickOneWheatAndOneOre() {
+
+        Node node44 = new Node(44);
+
+        Map<ResourceType, Integer> resources =
+                board.getAdjacentResources(node44);
+
+        assertEquals(3, resources.size());
+
+        assertEquals(1, resources.get(ResourceType.BRICK));
+        assertEquals(1, resources.get(ResourceType.WHEAT));
+        assertEquals(1, resources.get(ResourceType.ORE));
+    }
+
 
 
 }
