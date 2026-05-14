@@ -128,6 +128,17 @@ public class BoardTests {
         assertEquals("The node object is not valid", exception.getMessage());
     }
 
+    @Test
+    public void getAdjacentResources_NodeTwo_ReturnsOneBrickAndOneWood() {
+        Node node2 = new Node(2);
+        Map<ResourceType, Integer> resources = board.getAdjacentResources(node2);
+
+        assertEquals(2, resources.size());
+
+        assertEquals(1, resources.get(ResourceType.BRICK));
+        assertEquals(1, resources.get(ResourceType.WOOD));
+    }
+
 
 
 }

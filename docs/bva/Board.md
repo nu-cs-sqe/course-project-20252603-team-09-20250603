@@ -49,7 +49,7 @@
 | Test 2  | Node Id 53, 1 hex adjacent | Ore: 1                        | :white_check_mark:        |
 | Test 3  | Node Id -1                 | IllegalStateException         | :white_check_mark:        |
 | Test 4  | Node Id 54                 | IllegalStateException         | :white_check_mark:        |
-| Test 5  | Node Id 2, 2 hex adjacent  | Brick: 1, wood: 1             | :x: or :white_check_mark: |
+| Test 5  | Node Id 2, 2 hex adjacent  | Brick: 1, wood: 1             | :white_check_mark:        |
 | Test 6  | Node Id 10, 3 hex adjacent | Brick: 1, wood: 2             | :x: or :white_check_mark: |
 | Test 7  | Node Id 44, 3 hex adjacent | Brick: 1, wheat: 1, ore: 1    | :x: or :white_check_mark: |
 | Test 8  | Node Id 19, 3 hex adjacent | wood: 1, wheat: 1, ore: 1     | :x: or :white_check_mark: |
