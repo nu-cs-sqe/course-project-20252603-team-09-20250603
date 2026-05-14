@@ -117,6 +117,17 @@ public class BoardTests {
         assertEquals("The node object is not valid", exception.getMessage());
     }
 
+    @Test
+    public void GetAdjacentResources_InvalidNodeId_ThrowsIllegalStateException() {
+        Node node54 = new Node(54);
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> board.getAdjacentResources(node54)
+        );
+
+        assertEquals("The node object is not valid", exception.getMessage());
+    }
+
 
 
 }
