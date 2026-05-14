@@ -139,6 +139,20 @@ public class BoardTests {
         assertEquals(1, resources.get(ResourceType.WOOD));
     }
 
+    @Test
+    public void getAdjacentResources_NodeTen_ReturnsOneBrickAndTwoWood() {
+
+        Node node10 = new Node(10);
+
+        Map<ResourceType, Integer> resources =
+                board.getAdjacentResources(node10);
+
+        assertEquals(2, resources.size());
+
+        assertEquals(1, resources.get(ResourceType.BRICK));
+        assertEquals(2, resources.get(ResourceType.WOOD));
+    }
+
 
 
 }
