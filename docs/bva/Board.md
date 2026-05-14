@@ -53,7 +53,7 @@
 | Test 6  | Node Id 10, 3 hex adjacent | Brick: 1, wood: 2             | :white_check_mark:        |
 | Test 7  | Node Id 44, 3 hex adjacent | Brick: 1, wheat: 1, ore: 1    | :white_check_mark:        |
 | Test 8  | Node Id 19, 3 hex adjacent | wood: 1, wheat: 1, ore: 1     | :white_check_mark:        |
-| Test 9  | Node Id 40, 3 hex adjacent | sheep: 3                      | :x: or :white_check_mark: |
+| Test 9  | Node Id 40, 3 hex adjacent | sheep: 3                      | :white_check_mark:        |
 | Test 10 | Node Id 32, 3 hex adjacent | desert: 1, sheep: 1, brick: 1 | :x: or :white_check_mark: |
 
 

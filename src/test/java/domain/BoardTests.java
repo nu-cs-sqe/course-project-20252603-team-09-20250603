@@ -1,5 +1,6 @@
 package domain;
 
+import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import java.util.List;
@@ -181,6 +182,39 @@ public class BoardTests {
         assertEquals(1, resources.get(ResourceType.WOOD));
         assertEquals(1, resources.get(ResourceType.WHEAT));
         assertEquals(1, resources.get(ResourceType.ORE));
+    }
+
+    @Test
+    public void getAdjacentResources_MockBoard_ReturnsThreeSheep() {
+        Board mockBoard = EasyMock.partialMockBuilder(Board.class)
+                .addMockedMethod("getHexesFromNode", Node.class)
+                .createMock();
+
+
+        Node node40 = new Node(40);
+
+        Hex hex1 = new Hex(1);
+        Hex hex2 = new Hex(2);
+        Hex hex3 = new Hex(3);
+
+        hex1.setResourceType(ResourceType.SHEEP);
+        hex2.setResourceType(ResourceType.SHEEP);
+        hex3.setResourceType(ResourceType.SHEEP);
+
+        List<Hex> hexes = List.of(hex1, hex2, hex3);
+
+        EasyMock.expect(mockBoard.getHexesFromNode(node40)).andReturn(hexes).once();
+
+        EasyMock.replay(mockBoard);
+
+        Map<ResourceType, Integer> resources =
+                mockBoard.getAdjacentResources(node40);
+
+        assertEquals(1, resources.size());
+
+        assertEquals(3, resources.get(ResourceType.SHEEP));
+
+        EasyMock.verify(mockBoard);
     }
 
 
