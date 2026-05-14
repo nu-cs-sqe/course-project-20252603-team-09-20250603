@@ -96,6 +96,16 @@ public class BoardTests {
         assertEquals(1, resources.get(ResourceType.BRICK));
     }
 
+    @Test
+    public void GetAdjacentResources_NodeMax_ReturnsOneResource() {
+        Node node0 = new Node(53);
+
+        Map<ResourceType, Integer> resources = board.getAdjacentResources(node0);
+
+        assertEquals(1, resources.size());
+        assertEquals(1, resources.get(ResourceType.ORE));
+    }
+
 
 
 }

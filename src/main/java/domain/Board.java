@@ -23,8 +23,32 @@ public class Board {
     }
 
     private void initializeBoard() {
+
+        ResourceType[] hexResources = {
+                ResourceType.BRICK,
+                ResourceType.WOOD,
+                ResourceType.SHEEP,
+                ResourceType.WHEAT,
+                ResourceType.WOOD,
+                ResourceType.WHEAT,
+                ResourceType.SHEEP,
+                ResourceType.SHEEP,
+                ResourceType.ORE,
+                ResourceType.DESERT,
+                ResourceType.ORE,
+                ResourceType.WHEAT,
+                ResourceType.BRICK,
+                ResourceType.SHEEP,
+                ResourceType.BRICK,
+                ResourceType.WHEAT,
+                ResourceType.WOOD,
+                ResourceType.WOOD,
+                ResourceType.ORE
+        };
+
         for (int id = 0; id < NUM_HEXES; id++) {
             Hex hex = new Hex(id);
+            hex.setResourceType(hexResources[id]);
             hexes.add(hex);
         }
         for (int id = 0; id < NUM_NODES; id++) {
@@ -108,7 +132,17 @@ public class Board {
     public Map<ResourceType, Integer> getAdjacentResources(Node node) {
         Map<ResourceType, Integer> resources = new HashMap<>();
 
-        resources.put(ResourceType.BRICK, 1);
+        List<Hex> adjacentHexes = getHexesFromNode(node);
+
+        for (Hex hex : adjacentHexes) {
+
+            ResourceType resource = hex.getResourceType();
+
+            resources.put(
+                    resource,
+                    resources.getOrDefault(resource, 0) + 1
+            );
+        }
 
         return resources;
     }
