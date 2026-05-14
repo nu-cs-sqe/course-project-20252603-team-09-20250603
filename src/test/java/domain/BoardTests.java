@@ -168,6 +168,21 @@ public class BoardTests {
         assertEquals(1, resources.get(ResourceType.ORE));
     }
 
+    @Test
+    public void getAdjacentResources_NodeNineteen_ReturnsOneWoodOneWheatAndOneOre() {
+
+        Node node19 = new Node(19);
+
+        Map<ResourceType, Integer> resources =
+                board.getAdjacentResources(node19);
+
+        assertEquals(3, resources.size());
+
+        assertEquals(1, resources.get(ResourceType.WOOD));
+        assertEquals(1, resources.get(ResourceType.WHEAT));
+        assertEquals(1, resources.get(ResourceType.ORE));
+    }
+
 
 
 }
