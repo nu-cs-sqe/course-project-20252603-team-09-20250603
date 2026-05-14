@@ -217,6 +217,22 @@ public class BoardTests {
         EasyMock.verify(mockBoard);
     }
 
+    @Test
+    public void getAdjacentResources_NodeThirtyTwo_ReturnsOneDesertOneSheepAndOneBrick() {
+
+        Node node32 = new Node(32);
+
+        Map<ResourceType, Integer> resources =
+                board.getAdjacentResources(node32);
+
+        assertEquals(3, resources.size());
+
+        assertEquals(1, resources.get(ResourceType.DESERT));
+        assertEquals(1, resources.get(ResourceType.SHEEP));
+        assertEquals(1, resources.get(ResourceType.BRICK));
+    }
+
+
 
 
 }
