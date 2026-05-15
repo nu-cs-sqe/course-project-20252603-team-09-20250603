@@ -16,19 +16,20 @@
      - [80% done] Decided on implementing GUI application (considering Java Swing, JavaFX, React??)
 3. [80% Done] All: Documenting functional requirements in project board (https://github.com/orgs/nu-cs-sqe/projects/53?pane=issue&itemId=180919536&issue=nu-cs-sqe%7Ccourse-project-20252603-team-09-20250603%7C7](https://github.com/nu-cs-sqe/course-project-20252603-team-09-20250603/issues/6)
 
-# Week 5 (04/28/2026-XX/XX/2026) 
+# Week 5 (04/28/2026-05/05/2026) 
 **Planning and Progress Tracking**:
-1. [Status] All: Weekly meeting:
-     - 
-2. [10% Done] All: Producing the design
-3. [10% Done] All (individually) Splitting tasks and beginning implementation
-
-
-
-
+1. [Done] All: Weekly meeting:
+     - Met as a team to go over and address week 4 feedback
+     - Cleaned up design doc 
+     - Ensured all members knew their task
+     - Cleared up branching confusion
+2. [90% Done] All: Producing the design
+3. [100% Done] All (individually): Splitting tasks and beginning implementation
    
-# Week X (XX/XX/2026-04/2/2026) TEMPLATE (You can change the format to whatever the team likes better)
+# Week 6 (05/06/2026-05/12/2026) 
 **Planning and Progress Tracking**:
-1. [done] Person: Task (Links to PR)
-2. [not started] Person: Task (Links to PR)
-3. [80% done] Person: Task (Links to PR)
+1. [In progress] All: Weekly meeting:
+      - 
+2. [Done] Crystal: Finished feature/new-game-player-setup for game setup phase to handle player object creation and validation (https://github.com/nu-cs-sqe/course-project-20252603-team-09-20250603/pull/17)
+3. [Done] All: Select GUI library (JavaFX) and update README
+4. [Done] All: Set up Checkstyle and SpotBugs
