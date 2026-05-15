@@ -31,5 +31,10 @@
 1. [In progress] All: Weekly meeting:
       - 
 2. [Done] Crystal: Finished feature/new-game-player-setup for game setup phase to handle player object creation and validation (https://github.com/nu-cs-sqe/course-project-20252603-team-09-20250603/pull/17)
-3. [Done] All: Select GUI library (JavaFX) and update README
-4. [Done] All: Set up Checkstyle and SpotBugs
+3. [Done] Aria, Alicia, and Ben: Finished feature/board-generation to create nodes, hexes, edges, and nodeToHex relations (https://github.com/nu-cs-sqe/course-project-20252603-team-09-20250603/pull/22)
+   - Aria: Node and Edge classes
+   - Alicia: Board class, Node/Hex class updates, ResourceType
+   - Ben: Hex class
+5. [Done] All: Select GUI library (JavaFX) and update README
+6. [Done] All: Set up Checkstyle and SpotBugs
+7. [10%] Ben: Start building GUI
