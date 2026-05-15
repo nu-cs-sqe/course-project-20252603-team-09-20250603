@@ -8,11 +8,10 @@ public class Hex {
     private static final int MIN_TOKEN_NUMBER = 2;
     private static final int MAX_TOKEN_NUMBER = 12;
 
-    private int id;
+    private final int id;
     private ResourceType resourceType;
     private int tokenNumber;
     private boolean hasRobber;
-    private List<Node> adjacentNodes;
 
     public Hex(int id)
     {
@@ -25,7 +24,6 @@ public class Hex {
         this.resourceType = null;
         this.tokenNumber = NO_TOKEN;
         this.hasRobber = false;
-        this.adjacentNodes = new ArrayList<>(adjacentNodes);
     }
 
     public boolean getHasRobber() {
@@ -56,5 +54,24 @@ public class Hex {
         }
 
         this.tokenNumber = tokenNumber;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof Hex)) {
+            return false;
+        }
+
+        Hex hex = (Hex) o;
+        return id == hex.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id);
     }
 }

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
-public class HexTest {
+public class HexTests {
     private Hex hex;
 
     @BeforeEach

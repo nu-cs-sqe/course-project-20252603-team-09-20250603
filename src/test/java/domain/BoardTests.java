@@ -19,7 +19,7 @@ public class BoardTests {
     }
 
     @Test
-    public void GetHexesFromNode_NodeZero_ReturnsOneHex() {
+    public void getHexesFromNode_NodeZero_ReturnsOneHex() {
         Node node0 = new Node(0);
 
         List<Hex> hexList = board.getHexesFromNode(node0);
@@ -29,7 +29,7 @@ public class BoardTests {
     }
 
     @Test
-    public void GetHexesFromNode_NodeNine_ReturnsThreeAdjacentHexes() {
+    public void getHexesFromNode_NodeNine_ReturnsThreeAdjacentHexes() {
         Node node9 = new Node(9);
 
         List<Hex> hexes = board.getHexesFromNode(node9);
@@ -46,7 +46,7 @@ public class BoardTests {
     }
 
     @Test
-    public void GetHexesFromNode_NullNode_ThrowsIllegalStateException() {
+    public void getHexesFromNode_NullNode_ThrowsIllegalStateException() {
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
                 () -> board.getHexesFromNode(null)
@@ -56,7 +56,7 @@ public class BoardTests {
     }
 
     @Test
-    public void GetHexesFromNode_InvalidNodeId_ThrowsIllegalStateException() {
+    public void getHexesFromNode_InvalidNodeId_ThrowsIllegalStateException() {
         Node nodeNegative = new Node(-1);
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
@@ -67,7 +67,7 @@ public class BoardTests {
     }
 
     @Test
-    public void GetHexesFromNode_InvalidNodeId2_ThrowsIllegalStateException() {
+    public void getHexesFromNode_InvalidNodeId2_ThrowsIllegalStateException() {
         Node node54 = new Node(54);
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
@@ -78,7 +78,7 @@ public class BoardTests {
     }
 
     @Test
-    public void GetHexesFromNode_NodeMax_ReturnsOneHex() {
+    public void getHexesFromNode_NodeMax_ReturnsOneHex() {
         Node node0 = new Node(53);
 
         List<Hex> hexes = board.getHexesFromNode(node0);
@@ -88,7 +88,7 @@ public class BoardTests {
     }
 
     @Test
-    public void GetAdjacentResources_NodeMin_ReturnsOneResource() {
+    public void getAdjacentResources_NodeMin_ReturnsOneResource() {
         Node node0 = new Node(0);
 
         Map<ResourceType, Integer> resources = board.getAdjacentResources(node0);
@@ -98,7 +98,7 @@ public class BoardTests {
     }
 
     @Test
-    public void GetAdjacentResources_NodeMax_ReturnsOneResource() {
+    public void getAdjacentResources_NodeMax_ReturnsOneResource() {
         Node node0 = new Node(53);
 
         Map<ResourceType, Integer> resources = board.getAdjacentResources(node0);
@@ -108,7 +108,7 @@ public class BoardTests {
     }
 
     @Test
-    public void GetAdjacentResources_NegativeNodeId_ThrowsIllegalStateException() {
+    public void getAdjacentResources_NegativeNodeId_ThrowsIllegalStateException() {
         Node nodeNegative = new Node(-1);
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
@@ -119,7 +119,7 @@ public class BoardTests {
     }
 
     @Test
-    public void GetAdjacentResources_InvalidNodeId_ThrowsIllegalStateException() {
+    public void getAdjacentResources_InvalidNodeId_ThrowsIllegalStateException() {
         Node node54 = new Node(54);
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
@@ -231,8 +231,4 @@ public class BoardTests {
         assertEquals(1, resources.get(ResourceType.SHEEP));
         assertEquals(1, resources.get(ResourceType.BRICK));
     }
-
-
-
-
 }
