@@ -9,8 +9,6 @@ public class Player {
     private final PlayerColor color;
     private final Map<String, Integer> inventory;
     private int victoryPoints;
-    private boolean hasLongestRoad;
-    private boolean hasLargestArmy;
 
     public Player(int id, String name, PlayerColor color){
         this.id = id;
