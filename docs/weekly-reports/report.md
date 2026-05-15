@@ -35,6 +35,7 @@
    - Aria: Node and Edge classes
    - Alicia: Board class, Node/Hex class updates, ResourceType
    - Ben: Hex class
+4. [Done] Chloe: Finished feature/initial-placement-rules for snake drafting system and road/settlement validation (https://github.com/nu-cs-sqe/course-project-20252603-team-09-20250603/pull/18)
 5. [Done] All: Select GUI library (JavaFX) and update README
 6. [Done] All: Set up Checkstyle and SpotBugs
 7. [10%] Ben: Start building GUI
