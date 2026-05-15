@@ -18,10 +18,14 @@ public class Board {
     }
 
     public boolean checkDistanceRule(int nodeId) {
-        if (isNodeOccupied(nodeId)) return false;
+        if (isNodeOccupied(nodeId)) {
+            return false;
+        }
 
         for (int neighborId : getAdjacentNodes(nodeId)) {
-            if (isNodeOccupied(neighborId)) return false;
+            if (isNodeOccupied(neighborId)) {
+                return false;
+            }
         }
         return true;
     }
