@@ -1,4 +1,4 @@
-package domain.logic;
+package domain;
 
 /**
  * Custom exception to handle illegal moves during the
