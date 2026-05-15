@@ -30,7 +30,7 @@ public class Player {
     }
 
     public Map<String, Integer> getInventory() {
-        return inventory;
+        return new HashMap<>(inventory);
     }
 
     public int getVictoryPoints(){
