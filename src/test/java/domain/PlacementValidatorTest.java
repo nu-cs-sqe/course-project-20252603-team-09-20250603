@@ -58,6 +58,23 @@ public class PlacementValidatorTest {
 
     @Test // TC-PV-03
     void test_InitialRoadAdjacencySuccess() {
+        board = new Board();
+        validator = new PlacementValidator(board);
+
+        Node settlementNode = null;
+        for (Node n : board.getNodeToHexesMap().keySet()) {
+            if (n.equals(new Node(10))) {
+                settlementNode = n;
+                break;
+            }
+        }
+
+        int validEdgeId = settlementNode.hashCode();
+
+        final Node finalSettlementNode = settlementNode;
+        assertDoesNotThrow(() -> {
+            validator.validateInitialRoad(validEdgeId, finalSettlementNode);
+        });
     }
 
     @Test // TC-PV-04
