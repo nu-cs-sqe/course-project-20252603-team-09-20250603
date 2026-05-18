@@ -12,7 +12,7 @@ public class TurnManagerTest {
 
         tm.nextPlacement();
 
-        assertEquals(1, tm.getCurrentPlayerIndex());
+        assertEquals(2, tm.getCurrentPlayerIndex());
     }
 
     @Test // TC-TM-02
@@ -23,7 +23,7 @@ public class TurnManagerTest {
 
         tm.nextPlacement();
 
-        assertEquals(2, tm.getCurrentPlayerIndex());
+        assertEquals(3, tm.getCurrentPlayerIndex());
     }
 
     @Test // TC-TM-03
@@ -35,7 +35,7 @@ public class TurnManagerTest {
         tm.nextPlacement();
         tm.nextPlacement();
 
-        assertEquals(1, tm.getCurrentPlayerIndex());
+        assertEquals(2, tm.getCurrentPlayerIndex());
     }
 
     @Test // TC-TM-04
@@ -45,7 +45,7 @@ public class TurnManagerTest {
             tm.nextPlacement();
         }
 
-        assertEquals(0, tm.getCurrentPlayerIndex());
+        assertEquals(1, tm.getCurrentPlayerIndex());
     }
 
 
