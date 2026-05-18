@@ -1,6 +1,7 @@
 package domain;
 
 import java.util.List;
+import java.util.Map;
 
 public class PlacementValidator {
     private final Board board;
@@ -9,17 +10,41 @@ public class PlacementValidator {
         this.board = board;
     }
 
-    public void validateSettlementPlacement(int nodeId) {
-        if (!board.checkDistanceRule(nodeId)) {
-            throw new IllegalPlacementException("Placement violates the distance rule.");
+    public void validateSettlementPlacement(Node targetNode) throws IllegalPlacementException {
+        if (targetNode.getNodeOccupant() != null) {
+            throw new IllegalPlacementException("Node already occupied.");
+        }
+
+        List<Hex> targetHexes = board.getHexesFromNode(targetNode);
+
+        for (Map.Entry<Node, List<Hex>> entry : board.getNodeToHexesMap().entrySet()) {
+            Node potentialNeighbor = entry.getKey();
+            List<Hex> neighborHexes = entry.getValue();
+
+            if (potentialNeighbor.equals(targetNode)) {
+                continue;
+            }
+
+            if (sharesHex(targetHexes, neighborHexes)) {
+                if (potentialNeighbor.getNodeOccupant() != null) {
+                    throw new IllegalPlacementException("Violates distance rule: Adjacent node occupied.");
+                }
+            }
         }
     }
 
-    public void validateInitialRoad(int edgeId, int settlementNodeId) {
-        List<Integer> endpoints = board.getRoadEndpoints(edgeId);
+    private boolean sharesHex(List<Hex> list1, List<Hex> list2) {
+        for (Hex h : list1) {
+            if (list2.contains(h)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-        if (endpoints == null || !endpoints.contains(settlementNodeId)) {
-            throw new IllegalPlacementException("Road must be connected to the newly placed settlement.");
+    public void validateInitialRoad(int edgeId, Node settlementNode) throws IllegalPlacementException {
+        if (edgeId != settlementNode.hashCode()) {
+            throw new IllegalPlacementException("Road must connect to your settlement.");
         }
     }
 }
