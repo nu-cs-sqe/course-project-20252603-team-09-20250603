@@ -28,8 +28,24 @@
    
 # Week 6 (05/06/2026-05/12/2026) 
 **Planning and Progress Tracking**:
-1. [In progress] All: Weekly meeting:
-      - 
+1. [Done] All: Weekly meeting:
+      - Met as a team to finalize design and game architecture
 2. [Done] Crystal: Finished feature/new-game-player-setup for game setup phase to handle player object creation and validation (https://github.com/nu-cs-sqe/course-project-20252603-team-09-20250603/pull/17)
-3. [Done] All: Select GUI library (JavaFX) and update README
-4. [Done] All: Set up Checkstyle and SpotBugs
+3. [Done] Aria, Alicia, and Ben: Finished feature/board-generation to create nodes, hexes, edges, and nodeToHex relations (https://github.com/nu-cs-sqe/course-project-20252603-team-09-20250603/pull/22)
+   - Aria: Node and Edge classes
+   - Alicia: Board class, Node/Hex class updates, ResourceType
+   - Ben: Hex class
+4. [Done] Chloe: Finished feature/initial-placement-rules for snake drafting system and road/settlement validation (https://github.com/nu-cs-sqe/course-project-20252603-team-09-20250603/pull/18)
+5. [Done] All: Select GUI library (JavaFX) and update README
+6. [Done] All: Set up Checkstyle and SpotBugs
+7. [10%] Ben: Start building GUI
+
+# Week 7 (05/12/2026-05/18/2026) 
+1. [Done] All: weekly meeting:
+   - Assigned PR reviewers for all week 6 PRs
+   - Distributed tasks for week 7 -> finishing game setup phase and beginning first turn phase
+2. [0%] All: pull linters branch and fix any problems
+3. [0%] Aria and Crystal: create Main class to call GameInitializer and Game, create Game class to execute initial placement rules
+4. [0%] Alicia: continue working on Player class, finish resource distribution by updating Player class to have a method to update the resource hand
+5. [0%] Ben: continue building GUI
+6. [0%] Chloe: devCards
