@@ -39,12 +39,24 @@ public class PlacementValidatorTest {
     }
 
     @Test // TC-PV-02
-    @Disabled
     void test_DistanceRulePassesWhenNeighborsEmpty() {
+        board = new Board();
+        validator = new PlacementValidator(board);
+
+        Node node0 = null;
+
+        for (Node n : board.getNodeToHexesMap().keySet()) {
+            if (n.equals(new Node(0))) node0 = n;
+        }
+
+        final Node targetNode = node0;
+        assertDoesNotThrow(() -> {
+            validator.validateSettlementPlacement(targetNode);
+        });
+
     }
 
     @Test // TC-PV-03
-    @Disabled
     void test_InitialRoadAdjacencySuccess() {
     }
 
