@@ -73,6 +73,12 @@ public class HexTests {
     }
 
     @Test
+    public void setTokenNumber_GivenSeven_ThrowsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> hex.setTokenNumber(7),
+                "Token number 7 should be rejected because the game Catan does not have a 7 token.");
+    }
+
+    @Test
     public void setTokenNumber_GivenValueAboveMaximum_ThrowsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> hex.setTokenNumber(13),
                 "Token numbers above 12 should be rejected.");
