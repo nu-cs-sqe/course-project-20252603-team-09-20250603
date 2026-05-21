@@ -10,18 +10,18 @@ public class TurnManagerTest {
     void test_FirstPlacementMovesToNextPlayer() {
         TurnManager tm = new TurnManager(3);
 
-        tm.nextPlacement();
+        tm.nextPlayer();
 
-        assertEquals(2, tm.getCurrentPlayerIndex());
+        assertEquals(1, tm.getCurrentPlayerIndex());
     }
 
     @Test // TC-TM-02
     void test_PivotAtEndOfFirstRound() {
         TurnManager tm = new TurnManager(3);
-        tm.nextPlacement();
-        tm.nextPlacement();
+        tm.nextPlayer();
+        tm.nextPlayer();
 
-        tm.nextPlacement();
+        tm.nextPlayer();
 
         assertEquals(3, tm.getCurrentPlayerIndex());
     }
@@ -30,19 +30,19 @@ public class TurnManagerTest {
     void test_SnakeTurnReversesAtEnd() {
         TurnManager tm = new TurnManager(3);
 
-        tm.nextPlacement();
-        tm.nextPlacement();
-        tm.nextPlacement();
-        tm.nextPlacement();
+        tm.nextPlayer();
+        tm.nextPlayer();
+        tm.nextPlayer();
+        tm.nextPlayer();
 
-        assertEquals(2, tm.getCurrentPlayerIndex());
+        assertEquals(3, tm.getCurrentPlayerIndex());
     }
 
     @Test // TC-TM-04
-    void test_SetupEndsAtPlayerZero() {
-        TurnManager tm = new TurnManager(3);
-        for(int i = 0; i < 5; i++) {
-            tm.nextPlacement();
+    void test_SetupEndsAtPlayerOne() {
+        TurnManager tm = new TurnManager(4);
+        for(int i = 0; i < 8; i++) {
+            tm.nextPlayer();
         }
 
         assertEquals(1, tm.getCurrentPlayerIndex());
