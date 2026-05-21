@@ -1,8 +1,12 @@
 package domain;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Board {
+
     private static final int NUM_HEXES = 19;
     private static final int NUM_NODES = 54;
 
@@ -19,8 +23,32 @@ public class Board {
     }
 
     private void initializeBoard() {
+
+        ResourceType[] hexResources = {
+                ResourceType.BRICK,
+                ResourceType.WOOD,
+                ResourceType.SHEEP,
+                ResourceType.WHEAT,
+                ResourceType.WOOD,
+                ResourceType.WHEAT,
+                ResourceType.SHEEP,
+                ResourceType.SHEEP,
+                ResourceType.ORE,
+                ResourceType.DESERT,
+                ResourceType.ORE,
+                ResourceType.WHEAT,
+                ResourceType.BRICK,
+                ResourceType.SHEEP,
+                ResourceType.BRICK,
+                ResourceType.WHEAT,
+                ResourceType.WOOD,
+                ResourceType.WOOD,
+                ResourceType.ORE
+        };
+
         for (int id = 0; id < NUM_HEXES; id++) {
             Hex hex = new Hex(id);
+            hex.setResourceType(hexResources[id]);
             hexes.add(hex);
         }
         for (int id = 0; id < NUM_NODES; id++) {
@@ -89,18 +117,33 @@ public class Board {
         nodeToHexes.put(nodes.get(53), List.of(hexes.get(18)));
     }
 
-    public Map<Node, List<Hex>> getNodeToHexesMap() {
-        return Collections.unmodifiableMap(this.nodeToHexes);
-    }
-
     public List<Hex> getHexesFromNode(Node node) {
         if (node == null) {
-            throw new IllegalStateException("The node object is null");
+            throw new IllegalArgumentException("The node object is null");
         }
+
         if (!nodeToHexes.containsKey(node)) {
             throw new IllegalStateException("The node object is not valid");
         }
-        return nodeToHexes.get(node);
+
+        return new ArrayList<>(nodeToHexes.get(node));
     }
 
+    public Map<ResourceType, Integer> getAdjacentResources(Node node) {
+        Map<ResourceType, Integer> resources = new HashMap<>();
+
+        List<Hex> adjacentHexes = getHexesFromNode(node);
+
+        for (Hex hex : adjacentHexes) {
+
+            ResourceType resource = hex.getResourceType();
+
+            resources.put(
+                    resource,
+                    resources.getOrDefault(resource, 0) + 1
+            );
+        }
+
+        return resources;
+    }
 }
