@@ -47,8 +47,8 @@ public class BoardTests {
 
     @Test
     public void GetHexesFromNode_NullNode_ThrowsIllegalStateException() {
-        IllegalStateException exception = assertThrows(
-                IllegalStateException.class,
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
                 () -> board.getHexesFromNode(null)
         );
 
