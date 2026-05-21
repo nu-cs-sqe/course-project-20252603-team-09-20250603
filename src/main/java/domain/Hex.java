@@ -51,8 +51,10 @@ public class Hex {
     public void setTokenNumber(int tokenNumber) {
         if (tokenNumber != NO_TOKEN && (tokenNumber < MIN_TOKEN_NUMBER || tokenNumber > MAX_TOKEN_NUMBER)) {
             throw new IllegalArgumentException("Token number must be 0 or between 2 and 12.");
+        } else if (tokenNumber == 7) {
+            throw new IllegalArgumentException("Token number cannot be 7.");
         }
-
+        
         this.tokenNumber = tokenNumber;
     }
 
