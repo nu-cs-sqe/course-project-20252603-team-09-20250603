@@ -44,8 +44,17 @@
 1. [Done] All: weekly meeting:
    - Assigned PR reviewers for all week 6 PRs
    - Distributed tasks for week 7 -> finishing game setup phase and beginning first turn phase
-2. [0%] All: pull linters branch and fix any problems
-3. [0%] Aria and Crystal: create Main class to call GameInitializer and Game, create Game class to execute initial placement rules
-4. [0%] Alicia: continue working on Player class, finish resource distribution by updating Player class to have a method to update the resource hand
-5. [0%] Ben: continue building GUI
-6. [0%] Chloe: devCards
+2. [80%] All: pull linters branch and fix any problems
+3. [20%] Aria and Crystal: create Main class to call GameInitializer and Game, create Game class to execute initial placement rules
+4. [20%] Alicia: continue working on Player class, finish resource distribution by updating Player class to have a method to update the resource hand
+5. [30%] Ben: continue building GUI
+6. [20%] Chloe: devCards
+
+# Week 8 (05/19/2026-05/25/2026) 
+1. No weekly meeting - continue working on week 7 tasks
+2. [80%] All: finish merging pre-week 7 branches
+3. [80%] All: pull linters branch and fix any problems
+4. [20%] Aria and Crystal: create Main class to call GameInitializer and Game, create Game class to execute initial placement rules
+5. [20%] Alicia: continue working on Player class, finish resource distribution by updating Player class to have a method to update the resource hand
+6. [30%] Ben: continue building GUI
+7. [20%] Chloe: devCards
