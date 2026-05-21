@@ -1,10 +1,10 @@
 package domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TurnManager {
     private int currentPlayerIndex = 0;
-    private int placementsCount = 0;
     private final int numPlayers;
     private final List<Integer> setupSequence;
 
@@ -12,19 +12,20 @@ public class TurnManager {
         this.numPlayers = numPlayers;
 
         if (numPlayers == 3) {
-            this.setupSequence = List.of(1, 2, 3, 3, 2, 1);
+            this.setupSequence = new ArrayList<>(List.of(1, 2, 3, 3, 2, 1));
         } else{
-            this.setupSequence = List.of(1, 2, 3, 4, 4, 3, 2, 1);
+            this.setupSequence = new ArrayList<>(List.of(1, 2, 3, 4, 4, 3, 2, 1));
         }
     }
 
     public void nextPlacement() {
-        placementsCount++;
-
-        if (placementsCount < setupSequence.size()) {
-            currentPlayerIndex = setupSequence.get(placementsCount);
+        if (!setupSequence.isEmpty()) {
+            currentPlayerIndex = setupSequence.remove(0);
         } else {
-            currentPlayerIndex = (currentPlayerIndex % numPlayers) + 1;
+            currentPlayerIndex++;
+            if (currentPlayerIndex > numPlayers) {
+                currentPlayerIndex = 1;
+            }
         }
     }
 
