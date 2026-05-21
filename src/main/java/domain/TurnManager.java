@@ -1,3 +1,9 @@
+// Class: TurnManager
+// - Handles initial placement turns in snake order (1, 2, 3, 3, 2, 1)
+// - Hardcoded lists for 3 or 4 players' order
+// - "nextPlayer()": progresses to next turn
+//   - Calling nextPlayer() for the first time goes to player 1 turn
+
 package domain;
 
 import java.util.ArrayList;
