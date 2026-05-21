@@ -31,7 +31,7 @@ public class Edge {
             return false;
         }
 
-        Edge node = (Edge) o;
+        Edge edge = (Edge) o;
         return id == node.id;
     }
 
