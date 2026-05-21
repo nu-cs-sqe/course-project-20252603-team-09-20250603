@@ -119,14 +119,14 @@ public class Board {
 
     public List<Hex> getHexesFromNode(Node node) {
         if (node == null) {
-            throw new IllegalStateException("The node object is null");
+            throw new IllegalArgumentException("The node object is null");
         }
 
         if (!nodeToHexes.containsKey(node)) {
             throw new IllegalStateException("The node object is not valid");
         }
 
-        return nodeToHexes.get(node);
+        return new ArrayList<>(nodeToHexes.get(node));
     }
 
     public Map<ResourceType, Integer> getAdjacentResources(Node node) {

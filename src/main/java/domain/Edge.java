@@ -1,7 +1,7 @@
 package domain;
 
 public class Edge {
-    private final int id;
+    private int id;
     private Player occupant;
 
     public Edge(int id) {
@@ -19,24 +19,5 @@ public class Edge {
         }
 
         occupant = player;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (!(o instanceof Edge)) {
-            return false;
-        }
-
-        Edge node = (Edge) o;
-        return id == node.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Integer.hashCode(id);
     }
 }

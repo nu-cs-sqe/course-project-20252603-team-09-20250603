@@ -1,19 +1,20 @@
 package domain;
 
 import org.easymock.EasyMock;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeTests {
     @Test
-    public void getNodeOccupant_UnoccupiedNode_Return0() {
+    public void GetNodeOccupant_UnoccupiedNode_Return0() {
         Node n = new Node(1);
 
         assertNull(n.getNodeOccupant());
     }
 
-    @Test public void buildSettlement_GetNodeOccupant_GetInfraType_SuccessfulReturnPlayerAndSettlement() {
+    @Test public void BuildSettlement_GetNodeOccupant_GetInfraType_SuccessfulReturnPlayerAndSettlement() {
         Node n = new Node(1);
         Player mockPlayer = EasyMock.createMock(Player.class);
 
@@ -26,7 +27,7 @@ public class NodeTests {
         assertEquals(InfraType.SETTLEMENT, n.getInfraType());
     }
 
-    @Test public void buildSettlement_UnsuccessfulBuild() {
+    @Test public void BuildSettlement_UnsuccessfulBuild() {
         Node n = new Node(1);
         Player mockPlayer1 = EasyMock.createMock(Player.class);
         Player mockPlayer2 = EasyMock.createMock(Player.class);
@@ -47,7 +48,7 @@ public class NodeTests {
         assertSame(mockPlayer1, n.getNodeOccupant());
     }
 
-    @Test public void buildCity_GetInfraType_SuccessfulUpgradeSettlementToCity() {
+    @Test public void BuildCity_GetInfraType_SuccessfulUpgradeSettlementToCity() {
         Node n = new Node(1);
         Player mockPlayer = EasyMock.createMock(Player.class);
 
@@ -60,7 +61,7 @@ public class NodeTests {
         assertSame(mockPlayer, n.getNodeOccupant());
     }
 
-    @Test public void buildCity_UnsuccessfulUpgradeCityToCity() {
+    @Test public void BuildCity_UnsuccessfulUpgradeCityToCity() {
         Node n = new Node(1);
         Player mockPlayer = EasyMock.createMock(Player.class);
 
@@ -80,7 +81,7 @@ public class NodeTests {
         assertEquals("Cannot upgrade a city further.", exception.getMessage());
     }
 
-    @Test public void buildCity_GetInfraType_UnsuccessfulUpdateEmptyNodeToCity() {
+    @Test public void BuildCity_GetInfraType_UnsuccessfulUpdateEmptyNodeToCity() {
         Node n = new Node(1);
         Player mockPlayer = EasyMock.createMock(Player.class);
 
@@ -97,7 +98,7 @@ public class NodeTests {
         assertEquals("Cannot upgrade an unsettled node to city.", exception.getMessage());
     }
 
-    @Test public void buildCity_UnsuccessfulUpgradeOpponentToCity() {
+    @Test public void BuildCity_UnsuccessfulUpgradeOpponentToCity() {
         Node n = new Node(1);
         Player mockPlayer1 = EasyMock.createMock(Player.class);
         Player mockPlayer2 = EasyMock.createMock(Player.class);
@@ -118,7 +119,7 @@ public class NodeTests {
     }
 
     @Test
-    public void equals_SameMinimumId_ReturnsTrue() {
+    public void Equals_SameMinimumId_ReturnsTrue() {
         Node node1 = new Node(0);
         Node node2 = new Node(0);
 
@@ -127,7 +128,7 @@ public class NodeTests {
 
 
     @Test
-    public void equals_SameMaximumId_ReturnsTrue() {
+    public void Equals_SameMaximumId_ReturnsTrue() {
         Node node1 = new Node(53);
         Node node2 = new Node(53);
 
@@ -135,7 +136,7 @@ public class NodeTests {
     }
 
     @Test
-    public void equals_DifferentIds_ReturnsFalse() {
+    public void Equals_DifferentIds_ReturnsFalse() {
         Node node1 = new Node(0);
         Node node2 = new Node(1);
 
@@ -143,7 +144,7 @@ public class NodeTests {
     }
 
     @Test
-    public void hashCode_SameMinimumId_ReturnsSameHashCode() {
+    public void HashCode_SameMinimumId_ReturnsSameHashCode() {
         Node node1 = new Node(0);
         Node node2 = new Node(0);
 
@@ -151,7 +152,7 @@ public class NodeTests {
     }
 
     @Test
-    public void hashCode_SameMaximumId_ReturnsSameHashCode() {
+    public void HashCode_SameMaximumId_ReturnsSameHashCode() {
         Node node1 = new Node(53);
         Node node2 = new Node(53);
 
@@ -159,7 +160,7 @@ public class NodeTests {
     }
 
     @Test
-    public void hashCode_DifferentIds_NotEqual() {
+    public void HashCode_DifferentIds_NotEqual() {
         Node node1 = new Node(0);
         Node node2 = new Node(1);
 
