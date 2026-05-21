@@ -1,8 +1,5 @@
 package domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Hex {
     private static final int NO_TOKEN = 0;
     private static final int MIN_TOKEN_NUMBER = 2;
@@ -14,11 +11,6 @@ public class Hex {
     private boolean hasRobber;
 
     public Hex(int id)
-    {
-        this(id, new ArrayList<>());
-    }
-
-    Hex(int id, List<Node> adjacentNodes)
     {
         this.id = id;
         this.resourceType = null;
