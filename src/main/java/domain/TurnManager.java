@@ -23,9 +23,6 @@ public class TurnManager {
             currentPlayerIndex = setupSequence.remove(0);
         } else {
             currentPlayerIndex++;
-            if (currentPlayerIndex > numPlayers) {
-                currentPlayerIndex = 1;
-            }
         }
     }
 
