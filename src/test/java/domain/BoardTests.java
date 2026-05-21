@@ -29,7 +29,7 @@ public class BoardTests {
     }
 
     @Test
-    public void GetHexesFromNode_NodeNine_ReturnsThreeAdjacentHexes() {
+    public void getHexesFromNode_NodeNine_ReturnsThreeAdjacentHexes() {
         Node node9 = new Node(9);
 
         List<Hex> hexes = board.getHexesFromNode(node9);
@@ -231,8 +231,4 @@ public class BoardTests {
         assertEquals(1, resources.get(ResourceType.SHEEP));
         assertEquals(1, resources.get(ResourceType.BRICK));
     }
-
-
-
-
 }
