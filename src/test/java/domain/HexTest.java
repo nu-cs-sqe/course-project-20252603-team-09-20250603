@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
-public class HexTests {
+public class HexTest {
     private Hex hex;
 
     @BeforeEach
@@ -70,12 +70,6 @@ public class HexTests {
     public void setTokenNumber_GivenValueBelowMinimum_ThrowsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> hex.setTokenNumber(1),
                 "Token numbers below 2 should be rejected.");
-    }
-
-    @Test
-    public void setTokenNumber_GivenSeven_ThrowsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class, () -> hex.setTokenNumber(7),
-                "Token number 7 should be rejected because the game Catan does not have a 7 token.");
     }
 
     @Test

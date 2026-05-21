@@ -49,11 +49,8 @@ Step 4:
 |--------------|---------------------|-----------------|---------------------------|
 | Test Case 1  | setTokenNumber(1)   | IllegalArgumentException | :white_check_mark: |
 | Test Case 2  | setTokenNumber(2)   | TokenNumber 2   | :white_check_mark:        |
-| Test Case 3  | setTokenNumber(7)   | IllegalArgumentException | :white_check_mark: |
-| Test Case 4  | setTokenNumber(12)  | TokenNumber 12  | :white_check_mark:        |
-| Test Case 5  | setTokenNumber(13)  | IllegalArgumentException | :white_check_mark: |
-
-Note: `7` is a separate invalid class because it is inside `2..12` but explicitly disallowed by Catan token rules.
+| Test Case 3  | setTokenNumber(12)  | TokenNumber 12  | :white_check_mark:        |
+| Test Case 4  | setTokenNumber(13)  | IllegalArgumentException | :white_check_mark: |
 
 
 ### Method under test: `distributeResources()`

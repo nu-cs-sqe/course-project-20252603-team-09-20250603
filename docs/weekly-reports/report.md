@@ -16,36 +16,19 @@
      - [80% done] Decided on implementing GUI application (considering Java Swing, JavaFX, React??)
 3. [80% Done] All: Documenting functional requirements in project board (https://github.com/orgs/nu-cs-sqe/projects/53?pane=issue&itemId=180919536&issue=nu-cs-sqe%7Ccourse-project-20252603-team-09-20250603%7C7](https://github.com/nu-cs-sqe/course-project-20252603-team-09-20250603/issues/6)
 
-# Week 5 (04/28/2026-05/05/2026) 
+# Week 5 (04/28/2026-XX/XX/2026) 
 **Planning and Progress Tracking**:
-1. [Done] All: Weekly meeting:
-     - Met as a team to go over and address week 4 feedback
-     - Cleaned up design doc 
-     - Ensured all members knew their task
-     - Cleared up branching confusion
-2. [90% Done] All: Producing the design
-3. [100% Done] All (individually): Splitting tasks and beginning implementation
-   
-# Week 6 (05/06/2026-05/12/2026) 
-**Planning and Progress Tracking**:
-1. [Done] All: Weekly meeting:
-      - Met as a team to finalize design and game architecture
-2. [Done] Crystal: Finished feature/new-game-player-setup for game setup phase to handle player object creation and validation (https://github.com/nu-cs-sqe/course-project-20252603-team-09-20250603/pull/17)
-3. [Done] Aria, Alicia, and Ben: Finished feature/board-generation to create nodes, hexes, edges, and nodeToHex relations (https://github.com/nu-cs-sqe/course-project-20252603-team-09-20250603/pull/22)
-   - Aria: Node and Edge classes
-   - Alicia: Board class, Node/Hex class updates, ResourceType
-   - Ben: Hex class
-4. [Done] Chloe: Finished feature/initial-placement-rules for snake drafting system and road/settlement validation (https://github.com/nu-cs-sqe/course-project-20252603-team-09-20250603/pull/18)
-5. [Done] All: Select GUI library (JavaFX) and update README
-6. [Done] All: Set up Checkstyle and SpotBugs
-7. [10%] Ben: Start building GUI
+1. [Status] All: Weekly meeting:
+     - 
+2. [10% Done] All: Producing the design
+3. [10% Done] All (individually) Splitting tasks and beginning implementation
 
-# Week 7 (05/12/2026-05/18/2026) 
-1. [Done] All: weekly meeting:
-   - Assigned PR reviewers for all week 6 PRs
-   - Distributed tasks for week 7 -> finishing game setup phase and beginning first turn phase
-2. [0%] All: pull linters branch and fix any problems
-3. [0%] Aria and Crystal: create Main class to call GameInitializer and Game, create Game class to execute initial placement rules
-4. [0%] Alicia: continue working on Player class, finish resource distribution by updating Player class to have a method to update the resource hand
-5. [0%] Ben: continue building GUI
-6. [0%] Chloe: devCards
+
+
+
+   
+# Week X (XX/XX/2026-04/2/2026) TEMPLATE (You can change the format to whatever the team likes better)
+**Planning and Progress Tracking**:
+1. [done] Person: Task (Links to PR)
+2. [not started] Person: Task (Links to PR)
+3. [80% done] Person: Task (Links to PR)
