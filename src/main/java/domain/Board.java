@@ -1,9 +1,6 @@
 package domain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Board {
     private static final int NUM_HEXES = 19;
@@ -93,7 +90,7 @@ public class Board {
     }
 
     public Map<Node, List<Hex>> getNodeToHexesMap() {
-        return this.nodeToHexes;
+        return Collections.unmodifiableMap(this.nodeToHexes);
     }
 
     public List<Hex> getHexesFromNode(Node node) {

@@ -1,10 +1,6 @@
 package domain;
 import org.easymock.EasyMock;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import java.util.Arrays;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PlacementValidatorTest {
@@ -22,8 +18,12 @@ public class PlacementValidatorTest {
         Node node1 = null;
 
         for (Node n : board.getNodeToHexesMap().keySet()) {
-            if (n.equals(new Node(0))) node0 = n;
-            if (n.equals(new Node(1))) node1 = n;
+            if (n.equals(new Node(0))) {
+                node0 = n;
+            }
+            if (n.equals(new Node(1))) {
+                node1 = n;
+            }
         }
 
         node1.buildSettlement(mockPlayer);
@@ -46,7 +46,9 @@ public class PlacementValidatorTest {
         Node node0 = null;
 
         for (Node n : board.getNodeToHexesMap().keySet()) {
-            if (n.equals(new Node(0))) node0 = n;
+            if (n.equals(new Node(0))) {
+                node0 = n;
+            }
         }
 
         final Node targetNode = node0;
@@ -69,6 +71,7 @@ public class PlacementValidatorTest {
             }
         }
 
+        assertNotNull(settlementNode);
         int validEdgeId = settlementNode.hashCode();
 
         final Node finalSettlementNode = settlementNode;

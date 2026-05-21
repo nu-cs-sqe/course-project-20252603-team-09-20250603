@@ -13,10 +13,8 @@ public class TurnManager {
 
         if (numPlayers == 3) {
             this.setupSequence = List.of(1, 2, 3, 3, 2, 1);
-        } else if (numPlayers == 4) {
+        } else{
             this.setupSequence = List.of(1, 2, 3, 4, 4, 3, 2, 1);
-        } else {
-            throw new IllegalArgumentException("Unsupported player count: " + numPlayers);
         }
     }
 
