@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    application
 }
 
 group = "nu.csse.sqe"
@@ -7,6 +8,10 @@ version = "1.0"
 
 repositories {
     mavenCentral()
+}
+
+application {
+    mainClass.set("domain.Main")
 }
 
 dependencies {
