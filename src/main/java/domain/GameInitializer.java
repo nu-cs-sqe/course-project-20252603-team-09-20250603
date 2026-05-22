@@ -13,6 +13,14 @@ public class GameInitializer {
             PlayerColor.WHITE
     };
 
+    public Game setupGame(List<String> playerNames){
+        List<Player> players = setupPlayers(playerNames);
+
+        Board board = new Board();
+
+        return new Game(board, players);
+    }
+
     public List<Player> setupPlayers(List<String> names){
         if (names == null){
             throw new IllegalArgumentException("No players entered");
@@ -38,6 +46,8 @@ public class GameInitializer {
 
             players.add(player);
         }
+
+        // TODO: perhaps randomize and assign order or just keep as is
 
         return players;
     }
