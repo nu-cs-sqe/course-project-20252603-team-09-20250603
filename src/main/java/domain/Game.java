@@ -7,6 +7,7 @@ public class Game {
     private final List<Player> players;
     private final Dice dice;
     private final TurnManager turnManager;
+    // TODO: add devCardDeck to constructor
 
     public Game(Board board, List<Player> players, Dice dice, TurnManager turnManager){
         this.board = board;
