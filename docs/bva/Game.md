@@ -14,7 +14,7 @@ Handles the progression of game
 `handleDistributeResources(int roll)`
     distributes resources to all players based on a roll
 `getPlayerAction(Player currentPlayer)`
-    action selection done with cmdline for now
+    action selection mocked for testing for now
 `handleBuild(Player currentPlayer)`
     handles building a road, settlement, or city
     validates placement
