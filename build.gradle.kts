@@ -1,6 +1,3 @@
-import com.github.spotbugs.snom.Confidence
-import com.github.spotbugs.snom.Effort
-
 plugins {
     id("java")
     checkstyle
@@ -19,6 +16,7 @@ repositories {
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.easymock:easymock:5.2.0")
 }
 
 java {
