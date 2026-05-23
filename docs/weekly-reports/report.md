@@ -58,3 +58,4 @@
 5. [20%] Alicia: continue working on Player class, finish resource distribution by updating Player class to have a method to update the resource hand
 6. [30%] Ben: continue building GUI
 7. [20%] Chloe: devCards
+8. [done] Crystal: setup Jacoco and Pitest for code coverage and mutation testing (https://github.com/nu-cs-sqe/course-project-20252603-team-09-20250603/pull/31)
