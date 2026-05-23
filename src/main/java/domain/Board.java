@@ -9,6 +9,7 @@ public class Board {
 
     private List<Hex> hexes;
     private List<Node> nodes;
+    private List<Edge> edges;
     private Map<Node, List<Hex>> nodeToHexes;
 
     public Board() {
@@ -128,6 +129,22 @@ public class Board {
         }
 
         return new ArrayList<>(nodeToHexes.get(node));
+    }
+
+    public Node getNode(int nodeId) {
+        if (nodeId < 0 || nodeId >= nodes.size()) {
+            throw new IllegalArgumentException("Invalid node ID.");
+        }
+
+        return nodes.get(nodeId);
+    }
+
+    public Edge getEdge(int edgeId) {
+        if (edgeId < 0 || edgeId >= edges.size()) {
+            throw new IllegalArgumentException("Invalid edge ID.");
+        }
+
+        return edges.get(edgeId);
     }
 
     public Map<ResourceType, Integer> getAdjacentResources(Node node) {
