@@ -7,14 +7,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EdgeTests {
     @Test
-    public void GetEdgeOccupant_UnoccupiedEdge_ReturnNull() {
+    public void getEdgeOccupant_UnoccupiedEdge_ReturnNull() {
         Edge e = new Edge(1);
 
         assertNull(e.getEdgeOccupant());
     }
 
     @Test
-    public void BuildRoad_GetEdgeOccupant_Successful() {
+    public void buildRoad_GetEdgeOccupant_Successful() {
         Edge e = new Edge(1);
         Player mockPlayer = EasyMock.createMock(Player.class);
 
@@ -23,7 +23,7 @@ public class EdgeTests {
     }
 
     @Test
-    public void BuildRoad_Unsuccessful_AlreadyOccupied() {
+    public void buildRoad_Unsuccessful_AlreadyOccupied() {
         Edge e = new Edge(1);
         Player mockPlayer1 = EasyMock.createMock(Player.class);
         Player mockPlayer2 = EasyMock.createMock(Player.class);
