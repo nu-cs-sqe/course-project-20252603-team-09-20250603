@@ -1,6 +1,5 @@
 package domain;
 
-import java.util.Objects;
 
 public class Node {
     private int id;
@@ -15,8 +14,12 @@ public class Node {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Node)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Node)){
+            return false;
+        }
 
         Node node = (Node) o;
         return id == node.id;
@@ -27,6 +30,9 @@ public class Node {
         return Integer.hashCode(id);
     }
 
+    public int getId() {
+        return id;
+    }
 
     public Player getNodeOccupant() {
         return occupant;
