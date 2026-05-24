@@ -56,4 +56,7 @@
 | Test 9  | Node Id 40, 3 hex adjacent | sheep: 3                      | :white_check_mark: |
 | Test 10 | Node Id 32, 3 hex adjacent | desert: 1, sheep: 1, brick: 1 | :white_check_mark: |
 
-
+### Method under test: `private void buildEdges`
+| Test    | System under test                                    | Expected output             | Implemented? |
+|---------|------------------------------------------------------|-----------------------------|--------------|
+| Test 1  | Initialize board and nodes, there should be 72 edges | Length of board.edges == 72 | :x:          |

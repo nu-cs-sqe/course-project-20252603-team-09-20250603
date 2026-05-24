@@ -232,7 +232,13 @@ public class BoardTests {
         assertEquals(1, resources.get(ResourceType.BRICK));
     }
 
+    // not a unit test, just a sanity check on edge generation
+    @Test
+    public void buildEdges_Creates72Edges() {
 
+        Board board = new Board();
+        List<Edge> edges = board.getEdges();
 
-
+        assertEquals(72, edges.size());
+    }
 }
