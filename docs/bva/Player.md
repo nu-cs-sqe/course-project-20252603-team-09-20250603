@@ -25,26 +25,26 @@ Tracks a single player's identity, infrastructure inventory, and victory points.
 ### Method under test: `getInventory()`
 
 |              | State of the System | Expected output | Implemented? |
-|--------------|---------------------|-----------------|--------------|
+|--------------|---------------------|-----------------|--|
 | Test Case 5  | New player is created | Inventory contains 15 roads, 5 settlements, and 4 cities | :white_check_mark: |
-| Test Case 6  | Player uses one road | Inventory returns 14 roads, 5 settlements, and 4 cities | :x: |
-| Test Case 7  | Player uses one settlement | Inventory returns 15 roads, 4 settlements, and 4 cities | :x: |
-| Test Case 8  | Player uses one city | Inventory returns 15 roads, 5 settlements, and 3 cities | :x: |
-| Test Case 9  | Player uses one road, one settlement, and one city | Inventory returns 14 roads, 4 settlements, and 3 cities | :x: |
-| Test Case 10 | Caller modifies the map returned by `getInventory()` | Player's actual inventory does not change | :x: |
+| Test Case 6  | Player uses one road | Inventory returns 14 roads, 5 settlements, and 4 cities | :white_check_mark: |
+| Test Case 7  | Player uses one settlement | Inventory returns 15 roads, 4 settlements, and 4 cities | :white_check_mark: |
+| Test Case 8  | Player uses one city | Inventory returns 15 roads, 5 settlements, and 3 cities | :white_check_mark: |
+| Test Case 9  | Player uses one road, one settlement, and one city | Inventory returns 14 roads, 4 settlements, and 3 cities | :white_check_mark: |
+| Test Case 10 | Caller modifies the map returned by `getInventory()` | Player's actual inventory does not change | :white_check_mark: |
 
 ---
 
 ### Method under test: `useInventoryItem(String item)`
 
 |              | State of the System | Expected output / behavior | Implemented? |
-|--------------|---------------------|-----------------------------|--------------|
-| Test Case 11 | Player has 15 roads and uses one road | Road inventory decreases from 15 to 14 | :x: |
-| Test Case 12 | Player has 5 settlements and uses one settlement | Settlement inventory decreases from 5 to 4 | :x: |
-| Test Case 13 | Player has 4 cities and uses one city | City inventory decreases from 4 to 3 | :x: |
-| Test Case 14 | Player has exactly 1 item remaining and uses that item | Item inventory decreases from 1 to 0 | :x: |
-| Test Case 15 | Player has 0 of an item remaining and tries to use it | Throws `IllegalStateException` and inventory stays at 0 | :x: |
-| Test Case 16 | Player tries to use an invalid inventory item, such as `"ships"` | Throws `IllegalStateException` and inventory does not change | :x: |
+|--------------|---------------------|-----------------------------|--|
+| Test Case 11 | Player has 15 roads and uses one road | Road inventory decreases from 15 to 14 | :white_check_mark: |
+| Test Case 12 | Player has 5 settlements and uses one settlement | Settlement inventory decreases from 5 to 4 | :white_check_mark: |
+| Test Case 13 | Player has 4 cities and uses one city | City inventory decreases from 4 to 3 | :white_check_mark: |
+| Test Case 14 | Player has exactly 1 item remaining and uses that item | Item inventory decreases from 1 to 0 | :white_check_mark: |
+| Test Case 15 | Player has 0 of an item remaining and tries to use it | Throws `IllegalStateException` and inventory stays at 0 | :white_check_mark: |
+| Test Case 16 | Player tries to use an invalid inventory item, such as `"ships"` | Throws `IllegalStateException` and inventory does not change | :white_check_mark: |
 
 ---
 
