@@ -1,9 +1,6 @@
 package domain;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class GameInitializer {
     private static final PlayerColor[] COLORS = {
@@ -15,10 +12,10 @@ public class GameInitializer {
 
     public Game setupGame(List<String> playerNames){
         List<Player> players = setupPlayers(playerNames);
-
         Board board = new Board();
-
-        return new Game(board, players);
+        Dice dice = new Dice(new Random());
+        TurnManager turnManager = new TurnManager(players.size());
+        return new Game(board, players, dice, turnManager);
     }
 
     public List<Player> setupPlayers(List<String> names){
