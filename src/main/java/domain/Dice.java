@@ -7,7 +7,7 @@ public class Dice {
     private int die2;
     private final Random random;
 
-    public Dice(Random random) {
+    Dice(Random random) {
         this.random = random;
     }
 
