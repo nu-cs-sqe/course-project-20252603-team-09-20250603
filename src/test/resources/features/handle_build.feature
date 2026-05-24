@@ -19,7 +19,9 @@ Feature: Game handleBuild
 
     Examples:
     |buildType  | locationType | locationId |
-    |settlement | node         | 1          |
+    | settlement | node         | 1         |
+    | settlement | node         | 10        |
+    #TODO: added road builds after edges added to board
 
   Scenario Outline: Player successfully upgrades their settlement to a city
     When player chooses to build a city
@@ -33,4 +35,6 @@ Feature: Game handleBuild
 
     Examples:
     |locationId |
-    |1          |
+    | 1          |
+    | 8          |
+    | 10         |
