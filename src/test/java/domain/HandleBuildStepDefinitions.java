@@ -17,7 +17,6 @@ public class HandleBuildStepDefinitions {
     private TurnManager turnManager;
 
     private BuildType selectedBuildtype;
-    private String selectedLocationType;
     private int selectedLocationId;
 
     private int startingInventoryAmount;
@@ -42,13 +41,12 @@ public class HandleBuildStepDefinitions {
 
     @When("chooses to build at location {word} {int}")
     public void chooses_to_build_at_a_location(String locationType, Integer locationId) {
-        selectedLocationType = locationType;
         selectedLocationId = locationId;
     }
 
     @When("the game validates that player has the resources needed to build {word}")
     public void the_game_validates_that_player_has_the_resources_needed_to_build(String buildTypeText) {
-        BuildType buildType = toBuildType(buildTypeText);
+        //BuildType buildType = toBuildType(buildTypeText);
 
         // TODO: Implement once resources are added to Player.
         // For now, this step documents the expected validation.
@@ -116,7 +114,7 @@ public class HandleBuildStepDefinitions {
 
     @Then("the player's resources should decrease by the cost of building {word}")
     public void the_player_s_resources_should_decrease_by_the_cost_of_building(String buildTypeText) {
-        BuildType buildType = toBuildType(buildTypeText);
+        //BuildType buildType = toBuildType(buildTypeText);
 
         // TODO: Implement once resources are added to Player.
         // Later, this should check that the correct resources were deducted.
@@ -129,7 +127,6 @@ public class HandleBuildStepDefinitions {
 
     @When("chooses to build at node {int}")
     public void chooses_to_build_at_node(Integer locationId) {
-        selectedLocationType = "node";
         selectedLocationId = locationId;
     }
 
