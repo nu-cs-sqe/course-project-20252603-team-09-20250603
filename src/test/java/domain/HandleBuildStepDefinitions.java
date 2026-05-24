@@ -3,9 +3,11 @@ package domain;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import ui.GameController;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,7 +18,7 @@ public class HandleBuildStepDefinitions {
     private Dice dice;
     private TurnManager turnManager;
 
-    private BuildType selectedBuildtype;
+    private int selectedOptionNumber;
     private int selectedLocationId;
 
     private int startingInventoryAmount;
@@ -34,12 +36,12 @@ public class HandleBuildStepDefinitions {
         game = new Game(board, List.of(currentPlayer), dice, turnManager);
     }
 
-    @When("player chooses to build {word}")
-    public void player_chooses_to_build_infrastructure(String buildType ) {
-        selectedBuildtype = toBuildType(buildType);
+    @When("player chooses build option {int}")
+    public void player_chooses_to_build_infrastructure(Integer optionNumber) {
+        selectedOptionNumber = optionNumber;
     }
 
-    @When("chooses to build at location {word} {int}")
+    @When("enters to build at {word} {int}")
     public void chooses_to_build_at_a_location(String locationType, Integer locationId) {
         selectedLocationId = locationId;
     }
@@ -80,7 +82,7 @@ public class HandleBuildStepDefinitions {
             assertNull(node.getNodeOccupant());
         }
 
-        game.build(currentPlayer, selectedBuildtype, selectedLocationId);
+        runControllerHandleBuild();
     }
 
     @Then("the {word} {int} should be occupied by the player's {word}")
@@ -120,16 +122,6 @@ public class HandleBuildStepDefinitions {
         // Later, this should check that the correct resources were deducted.
     }
 
-    @When("player chooses to build a city")
-    public void player_chooses_to_build_a_city() {
-        player_chooses_to_build_infrastructure("city");
-    }
-
-    @When("chooses to build at node {int}")
-    public void chooses_to_build_at_node(Integer locationId) {
-        selectedLocationId = locationId;
-    }
-
     @When("the game validates that node {int} is occupied by the player's settlement")
     public void the_game_validates_that_node_is_occupied_by_the_player_s_settlement(Integer locationId) {
         Node node = board.getNode(locationId);
@@ -139,7 +131,7 @@ public class HandleBuildStepDefinitions {
         assertEquals(currentPlayer, node.getNodeOccupant());
         assertEquals(InfraType.SETTLEMENT, node.getInfraType());
 
-        game.build(currentPlayer, selectedBuildtype, selectedLocationId);
+        runControllerHandleBuild();
     }
 
     @Then("node {int} should be occupied by the player's city")
@@ -152,6 +144,14 @@ public class HandleBuildStepDefinitions {
     @Then("the player's resources should decrease by the cost of building a city")
     public void the_player_s_resources_should_decrease_by_the_cost_of_building_a_city() {
         the_player_s_resources_should_decrease_by_the_cost_of_building("city");
+    }
+
+    private void runControllerHandleBuild() {
+        String input = selectedOptionNumber + "\n" + selectedLocationId + "\n";
+        Scanner scanner = new Scanner(input);
+
+        GameController controller = new GameController(game, scanner);
+        controller.handleBuild(currentPlayer);
     }
 
     private BuildType toBuildType(String buildTypeText) {
