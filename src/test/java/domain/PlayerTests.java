@@ -195,6 +195,30 @@ public class PlayerTests {
         assertEquals(expectedAfter, player.getResources());
     }
 
+    @Test
+    public void addResources_existingBrick_addDesert_returnsBrickOne() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> startingResources = new HashMap<>();
+        startingResources.put(ResourceType.BRICK, 1);
+
+        player.addResources(startingResources);
+
+        Map<ResourceType, Integer> expectedBefore = new HashMap<>();
+        expectedBefore.put(ResourceType.BRICK, 1);
+
+        assertEquals(expectedBefore, player.getResources());
+
+        Map<ResourceType, Integer> resourcesToAdd = new HashMap<>();
+        resourcesToAdd.put(ResourceType.DESERT, 1);
+
+        player.addResources(resourcesToAdd);
+
+        Map<ResourceType, Integer> expectedAfter = new HashMap<>();
+        expectedAfter.put(ResourceType.BRICK, 1);
+
+        assertEquals(expectedAfter, player.getResources());
+    }
 
 
 
