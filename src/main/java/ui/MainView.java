@@ -9,9 +9,18 @@ public class MainView extends BorderPane {
         setStyle("-fx-background-color: #f2efe6;");
         getStyleClass().add("main-view");
 
-        WelcomeController welcomeController = new WelcomeController();
-        WelcomeView welcomeView = new WelcomeView(welcomeController);
+        showWelcomeView();
+    }
 
+    public void showWelcomeView() {
+        WelcomeController welcomeController = new WelcomeController(this);
+        WelcomeView welcomeView = new WelcomeView(welcomeController);
         setCenter(welcomeView);
+    }
+
+    public void showSetupView() {
+        SetupController setupController = new SetupController(this);
+        SetupView setupView = new SetupView(setupController);
+        setCenter(setupView);
     }
 }
