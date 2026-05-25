@@ -9,6 +9,7 @@ plugins {
     id("com.github.spotbugs") version "6.0.25"
     jacoco
     id("info.solidsoft.pitest") version "1.15.0"
+    application
 }
 
 group = "nu.csse.sqe"
@@ -18,10 +19,22 @@ repositories {
     mavenCentral()
 }
 
+application {
+    mainClass.set("domain.Main")
+}
+
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.junit.platform:junit-platform-suite")
+
     testImplementation("org.easymock:easymock:5.2.0")
+
+    // cucumber
+    testImplementation(platform("io.cucumber:cucumber-bom:7.20.1"))
+    testImplementation("io.cucumber:cucumber-java")
+    testImplementation("io.cucumber:cucumber-junit-platform-engine")
+    testImplementation("io.cucumber:cucumber-picocontainer")
 }
 
 java {
@@ -41,10 +54,6 @@ javafx {
 
 tasks.compileJava {
     options.release = 11
-}
-
-tasks.test {
-    useJUnitPlatform()
 }
 
 tasks.withType<Checkstyle>().configureEach {
@@ -76,21 +85,53 @@ tasks.spotbugsMain {
     }
 }
 
-tasks.jacocoTestReport {
-    reports {
-        xml.required = false
-        csv.required = false
-        html.outputLocation = layout.buildDirectory.dir("reports/jacoco")
-    }
+tasks.test {
+    useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+    //finalizedBy(tasks.pitest)
 }
 
-tasks.test {
-    finalizedBy(tasks.jacocoTestReport)
-    finalizedBy(tasks.pitest)
+configurations {}
+
+val cucumberRuntime by configurations.creating {
+    extendsFrom(configurations["testImplementation"])
+}
+
+task("cucumber") {
+    dependsOn("assemble", "compileTestJava")
+    doLast {
+        javaexec {
+            mainClass.set("io.cucumber.core.cli.Main")
+            classpath = cucumberRuntime + sourceSets.main.get().output + sourceSets.test.get().output
+            args = listOf("--plugin", "pretty",
+                "--glue", "domain",  // where the step definitions are.
+                "src/test/resources")                    // where the feature files are.
+            // Configure jacoco agent for the test coverage.
+            val jacocoAgent = zipTree(configurations.jacocoAgent.get().singleFile)
+                .filter { it.name == "jacocoagent.jar" }
+                .singleFile
+            jvmArgs = listOf("-javaagent:$jacocoAgent=destfile=$buildDir/results/jacoco/cucumber.exec,append=false")
+        }
+    }
 }
 
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
+    dependsOn("cucumber")
+
+    executionData(
+        files(
+            "$buildDir/jacoco/test.exec",
+            "$buildDir/results/jacoco/cucumber.exec"
+        )
+    )
+
+    reports {
+        xml.required.set(true)
+        csv.required.set(false)
+        html.required.set(true)
+        html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco"))
+    }
 }
 
 tasks.build {

@@ -33,6 +33,17 @@ public class Player {
         return new HashMap<>(inventory);
     }
 
+    public void useInventoryItem(String item) {
+        int currentAmount = inventory.getOrDefault(item, 0);
+
+        if (currentAmount <= 0) {
+            throw new IllegalStateException("No " + item + " remaining.");
+        }
+
+        inventory.put(item, currentAmount - 1);
+    }
+
+
     public int getVictoryPoints(){
         return victoryPoints;
     }
