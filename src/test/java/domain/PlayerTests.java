@@ -113,6 +113,33 @@ public class PlayerTests {
         assertEquals(expected, player.getResources());
     }
 
+    @Test
+    public void addResources_existingOre_addSheepAndOre_returnsSheepOneAndOreTwo() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> startingResources = new HashMap<>();
+        startingResources.put(ResourceType.ORE, 1);
+
+        player.addResources(startingResources);
+
+        Map<ResourceType, Integer> expectedBefore = new HashMap<>();
+        expectedBefore.put(ResourceType.ORE, 1);
+
+        assertEquals(expectedBefore, player.getResources());
+
+        Map<ResourceType, Integer> resourcesToAdd = new HashMap<>();
+        resourcesToAdd.put(ResourceType.SHEEP, 1);
+        resourcesToAdd.put(ResourceType.ORE, 1);
+
+        player.addResources(resourcesToAdd);
+
+        Map<ResourceType, Integer> expectedAfter = new HashMap<>();
+        expectedAfter.put(ResourceType.SHEEP, 1);
+        expectedAfter.put(ResourceType.ORE, 2);
+
+        assertEquals(expectedAfter, player.getResources());
+    }
+
 
 
 
