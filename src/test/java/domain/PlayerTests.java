@@ -99,6 +99,20 @@ public class PlayerTests {
         assertEquals(expected, player.getResources());
     }
 
+    @Test
+    public void addResources_emptyHand_addDesert_returnsEmptyHand() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.DESERT, 1);
+
+        player.addResources(resources);
+
+        Map<ResourceType, Integer> expected = new HashMap<>();
+
+        assertEquals(expected, player.getResources());
+    }
+
 
 
 
