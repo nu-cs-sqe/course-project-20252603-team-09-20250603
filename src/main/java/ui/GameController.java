@@ -10,9 +10,9 @@ public class GameController {
     private final Game game;
     private final Scanner scanner;
 
-    public GameController(Game game, Scanner scanner) {
+    public GameController(Game game, Readable input) {
         this.game = game;
-        this.scanner = scanner;
+        this.scanner = new Scanner(input);
     }
 
     public void handleBuild(Player currentPlayer) {

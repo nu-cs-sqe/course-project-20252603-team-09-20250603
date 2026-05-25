@@ -1,19 +1,16 @@
 package domain;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
         GameInitializer initializer = new GameInitializer();
 
-        List<String> playerNames = Arrays.asList(args);
-
-        Game game = initializer.setupGame(playerNames);
+        Game game = initializer.setupGame(List.of(args));
 
         System.out.println("Game created successfully!");
 
-        //TODO: game.play()
+        System.out.println(game.start()); //printing start as true for now for checkstyle and spotbug errors
     }
 }
 
