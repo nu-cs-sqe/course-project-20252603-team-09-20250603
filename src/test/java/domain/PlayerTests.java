@@ -67,4 +67,21 @@ public class PlayerTests {
         assertEquals(expected, player.getResources());
     }
 
+    @Test
+    public void addResources_emptyHand_addNineteenBrick_returnsBrickNineteen() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.BRICK, 19);
+
+        player.addResources(resources);
+
+        Map<ResourceType, Integer> expected = new HashMap<>();
+        expected.put(ResourceType.BRICK, 19);
+
+        assertEquals(expected, player.getResources());
+    }
+
+
+
 }
