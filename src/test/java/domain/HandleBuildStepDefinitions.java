@@ -5,9 +5,10 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import ui.GameController;
 
+import java.io.StringReader;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,28 +18,34 @@ public class HandleBuildStepDefinitions {
     private Player currentPlayer;
     private Dice dice;
     private TurnManager turnManager;
+    private PlacementValidator placementValidator;
+    private Player otherPlayer;
+    private Exception thrownException;
 
     private int selectedOptionNumber;
     private int selectedLocationId;
-
     private int startingInventoryAmount;
+    private Map<String, Integer> startingInventory;
 
     @Given("a game with a current player")
     public void a_game_with_a_current_player() {
         currentPlayer = new Player(0, "Bob", PlayerColor.RED);
         dice = new Dice(new Random());
         turnManager = new TurnManager(3);
+        thrownException = null;
     }
 
     @Given("an initialized board")
     public void an_initialized_board() {
         board = new Board();
+        placementValidator = new PlacementValidator(board);
         game = new Game(board, List.of(currentPlayer), dice, turnManager);
     }
 
     @When("player chooses build option {int}")
     public void player_chooses_to_build_infrastructure(Integer optionNumber) {
         selectedOptionNumber = optionNumber;
+        startingInventory = currentPlayer.getInventory();
     }
 
     @When("enters to build at {word} {int}")
@@ -79,10 +86,27 @@ public class HandleBuildStepDefinitions {
         }else if(buildType == BuildType.SETTLEMENT) {
             Node node = board.getNode(locationId);
             assertNotNull(node);
+
+            assertDoesNotThrow(() -> placementValidator.validateSettlementPlacement(node));
+
             assertNull(node.getNodeOccupant());
         }
 
-        runControllerHandleBuild();
+        tryRunControllerHandleBuild();
+    }
+
+    @When("the game validates that node {int} is occupied by another player's settlement")
+    public void the_game_validates_that_node_is_occupied_by_another_players_settlement(Integer locationId) {
+        otherPlayer = new Player(1, "Other Player", PlayerColor.BLUE);
+
+        Node node = board.getNode(locationId);
+        node.buildSettlement(otherPlayer);
+
+        assertEquals(otherPlayer, node.getNodeOccupant());
+        assertEquals(InfraType.SETTLEMENT, node.getInfraType());
+
+        startingInventoryAmount = getCurrentInventoryAmount();
+        tryRunControllerHandleBuild();
     }
 
     @Then("the {word} {int} should be occupied by the player's {word}")
@@ -141,17 +165,163 @@ public class HandleBuildStepDefinitions {
         assertEquals(InfraType.CITY, node.getInfraType());
     }
 
-    @Then("the player's resources should decrease by the cost of building a city")
-    public void the_player_s_resources_should_decrease_by_the_cost_of_building_a_city() {
-        the_player_s_resources_should_decrease_by_the_cost_of_building("city");
+    @When("the game validates that player does not have any {word} in their inventory")
+    public void the_game_validates_that_player_does_not_have_any_in_their_inventory(String buildTypeText) {
+        BuildType buildType = toBuildType(buildTypeText);
+        String inventoryKey = getInventoryKey(buildType);
+
+        while (currentPlayer.getInventory().get(inventoryKey) > 0) {
+            currentPlayer.useInventoryItem(inventoryKey);
+        }
+
+        assertEquals(0, currentPlayer.getInventory().get(inventoryKey));
+        startingInventory = currentPlayer.getInventory();
+    }
+
+    @When("the game validates that {word} {int} is occupied by another player")
+    public void the_game_validates_that_location_is_occupied_by_another_player(
+            String locationType,
+            Integer locationId
+    ) {
+        otherPlayer = new Player(1, "Other Player", PlayerColor.BLUE);
+
+        if (locationType.equals("edge")) {
+            Edge edge = board.getEdge(locationId);
+            edge.buildRoad(otherPlayer);
+            assertEquals(otherPlayer, edge.getEdgeOccupant());
+        } else if (locationType.equals("node")) {
+            Node node = board.getNode(locationId);
+            node.buildSettlement(otherPlayer);
+            assertEquals(otherPlayer, node.getNodeOccupant());
+            assertEquals(InfraType.SETTLEMENT, node.getInfraType());
+        }
+
+        startingInventoryAmount = getCurrentInventoryAmount();
+        tryRunControllerHandleBuild();
+    }
+
+    @When("node {int} is occupied by another player")
+    public void node_is_occupied_by_another_player(Integer locationId) {
+        otherPlayer = new Player(1, "Other Player", PlayerColor.BLUE);
+
+        Node node = board.getNode(locationId);
+        node.buildSettlement(otherPlayer);
+
+        assertEquals(otherPlayer, node.getNodeOccupant());
+        assertEquals(InfraType.SETTLEMENT, node.getInfraType());
+
+        startingInventoryAmount = getCurrentInventoryAmount();
+        tryRunControllerHandleBuild();
+    }
+
+    @When("the game validates that node {int} is not occupied by any player's settlement")
+    public void the_game_validates_that_node_is_not_occupied_by_any_players_settlement(Integer locationId) {
+        Node node = board.getNode(locationId);
+
+        assertNull(node.getNodeOccupant());
+        assertNull(node.getInfraType());
+
+        startingInventoryAmount = getCurrentInventoryAmount();
+        tryRunControllerHandleBuild();
+    }
+
+    @When("the game validates that node {int} is occupied by the player's city")
+    public void the_game_validates_that_node_is_occupied_by_the_players_city(Integer locationId) {
+        Node node = board.getNode(locationId);
+
+        node.buildSettlement(currentPlayer);
+        node.buildCity(currentPlayer);
+
+        assertEquals(currentPlayer, node.getNodeOccupant());
+        assertEquals(InfraType.CITY, node.getInfraType());
+
+        startingInventoryAmount = getCurrentInventoryAmount();
+        tryRunControllerHandleBuild();
+    }
+
+    @Then("the game should prevent the player from building")
+    public void the_game_should_prevent_the_player_from_building() {
+        if (thrownException == null) {
+            tryRunControllerHandleBuild();
+        }
+
+        assertNotNull(thrownException);
+    }
+
+    @Then("{word} {int} should not be occupied by the player's {word}")
+    public void the_location_should_not_be_occupied_by_the_players_build_type(
+            String locationType,
+            Integer locationId,
+            String buildTypeText
+    ) {
+        BuildType buildType = toBuildType(buildTypeText);
+
+        if (buildType == BuildType.ROAD) {
+            Edge edge = board.getEdge(locationId);
+            assertNotEquals(currentPlayer, edge.getEdgeOccupant());
+        } else {
+            Node node = board.getNode(locationId);
+            assertNotEquals(currentPlayer, node.getNodeOccupant());
+        }
+    }
+
+    @Then("{word} {int} should remain occupied by the other player")
+    public void location_should_remain_occupied_by_the_other_player(String locationType, Integer locationId) {
+        if (locationType.equals("edge")) {
+            Edge edge = board.getEdge(locationId);
+            assertEquals(otherPlayer, edge.getEdgeOccupant());
+        } else if (locationType.equals("node")) {
+            Node node = board.getNode(locationId);
+            assertEquals(otherPlayer, node.getNodeOccupant());
+        }
+    }
+
+    @Then("node {int} should remain unoccupied")
+    public void node_should_remain_unoccupied(Integer locationId) {
+        Node node = board.getNode(locationId);
+
+        assertNull(node.getNodeOccupant());
+        assertNull(node.getInfraType());
+    }
+
+    @Then("node {int} should remain occupied by the player's city")
+    public void node_should_remain_occupied_by_the_players_city(Integer locationId) {
+        Node node = board.getNode(locationId);
+
+        assertEquals(currentPlayer, node.getNodeOccupant());
+        assertEquals(InfraType.CITY, node.getInfraType());
+    }
+
+    @Then("the player's inventory should remain unchanged")
+    public void the_players_inventory_should_remain_unchanged() {
+        assertEquals(startingInventory, currentPlayer.getInventory());
+    }
+
+    @Then("the player's resources should remain unchanged")
+    public void the_players_resources_should_remain_unchanged() {
+        // TODO: Implement once resources are added to Player.
     }
 
     private void runControllerHandleBuild() {
         String input = selectedOptionNumber + "\n" + selectedLocationId + "\n";
-        Scanner scanner = new Scanner(input);
 
-        GameController controller = new GameController(game, scanner);
+        GameController controller = new GameController(game, new StringReader(input));
         controller.handleBuild(currentPlayer);
+    }
+
+    private void tryRunControllerHandleBuild() {
+        try {
+            runControllerHandleBuild();
+        } catch (Exception e) {
+            thrownException = e;
+        }
+    }
+
+    private int getCurrentInventoryAmount() {
+        BuildType buildType = toBuildType(selectedOptionNumber);
+        String inventoryKey = getInventoryKey(buildType);
+
+        return currentPlayer.getInventory().get(inventoryKey);
     }
 
     private BuildType toBuildType(String buildTypeText) {
@@ -164,6 +334,19 @@ public class HandleBuildStepDefinitions {
         }
 
         throw new IllegalArgumentException("Invalid build type: " + buildTypeText);
+    }
+
+    private BuildType toBuildType(int optionNumber) {
+        switch (optionNumber) {
+            case 1:
+                return BuildType.ROAD;
+            case 2:
+                return BuildType.SETTLEMENT;
+            case 3:
+                return BuildType.CITY;
+            default:
+                throw new IllegalArgumentException("Invalid build option.");
+        }
     }
 
     private String getInventoryKey(BuildType buildType) {
