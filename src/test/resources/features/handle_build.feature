@@ -46,8 +46,8 @@ Feature: Game handleBuild
     And the game validates that player has the resources needed to build <buildType>
     And the game validates that player does not have any <buildType> in their inventory
     And the game validates that <locationType> <locationId> is available for building <buildType>
-    Then the game should prevent the player from building <buildType>
-    And the <locationType> <locationId> should not be occupied by the player's <buildType>
+    Then the game should prevent the player from building
+    And <locationType> <locationId> should not be occupied by the player's <buildType>
     And the player's inventory should remain unchanged
     And the player's resources should remain unchanged
 
@@ -66,7 +66,7 @@ Feature: Game handleBuild
     And the game validates that player has the resources needed to build <buildType>
     And the game validates that player has at least one <buildType> in their inventory
     And the game validates that <locationType> <locationId> is occupied by another player
-    Then the game should prevent the player from building <buildType>
+    Then the game should prevent the player from building
     And <locationType> <locationId> should remain occupied by the other player
     And the player's inventory should remain unchanged
     And the player's resources should remain unchanged
@@ -84,7 +84,7 @@ Feature: Game handleBuild
     And the game validates that player has the resources needed to build settlement
     And the game validates that player has at least one settlement in their inventory
     And node <neighborId> is occupied by another player
-    Then the game should prevent the player from building settlement
+    Then the game should prevent the player from building
     And node <locationId> should not be occupied by the player's settlement
     And node <neighborId> should remain occupied by the other player
     And the player's inventory should remain unchanged
@@ -102,7 +102,7 @@ Feature: Game handleBuild
     And the game validates that player has the resources needed to build city
     And the game validates that player has at least one city in their inventory
     And the game validates that node <locationId> is not occupied by any player's settlement
-    Then the game should prevent the player from building city
+    Then the game should prevent the player from building
     And node <locationId> should remain unoccupied
     And the player's inventory should remain unchanged
     And the player's resources should remain unchanged
@@ -119,7 +119,7 @@ Feature: Game handleBuild
     And the game validates that player has the resources needed to build city
     And the game validates that player has at least one city in their inventory
     And the game validates that node <locationId> is occupied by another player's settlement
-    Then the game should prevent the player from building city
+    Then the game should prevent the player from building
     And node <locationId> should remain occupied by the other player
     And the player's inventory should remain unchanged
     And the player's resources should remain unchanged
@@ -136,7 +136,7 @@ Feature: Game handleBuild
     And the game validates that player has the resources needed to build city
     And the game validates that player has at least one city in their inventory
     And the game validates that node <locationId> is occupied by the player's city
-    Then the game should prevent the player from building city
+    Then the game should prevent the player from building
     And node <locationId> should remain occupied by the player's city
     And the player's inventory should remain unchanged
     And the player's resources should remain unchanged
