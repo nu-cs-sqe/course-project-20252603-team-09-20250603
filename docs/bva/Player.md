@@ -45,7 +45,7 @@ Tracks a single player's identity and resources.
 
 | Test   | System under test                             | Expected output           | Implemented?       |
 |--------|-----------------------------------------------|---------------------------|--------------------|
-| Test 1 | Start with empty hand, add 1 wood             | Wood: 1                   | :x:                |
+| Test 1 | Start with empty hand, add 1 wood             | Wood: 1                   | :white_check_mark: |
 | Test 2 | Start with empty hand, add 19 brick           | Brick: 19                 | :x:                |
 | Test 3 | Start with empty hand, add 1 sheep 1 wheat    | Sheep: 1, Wheat: 1        | :x:                |
 | Test 4 | Start with empty hand, add desert             | empty collection          | :x:                |

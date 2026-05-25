@@ -2,6 +2,9 @@ package domain;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PlayerTests {
@@ -47,6 +50,21 @@ public class PlayerTests {
         Player player = new Player(0, "Bob", PlayerColor.RED);
 
         assertEquals(0, player.getVictoryPoints());
+    }
+
+    @Test
+    public void addResources_emptyHand_addOneWood_returnsWoodOne() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WOOD, 1);
+
+        player.addResources(resources);
+
+        Map<ResourceType, Integer> expected = new HashMap<>();
+        expected.put(ResourceType.WOOD, 1);
+
+        assertEquals(expected, player.getResources());
     }
 
 }
