@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PlayerTests {
     @Test
@@ -218,6 +219,27 @@ public class PlayerTests {
         expectedAfter.put(ResourceType.BRICK, 1);
 
         assertEquals(expectedAfter, player.getResources());
+    }
+    @Test
+    public void addResources_existingBrick_addNull_throwsIllegalArgumentException() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> startingResources = new HashMap<>();
+        startingResources.put(ResourceType.BRICK, 1);
+
+        player.addResources(startingResources);
+
+        Map<ResourceType, Integer> expectedBefore = new HashMap<>();
+        expectedBefore.put(ResourceType.BRICK, 1);
+
+        assertEquals(expectedBefore, player.getResources());
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> player.addResources(null)
+        );
+
+        assertEquals("resources cannot be null", exception.getMessage());
     }
 
 

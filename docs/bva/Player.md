@@ -53,5 +53,5 @@ Tracks a single player's identity and resources.
 | Test 6 | Start with 2 brick, add desert                | Brick: 2                  | :white_check_mark: |
 | Test 7 | Start with 2 wood, add 2 wood, 1 ore, 2 brick | Wood: 4, ore: 1, brick: 2 | :white_check_mark: |
 | Test 8 | Start with  brick, add desert                 | Brick: 1                  | :white_check_mark: |
-| Test 9 | Start with  brick, add null                   | IllegalArgumentException  | :x:                |
+| Test 9 | Start with  brick, add null                   | IllegalArgumentException  | :white_check_mark: |
 
