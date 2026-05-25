@@ -166,6 +166,35 @@ public class PlayerTests {
     }
 
 
+    @Test
+    public void addResources_existingWood_addWoodOreAndBrick_returnsWoodFourOreOneAndBrickTwo() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> startingResources = new HashMap<>();
+        startingResources.put(ResourceType.WOOD, 2);
+
+        player.addResources(startingResources);
+
+        Map<ResourceType, Integer> expectedBefore = new HashMap<>();
+        expectedBefore.put(ResourceType.WOOD, 2);
+
+        assertEquals(expectedBefore, player.getResources());
+
+        Map<ResourceType, Integer> resourcesToAdd = new HashMap<>();
+        resourcesToAdd.put(ResourceType.WOOD, 2);
+        resourcesToAdd.put(ResourceType.ORE, 1);
+        resourcesToAdd.put(ResourceType.BRICK, 2);
+
+        player.addResources(resourcesToAdd);
+
+        Map<ResourceType, Integer> expectedAfter = new HashMap<>();
+        expectedAfter.put(ResourceType.WOOD, 4);
+        expectedAfter.put(ResourceType.ORE, 1);
+        expectedAfter.put(ResourceType.BRICK, 2);
+
+        assertEquals(expectedAfter, player.getResources());
+    }
+
 
 
 
