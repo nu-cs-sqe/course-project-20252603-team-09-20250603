@@ -54,8 +54,17 @@
 1. No weekly meeting - continue working on week 7 tasks
 2. [80%] All: finish merging pre-week 7 branches
 3. [80%] All: pull linters branch and fix any problems
-4. [20%] Aria and Crystal: create Main class to call GameInitializer and Game, create Game class to execute initial placement rules
-5. [20%] Alicia: continue working on Player class, finish resource distribution by updating Player class to have a method to update the resource hand
-6. [30%] Ben: continue building GUI
-7. [20%] Chloe: devCards
+4. [100%] Aria and Crystal: create Main class to call GameInitializer and Game, create Game class to execute initial placement rules
+5. [60%] Alicia: continue working on Player class, finish resource distribution by updating Player class to have a method to update the resource hand
+6. [90%] Ben: continue building GUI
+7. [50%] Chloe: devCards
 8. [done] Crystal: setup Jacoco and Pitest for code coverage and mutation testing (https://github.com/nu-cs-sqe/course-project-20252603-team-09-20250603/pull/31)
+
+# Week 9 (05/26/2026-06/01/2026)
+1. [Done] All: weekly meeting:
+   - Distributed/refreshed tasks for week 9 
+3. [20%] Aria: create internationalization files
+4. [30%] Crystal: updatePlayerPoints, moveRobber
+5. [20%] Alicia: finish Player class, handleDistributeResources
+6. [40%] Ben: continue building GUI, getPlayerAction, handleInitialPlacement
+7. [20%] Chloe: handleBuyDevCard, handleUseDevCard in game class
