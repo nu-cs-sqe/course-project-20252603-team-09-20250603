@@ -23,10 +23,7 @@ public class SetupController {
     public void handleStartSetup(List<String> names) {
         try {
             List<Player> players = gameInitializer.setupPlayers(getEnteredPlayerNames(names));
-            view.setStatusMessage(buildSetupSuccessMessage(players));
-
-            // This is where we will transition to the board once MainView has that screen.
-            // mainView.setToGameView();
+            mainView.showBoardView(players);
         } catch (IllegalArgumentException e) {
             view.setStatusMessage("Error: " + e.getMessage());
         }
@@ -48,16 +45,4 @@ public class SetupController {
         return enteredNames;
     }
 
-    private String buildSetupSuccessMessage(List<Player> players) {
-        StringBuilder successMsg = new StringBuilder("Success!\n");
-
-        for (Player player : players) {
-            successMsg.append(player.getName())
-                    .append(" - ")
-                    .append(player.getColor())
-                    .append("\n");
-        }
-
-        return successMsg.toString();
-    }
 }

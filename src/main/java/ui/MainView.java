@@ -1,6 +1,10 @@
 package ui;
 
+import domain.Player;
+
 import javafx.scene.layout.BorderPane;
+
+import java.util.List;
 
 public class MainView extends BorderPane {
     public MainView() {
@@ -22,5 +26,11 @@ public class MainView extends BorderPane {
         SetupController setupController = new SetupController(this);
         SetupView setupView = new SetupView(setupController);
         setCenter(setupView);
+    }
+
+    public void showBoardView(List<Player> players) {
+        BoardController boardController = new BoardController(players);
+        BoardView boardView = new BoardView(boardController);
+        setCenter(boardView);
     }
 }
