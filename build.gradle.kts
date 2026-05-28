@@ -33,6 +33,7 @@ dependencies {
     testImplementation("io.cucumber:cucumber-java")
     testImplementation("io.cucumber:cucumber-junit-platform-engine")
     testImplementation("io.cucumber:cucumber-picocontainer")
+    compileOnly("com.github.spotbugs:spotbugs-annotations:4.8.6")
 }
 
 java {

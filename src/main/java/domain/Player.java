@@ -8,6 +8,7 @@ public class Player {
     private final String name;
     private final PlayerColor color;
     private final Map<String, Integer> inventory;
+    private final Map<ResourceType, Integer> resourceHand;
     private int victoryPoints;
 
     public Player(int id, String name, PlayerColor color){
@@ -19,6 +20,7 @@ public class Player {
         this.inventory.put("settlements", 5);
         this.inventory.put("cities", 4);
         this.victoryPoints = 0;
+        this.resourceHand = new HashMap<>();
     }
 
     public String getName(){
@@ -47,4 +49,27 @@ public class Player {
     public int getVictoryPoints(){
         return victoryPoints;
     }
+
+    public void addResources(Map<ResourceType, Integer> resources) {
+        if (resources == null) {
+            throw new IllegalArgumentException("resources cannot be null");
+        }
+        for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
+            ResourceType resource = entry.getKey();
+            int amount = entry.getValue();
+
+            if (resource != ResourceType.DESERT) {
+            resourceHand.put(
+                    resource,
+                    resourceHand.getOrDefault(resource, 0) + amount
+            );
+            }
+        }
+    }
+
+    public Map<ResourceType, Integer> getResources() {
+        return new HashMap<>(resourceHand);
+    }
+
+
 }
