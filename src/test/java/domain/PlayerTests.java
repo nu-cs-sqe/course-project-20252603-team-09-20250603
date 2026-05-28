@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PlayerTests {
     @Test
@@ -370,6 +369,97 @@ public class PlayerTests {
 
         assertEquals("resources cannot be null", exception.getMessage());
     }
+
+    @Test
+    public void hasResources_playerHasExactRequired_returnTrue() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        Map<ResourceType, Integer> cost = new HashMap<>();
+        cost.put(ResourceType.WOOD, 1);
+        cost.put(ResourceType.BRICK, 1);
+
+        player.addResources(cost);
+
+        assertTrue(player.hasResources(cost));
+    }
+
+    @Test
+    public void hasResources_playerHasMoreThanRequired_returnTrue() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resourcesToAdd = new HashMap<>();
+        resourcesToAdd.put(ResourceType.WOOD, 2);
+        resourcesToAdd.put(ResourceType.BRICK, 3);
+        resourcesToAdd.put(ResourceType.ORE, 2);
+        resourcesToAdd.put(ResourceType.SHEEP, 2);
+
+        Map<ResourceType, Integer> cost = new HashMap<>();
+        cost.put(ResourceType.WOOD, 1);
+        cost.put(ResourceType.BRICK, 1);
+
+        player.addResources(resourcesToAdd);
+
+        assertTrue(player.hasResources(cost));
+    }
+
+    @Test
+    public void hasResources_playerHasMissingFromRequired_returnFalse() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resourcesToAdd = new HashMap<>();
+        resourcesToAdd.put(ResourceType.WOOD, 1);
+
+        Map<ResourceType, Integer> cost = new HashMap<>();
+        cost.put(ResourceType.WOOD, 2);
+        cost.put(ResourceType.BRICK, 1);
+
+        player.addResources(resourcesToAdd);
+
+        assertFalse(player.hasResources(cost));
+    }
+
+    @Test
+    public void hasResources_playerHasLessThanRequired_returnFalse() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resourcesToAdd = new HashMap<>();
+        resourcesToAdd.put(ResourceType.WOOD, 1);
+        resourcesToAdd.put(ResourceType.BRICK, 1);
+
+        Map<ResourceType, Integer> cost = new HashMap<>();
+        cost.put(ResourceType.WOOD, 2);
+        cost.put(ResourceType.BRICK, 1);
+
+        player.addResources(resourcesToAdd);
+
+        assertFalse(player.hasResources(cost));
+    }
+
+    @Test
+    public void hasResources_costIsEmpty_returnTrue() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resourcesToAdd = new HashMap<>();
+        resourcesToAdd.put(ResourceType.WOOD, 1);
+        resourcesToAdd.put(ResourceType.BRICK, 1);
+
+        Map<ResourceType, Integer> cost = new HashMap<>();
+
+        player.addResources(resourcesToAdd);
+
+        assertTrue(player.hasResources(cost));
+    }
+
+    @Test
+    public void hasResources_costIsNUll_returnTrue() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            player.hasResources(null);
+        });
+    }
+
+
 
 
 
