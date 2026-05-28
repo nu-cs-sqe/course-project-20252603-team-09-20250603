@@ -6,6 +6,7 @@ import io.cucumber.java.en.When;
 import ui.GameController;
 
 import java.io.StringReader;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -26,6 +27,7 @@ public class HandleBuildStepDefinitions {
     private int selectedLocationId;
     private int startingInventoryAmount;
     private Map<String, Integer> startingInventory;
+    private Map<ResourceType, Integer> startingResources;
 
     @Given("a game with a current player")
     public void a_game_with_a_current_player() {
@@ -55,14 +57,14 @@ public class HandleBuildStepDefinitions {
 
     @When("the game validates that player has the resources needed to build {word}")
     public void the_game_validates_that_player_has_the_resources_needed_to_build(String buildTypeText) {
-        //BuildType buildType = toBuildType(buildTypeText);
+        BuildType buildType = toBuildType(buildTypeText);
+        Map<ResourceType, Integer> cost = getBuildCost(buildType);
 
-        // TODO: Implement once resources are added to Player.
-        // For now, this step documents the expected validation.
-        // Later, this should give/check the player has:
-        // ROAD: 1 brick, 1 wood
-        // SETTLEMENT: 1 brick, 1 wood, 1 sheep, 1 wheat
-        // CITY: 2 wheat, 3 ore
+        currentPlayer.addResources(cost);
+        startingResources = currentPlayer.getResources();
+
+        assertTrue(currentPlayer.hasResources(cost));
+
     }
 
     @When("the game validates that player has at least one {word} in their inventory")
@@ -140,10 +142,19 @@ public class HandleBuildStepDefinitions {
 
     @Then("the player's resources should decrease by the cost of building {word}")
     public void the_player_s_resources_should_decrease_by_the_cost_of_building(String buildTypeText) {
-        //BuildType buildType = toBuildType(buildTypeText);
+        BuildType buildType = toBuildType(buildTypeText);
+        Map<ResourceType, Integer> cost = getBuildCost(buildType);
+        Map<ResourceType, Integer> actualResources = currentPlayer.getResources();
 
-        // TODO: Implement once resources are added to Player.
-        // Later, this should check that the correct resources were deducted.
+        for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
+            ResourceType resource = entry.getKey();
+            int costAmount = entry.getValue();
+
+            int expectedAmount = startingResources.getOrDefault(resource, 0) - costAmount;
+            int actualAmount = actualResources.getOrDefault(resource, 0);
+
+            assertEquals(expectedAmount, actualAmount);
+        }
     }
 
     @When("the game validates that node {int} is occupied by the player's settlement")
@@ -299,7 +310,7 @@ public class HandleBuildStepDefinitions {
 
     @Then("the player's resources should remain unchanged")
     public void the_players_resources_should_remain_unchanged() {
-        // TODO: Implement once resources are added to Player.
+        assertEquals(startingResources, currentPlayer.getResources());
     }
 
     private void runControllerHandleBuild() {
@@ -360,6 +371,31 @@ public class HandleBuildStepDefinitions {
             default:
                 throw new IllegalArgumentException("Invalid build type.");
         }
+    }
+
+    private Map<ResourceType, Integer> getBuildCost(BuildType buildType) {
+        Map<ResourceType, Integer> cost = new HashMap<>();
+
+        switch (buildType) {
+            case ROAD:
+                cost.put(ResourceType.BRICK, 1);
+                cost.put(ResourceType.WOOD, 1);
+                break;
+            case SETTLEMENT:
+                cost.put(ResourceType.BRICK, 1);
+                cost.put(ResourceType.WOOD, 1);
+                cost.put(ResourceType.SHEEP, 1);
+                cost.put(ResourceType.WHEAT, 1);
+                break;
+            case CITY:
+                cost.put(ResourceType.WHEAT, 2);
+                cost.put(ResourceType.ORE, 3);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid build type.");
+        }
+
+        return cost;
     }
 
 }
