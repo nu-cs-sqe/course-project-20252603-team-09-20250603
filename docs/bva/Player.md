@@ -54,7 +54,7 @@ Tracks a single player's identity, infrastructure inventory, and victory points.
 |-------------|----------------------------------------|-----------------|--------------------|
 | Test Case 6 | New player is created                  | Return 0        | :white_check_mark: |
 
-
+---
 ## Method under test: `public void addResources(Map<ResourceType, Integer>)`
 
 |          | Step 1                              | Step 2     | Step 3                                                                                                                                                                                                                      |
@@ -81,7 +81,24 @@ Tracks a single player's identity, infrastructure inventory, and victory points.
 | Test 8 | Start with  brick, add desert                 | Brick: 1                  | :white_check_mark: |
 | Test 9 | Start with  brick, add null                   | IllegalArgumentException  | :white_check_mark: |
 
+### Method under test: `hasResources(Map<ResourceType, Integer> cost)`
 
-|              | State of the System | Expected output | Implemented? |
-|--------------|---------------------|-----------------|--------------|
-| Test Case 17 | New player is created | Returns 0 | :white_check_mark: |
+|              | State of the System                                      | Expected output / behavior                                      | Implemented? |
+|--------------|----------------------------------------------------------|------------------------------------------------------------------|--------------|
+| Test Case 26 | Player has exactly the required resources                | Returns `true`                                                   | :x: |
+| Test Case 27 | Player has more than the required resources              | Returns `true`                                                   | :x: |
+| Test Case 28 | Player is missing one required resource                  | Returns `false`                                                  | :x: |
+| Test Case 29 | Player has the resource, but not enough of it            | Returns `false`                                                  | :x: |
+| Test Case 30 | Cost map is empty                                        | Returns `true`                                                   | :x: |
+| Test Case 31 | Cost map is null                                         | Throws `IllegalArgumentException`                                | :x: |
+
+### Method under test: `useResources(Map<ResourceType, Integer> cost)`
+
+|              | State of the System                                      | Expected output / behavior                                      | Implemented? |
+|--------------|----------------------------------------------------------|------------------------------------------------------------------|--------------|
+| Test Case 32 | Player has exactly the required resources and uses them  | Required resources decrease to 0                                 | :x: |
+| Test Case 33 | Player has more than the required resources and uses them | Resources decrease by the cost amount                           | :x: |
+| Test Case 34 | Player is missing one required resource                  | Throws `IllegalStateException` and resources remain unchanged    | :x: |
+| Test Case 35 | Player has the resource, but not enough of it            | Throws `IllegalStateException` and resources remain unchanged    | :x: |
+| Test Case 36 | Cost map is empty                                        | Resources remain unchanged                                       | :x: |
+| Test Case 37 | Cost map is null                                         | Throws `IllegalArgumentException`                                | :x: |
