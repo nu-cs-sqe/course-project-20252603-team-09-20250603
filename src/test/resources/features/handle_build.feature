@@ -58,7 +58,37 @@ Feature: Game handleBuild
     |2            | settlement | node         | 1          |
     |2            | settlement | node         | 10         |
 
-  #Scenario Outline: Player cannot build without enough resources through the controller
+  Scenario Outline: Player cannot build without enough resources through the controller
+    When player chooses build option <optionNumber>
+    And enters to build at <locationType> <locationId>
+    And the game validates that player does not have the resources needed to build <buildType>
+    And the game validates that player has at least one <buildType> in their inventory
+    And the game validates that <locationType> <locationId> is available for building <buildType>
+    Then the game should prevent the player from building
+    And <locationType> <locationId> should not be occupied by the player's <buildType>
+    And the player's inventory should remain unchanged
+    And the player's resources should remain unchanged
+
+    Examples:
+      | optionNumber | buildType  | locationType | locationId |
+      | 1            | road       | edge         | 1          |
+      | 2            | settlement | node         | 1          |
+
+  Scenario Outline: Player cannot upgrade settlement to city without enough resources through the controller
+    When player chooses build option 3
+    And enters to build at node <locationId>
+    And the game validates that player does not have the resources needed to build city
+    And the game validates that player has at least one city in their inventory
+    And the game validates that node <locationId> is occupied by the player's settlement
+    Then the game should prevent the player from building
+    And node <locationId> should remain occupied by the player's settlement
+    And the player's inventory should remain unchanged
+    And the player's resources should remain unchanged
+
+    Examples:
+      | locationId |
+      | 1          |
+      | 8          |
 
   Scenario Outline: Player cannot build a settlement or road on an occupied node or edge through the controller
     When player chooses build option <optionNumber>
