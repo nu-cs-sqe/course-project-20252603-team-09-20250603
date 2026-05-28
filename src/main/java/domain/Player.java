@@ -54,6 +54,7 @@ public class Player {
         if (resources == null) {
             throw new IllegalArgumentException("resources cannot be null");
         }
+
         for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
             ResourceType resource = entry.getKey();
             int amount = entry.getValue();
@@ -62,13 +63,43 @@ public class Player {
             resourceHand.put(
                     resource,
                     resourceHand.getOrDefault(resource, 0) + amount
-            );
+                );
             }
         }
     }
 
     public Map<ResourceType, Integer> getResources() {
         return new HashMap<>(resourceHand);
+    }
+
+    public void useResources(Map<ResourceType, Integer> cost) {
+        if (!hasResources(cost)) {
+            throw new IllegalStateException("Player does not have enough resources.");
+        }
+
+        for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
+            ResourceType resource = entry.getKey();
+            int amount = entry.getValue();
+
+            resourceHand.put(resource, resourceHand.getOrDefault(resource, 0) - amount);
+        }
+    }
+
+    public boolean hasResources(Map<ResourceType, Integer> cost) {
+        if (cost == null) {
+            throw new IllegalArgumentException("cost cannot be null");
+        }
+
+        for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
+            ResourceType resource = entry.getKey();
+            int requiredAmount = entry.getValue();
+
+            if (resourceHand.getOrDefault(resource, 0) < requiredAmount) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 
