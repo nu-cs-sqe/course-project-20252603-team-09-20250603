@@ -48,6 +48,7 @@ public class HandleBuildStepDefinitions {
     public void player_chooses_to_build_infrastructure(Integer optionNumber) {
         selectedOptionNumber = optionNumber;
         startingInventory = currentPlayer.getInventory();
+        startingResources = currentPlayer.getResources();
     }
 
     @When("enters to build at {word} {int}")
@@ -108,6 +109,8 @@ public class HandleBuildStepDefinitions {
         assertEquals(InfraType.SETTLEMENT, node.getInfraType());
 
         startingInventoryAmount = getCurrentInventoryAmount();
+        startingResources = currentPlayer.getResources();
+
         tryRunControllerHandleBuild();
     }
 
@@ -166,7 +169,10 @@ public class HandleBuildStepDefinitions {
         assertEquals(currentPlayer, node.getNodeOccupant());
         assertEquals(InfraType.SETTLEMENT, node.getInfraType());
 
-        runControllerHandleBuild();
+        startingInventoryAmount = getCurrentInventoryAmount();
+        startingResources = currentPlayer.getResources();
+
+        tryRunControllerHandleBuild();
     }
 
     @Then("node {int} should be occupied by the player's city")
@@ -317,7 +323,7 @@ public class HandleBuildStepDefinitions {
     public void the_game_validates_that_player_does_not_have_the_resources_needed_to_build(String buildTypeText) {
         BuildType buildType = toBuildType(buildTypeText);
         Map<ResourceType, Integer> cost = getBuildCost(buildType);
-        
+
         startingResources = currentPlayer.getResources();
 
         assertFalse(currentPlayer.hasResources(cost));
