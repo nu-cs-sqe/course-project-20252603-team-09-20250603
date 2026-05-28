@@ -41,8 +41,12 @@ public class Game {
         }
 
         if(buildType == BuildType.ROAD){
-            Edge edge = board.getEdge(locationId);
-            edge.buildRoad(currentPlayer);
+            try {
+                Edge edge = board.getEdge(locationId);
+                edge.buildRoad(currentPlayer);
+            }catch (IllegalPlacementException exception) {
+                throw new IllegalStateException(exception.getMessage(), exception);
+            }
         } else if (buildType == BuildType.SETTLEMENT){
             Node node = board.getNode(locationId);
 
@@ -53,8 +57,12 @@ public class Game {
             }
             node.buildSettlement(currentPlayer);
         } else if(buildType == BuildType.CITY){
-            Node node = board.getNode(locationId);
-            node.buildCity(currentPlayer);
+            try {
+                Node node = board.getNode(locationId);
+                node.buildCity(currentPlayer);
+            }catch (IllegalPlacementException exception) {
+                throw new IllegalStateException(exception.getMessage(), exception);
+            }
         } else {
             throw new IllegalArgumentException("Invalid build type.");
         }
