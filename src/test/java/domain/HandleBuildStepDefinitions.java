@@ -313,6 +313,16 @@ public class HandleBuildStepDefinitions {
         assertEquals(startingResources, currentPlayer.getResources());
     }
 
+    @When("the game validates that player does not have the resources needed to build {word}")
+    public void the_game_validates_that_player_does_not_have_the_resources_needed_to_build(String buildTypeText) {
+        BuildType buildType = toBuildType(buildTypeText);
+        Map<ResourceType, Integer> cost = getBuildCost(buildType);
+        
+        startingResources = currentPlayer.getResources();
+
+        assertFalse(currentPlayer.hasResources(cost));
+    }
+
     private void runControllerHandleBuild() {
         String input = selectedOptionNumber + "\n" + selectedLocationId + "\n";
 
