@@ -81,7 +81,7 @@ Feature: Game handleBuild
     And the game validates that player has at least one city in their inventory
     And the game validates that node <locationId> is occupied by the player's settlement
     Then the game should prevent the player from building
-    And node <locationId> should remain occupied by the player's settlement
+    And the node <locationId> should be occupied by the player's settlement
     And the player's inventory should remain unchanged
     And the player's resources should remain unchanged
 
