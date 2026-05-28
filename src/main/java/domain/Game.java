@@ -1,7 +1,9 @@
 package domain;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Game {
     private final Board board;
@@ -28,9 +30,14 @@ public class Game {
             throw new IllegalArgumentException("Build type cannot be null");
         }
         String inventoryKey = getInventoryKey(buildType);
+        Map<ResourceType, Integer> cost = getBuildCost(buildType);
 
         if(currentPlayer.getInventory().get(inventoryKey) <= 0){
             throw new IllegalStateException("Player does not have enough inventory");
+        }
+
+        if(!currentPlayer.hasResources(cost)){
+            throw new IllegalStateException("Player does not have enough resources");
         }
 
         if(buildType == BuildType.ROAD){
@@ -53,6 +60,7 @@ public class Game {
         }
 
         currentPlayer.useInventoryItem(inventoryKey);
+        currentPlayer.useResources(cost);
     }
 
     private String getInventoryKey(BuildType buildType) {
@@ -66,5 +74,30 @@ public class Game {
             default:
                 throw new IllegalArgumentException("Invalid build type.");
         }
+    }
+
+    private Map<ResourceType, Integer> getBuildCost(BuildType buildType) {
+        Map<ResourceType, Integer> cost = new HashMap<>();
+
+        switch (buildType) {
+            case ROAD:
+                cost.put(ResourceType.BRICK, 1);
+                cost.put(ResourceType.WOOD, 1);
+                break;
+            case SETTLEMENT:
+                cost.put(ResourceType.BRICK, 1);
+                cost.put(ResourceType.WOOD, 1);
+                cost.put(ResourceType.SHEEP, 1);
+                cost.put(ResourceType.WHEAT, 1);
+                break;
+            case CITY:
+                cost.put(ResourceType.WHEAT, 2);
+                cost.put(ResourceType.ORE, 3);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid build type.");
+        }
+
+        return cost;
     }
 }
