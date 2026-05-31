@@ -23,4 +23,5 @@ public class DevCardTests {
 
         EasyMock.verify(mockPlayer, mockBoard);
     }
+
 }

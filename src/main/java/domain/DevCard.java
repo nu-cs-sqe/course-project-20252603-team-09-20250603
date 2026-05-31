@@ -9,6 +9,8 @@ public class DevCard {
         this.isActive = false;
     }
 
+    public DevCardType getType() { return this.type; }
+
     public boolean getIsActive() {
         return this.isActive;
     }
