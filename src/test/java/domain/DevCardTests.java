@@ -54,4 +54,19 @@ public class DevCardTests {
 
         assertTrue(card.getIsActive());
     }
+
+    @Test // TC-DC-04
+    void test_ActionExecutionOnActiveCard() {
+        DevCard card = new DevCard(DevCardType.KNIGHT);
+        card.activateCard();
+
+        Player mockPlayer = EasyMock.createMock(Player.class);
+        Board mockBoard = EasyMock.createMock(Board.class);
+
+        EasyMock.replay(mockPlayer, mockBoard);
+
+        assertDoesNotThrow(() -> card.doDevCardAction(mockPlayer, mockBoard));
+
+        EasyMock.verify(mockPlayer, mockBoard);
+    }
 }
