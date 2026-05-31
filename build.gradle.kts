@@ -3,6 +3,8 @@ import com.github.spotbugs.snom.Effort
 
 plugins {
     id("java")
+    id("application")
+    id("org.openjfx.javafxplugin") version "0.1.0"
     checkstyle
     id("com.github.spotbugs") version "6.0.25"
     jacoco
@@ -40,6 +42,15 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(11)
     }
+}
+
+application {
+    mainClass.set("ui.Main")
+}
+
+javafx {
+    version = "17.0.16"
+    modules("javafx.controls", "javafx.fxml")
 }
 
 tasks.compileJava {

@@ -1,0 +1,35 @@
+.game-stats-view {
+    -fx-background-color: #e8e4d9;
+    -fx-border-color: #d1ccb8;
+    -fx-border-width: 0 2px 0 0;
+    -fx-min-width: 220px;
+}
+
+.stats-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 5px 0;
+}
+
+.stats-order {
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+    -fx-padding: 0 0 10px 0;
+}
+
+.player-stat-box {
+    -fx-background-color: #ffffff;
+    -fx-padding: 10px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.player-name {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.player-vp {
+    -fx-font-size: 12px;
+    -fx-text-fill: #555555;
+}
