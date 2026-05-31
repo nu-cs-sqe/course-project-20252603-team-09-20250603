@@ -40,4 +40,18 @@ public class DevCard {
 
         this.isActive = false;
     }
+
+    public void doYearOfPlentyAction(Player player, Board board, ResourceType choice1, ResourceType choice2) {
+        if (!this.isActive) {
+            throw new IllegalActionException("Cannot play a Dev Card on the turn it was bought!");
+        }
+        if (this.type != DevCardType.YEAR_OF_PLENTY) {
+            throw new IllegalStateException("This card is not a Year of Plenty card!");
+        }
+
+        player.getResourceHand().addResource(choice1, 1);
+        player.getResourceHand().addResource(choice2, 1);
+
+        this.isActive = false;
+    }
 }

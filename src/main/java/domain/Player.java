@@ -13,6 +13,7 @@ public class Player {
     private int victoryPoints;
     private final List<DevCard> devHand;
     private int playedKnightCount = 0;
+    private ResourceHand resourceHand;
 
     public Player(int id, String name, PlayerColor color){
         this.id = id;
@@ -24,6 +25,11 @@ public class Player {
         this.inventory.put("cities", 4);
         this.victoryPoints = 0;
         this.devHand = new ArrayList<>();
+        this.resourceHand = new ResourceHand();
+    }
+
+    public ResourceHand getResourceHand() {
+        return this.resourceHand;
     }
 
     public String getName(){

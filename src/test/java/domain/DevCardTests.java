@@ -102,4 +102,26 @@ public class DevCardTests {
         int finalRoadCount = player1.getInventory().getOrDefault("roads", 15);
         assertEquals(13, finalRoadCount);
     }
+
+    @Test // TC-DC-YP
+    void test_YearOfPlentyCard() {
+        DevCard card = new DevCard(DevCardType.YEAR_OF_PLENTY);
+        card.activateCard();
+
+        int owningPlayerId = 1;
+        Player player1 = new Player(owningPlayerId, "John", PlayerColor.RED);
+        Board mockBoard = EasyMock.createMock(Board.class);
+
+        assertEquals(0, player1.getResourceHand().getResourceCount(ResourceType.WOOD));
+        assertEquals(0, player1.getResourceHand().getResourceCount(ResourceType.WHEAT));
+
+        EasyMock.replay(mockBoard);
+
+        card.doYearOfPlentyAction(player1, mockBoard, ResourceType.WOOD, ResourceType.WHEAT);
+
+        EasyMock.verify(mockBoard);
+
+        assertEquals(1, player1.getResourceHand().getResourceCount(ResourceType.WOOD));
+        assertEquals(1, player1.getResourceHand().getResourceCount(ResourceType.WHEAT));
+    }
 }
