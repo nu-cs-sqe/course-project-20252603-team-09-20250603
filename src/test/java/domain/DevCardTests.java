@@ -28,7 +28,7 @@ public class DevCardTests {
     void test_EndOfTurnPhaseChange_RemainsInactive() {
         int owningPlayerId = 1;
         Player player1 = new Player(owningPlayerId, "John", PlayerColor.RED);
-        DevCard card = new DevCard(DevCardType.KNIGHT);
+        DevCard card = new DevCard(DevCardType.ROAD_BUILDING);
         player1.setDevCardHand(card);
 
         assertFalse(card.getIsActive());
@@ -38,5 +38,20 @@ public class DevCardTests {
 
         player1.manageDevCardActivation(3);
         assertFalse(card.getIsActive());
+    }
+
+    @Test // TC-DC-03
+    void test_StartOfNextTurn_ActivatesCard() {
+        int owningPlayerId = 1;
+        Player player1 = new Player(owningPlayerId, "John", PlayerColor.RED);
+
+        DevCard card = new DevCard(DevCardType.MONOPOLY);
+        player1.setDevCardHand(card);
+
+        assertFalse(card.getIsActive());
+
+        player1.manageDevCardActivation(owningPlayerId);
+
+        assertTrue(card.getIsActive());
     }
 }
