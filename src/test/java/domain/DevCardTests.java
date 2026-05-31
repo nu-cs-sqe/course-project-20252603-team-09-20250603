@@ -24,4 +24,19 @@ public class DevCardTests {
         EasyMock.verify(mockPlayer, mockBoard);
     }
 
+    @Test // TC-DC-02
+    void test_EndOfTurnPhaseChange_RemainsInactive() {
+        int owningPlayerId = 1;
+        Player player1 = new Player(owningPlayerId, "John", PlayerColor.RED);
+        DevCard card = new DevCard(DevCardType.KNIGHT);
+        player1.setDevCardHand(card);
+
+        assertFalse(card.getIsActive());
+
+        player1.manageDevCardActivation(2);
+        assertFalse(card.getIsActive());
+
+        player1.manageDevCardActivation(3);
+        assertFalse(card.getIsActive());
+    }
 }

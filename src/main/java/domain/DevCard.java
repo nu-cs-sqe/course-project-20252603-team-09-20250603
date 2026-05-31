@@ -15,6 +15,8 @@ public class DevCard {
         return this.isActive;
     }
 
+    public void activateCard() { this.isActive = true; }
+
     public void doDevCardAction(Player player, Board board) {
         if (!this.isActive) {
             throw new IllegalActionException("Development cards cannot be played on the turn they were bought.");

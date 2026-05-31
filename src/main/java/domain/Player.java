@@ -1,6 +1,8 @@
 package domain;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Player {
@@ -9,6 +11,7 @@ public class Player {
     private final PlayerColor color;
     private final Map<String, Integer> inventory;
     private int victoryPoints;
+    private final List<DevCard> devHand;
 
     public Player(int id, String name, PlayerColor color){
         this.id = id;
@@ -19,6 +22,7 @@ public class Player {
         this.inventory.put("settlements", 5);
         this.inventory.put("cities", 4);
         this.victoryPoints = 0;
+        this.devHand = new ArrayList<>();
     }
 
     public String getName(){
@@ -36,4 +40,17 @@ public class Player {
     public int getVictoryPoints(){
         return victoryPoints;
     }
+
+    public List<DevCard> getDevCardHand() { return this.devHand; }
+
+    public void setDevCardHand(DevCard devCard) { this.devHand.add(devCard); }
+
+    public void manageDevCardActivation(int activePlayerId) {
+        if (this.id == activePlayerId) {
+            for (DevCard card : devHand) {
+                card.activateCard();
+            }
+        }
+    }
+
 }
