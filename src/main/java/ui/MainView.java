@@ -13,6 +13,13 @@ public class MainView extends BorderPane {
         setStyle("-fx-background-color: #f2efe6;");
         getStyleClass().add("main-view");
 
+        // Load shared UI stylesheet so child views (setup, welcome, board) can use
+        // common classes like .primary-button and .secondary-button.
+        String sharedStylesheet = "/ui/common.css";
+        if (getClass().getResource(sharedStylesheet) != null) {
+            getStylesheets().add(getClass().getResource(sharedStylesheet).toExternalForm());
+        }
+
         showWelcomeView();
     }
 
@@ -20,16 +27,18 @@ public class MainView extends BorderPane {
         WelcomeController welcomeController = new WelcomeController(this);
         WelcomeView welcomeView = new WelcomeView(welcomeController);
         setCenter(welcomeView);
+        setLeft(null);
     }
 
     public void showSetupView() {
         SetupController setupController = new SetupController(this);
         SetupView setupView = new SetupView(setupController);
         setCenter(setupView);
+        setLeft(null);
     }
 
     public void showBoardView(List<Player> players) {
-        BoardController boardController = new BoardController(players);
+        BoardController boardController = new BoardController(this, players);
         BoardView boardView = new BoardView(boardController);
         setCenter(boardView);
 

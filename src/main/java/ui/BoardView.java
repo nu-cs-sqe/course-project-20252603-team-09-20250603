@@ -6,13 +6,17 @@ import domain.Hex;
 import domain.Node;
 
 import javafx.geometry.Insets;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
@@ -51,7 +55,17 @@ public class BoardView extends BorderPane {
 
         Label titleLabel = new Label("Catan Board");
         titleLabel.getStyleClass().add("board-title");
-        setTop(titleLabel);
+        Button exitButton = new Button("Exit Game");
+        exitButton.getStyleClass().add("secondary-button");
+        exitButton.setOnAction(e -> controller.handleExitToWelcome());
+
+        // build a top bar with a spacer so the exit button is right aligned
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        HBox topBar = new HBox(titleLabel, spacer, exitButton);
+        topBar.setSpacing(12);
+        topBar.setPadding(new Insets(4));
+        setTop(topBar);
 
         ScrollPane scrollPane = new ScrollPane(buildBoardPane(controller.getBoard()));
         scrollPane.getStyleClass().add("board-scroll");

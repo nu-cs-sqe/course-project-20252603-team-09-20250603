@@ -14,8 +14,10 @@ public class BoardController {
     private final Board board;
     private final List<Player> players;
     private BoardView view;
+    private final MainView mainView;
 
-    public BoardController(List<Player> players) {
+    public BoardController(MainView mainView, List<Player> players) {
+        this.mainView = mainView;
         this.board = new Board();
         this.players = List.copyOf(players);
     }
@@ -50,6 +52,12 @@ public class BoardController {
     public void handleHexSelected(int hexId) {
         Hex hex = getHexById(hexId);
         view.setStatusMessage("Selected hex " + hex.getId() + " | resource: " + hex.getResourceType());
+    }
+
+    public void handleExitToWelcome() {
+        if (mainView != null) {
+            mainView.showWelcomeView();
+        }
     }
 
     private Hex getHexById(int hexId) {

@@ -29,6 +29,10 @@ public class SetupController {
         }
     }
 
+    public void handleBackToWelcome() {
+        mainView.showWelcomeView();
+    }
+
     private List<String> getEnteredPlayerNames(List<String> names) {
         List<String> enteredNames = new ArrayList<>();
 

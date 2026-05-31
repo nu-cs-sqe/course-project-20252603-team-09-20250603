@@ -1,0 +1,23 @@
+.primary-button {
+    -fx-background-color: #2e5044;
+    -fx-background-radius: 6;
+    -fx-font-size: 15px;
+    -fx-font-weight: 700;
+    -fx-padding: 10 24;
+    -fx-text-fill: #ffffff;
+}
+
+.primary-button:hover {
+    -fx-background-color: #386657;
+}
+
+.secondary-button {
+    -fx-background-color: transparent;
+    -fx-border-color: #2e5044;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-font-size: 14px;
+    -fx-padding: 8 18;
+    -fx-text-fill: #2e5044;
+}
+
