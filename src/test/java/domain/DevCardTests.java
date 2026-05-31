@@ -17,8 +17,9 @@ public class DevCardTests {
 
         EasyMock.replay(mockPlayer, mockBoard);
 
+        int targetHexId = 5;
         assertThrows(IllegalActionException.class, () -> {
-            card.doDevCardAction(mockPlayer, mockBoard);
+            card.doDevCardAction(mockPlayer, mockBoard, targetHexId);
         });
 
         EasyMock.verify(mockPlayer, mockBoard);
@@ -55,18 +56,25 @@ public class DevCardTests {
         assertTrue(card.getIsActive());
     }
 
-    @Test // TC-DC-04
-    void test_ActionExecutionOnActiveCard() {
+    @Test // TC-DC-KN
+    void test_KnightCard_IncrementsKnightPoolAndMovesRobber() {
+        int owningPlayerId = 1;
+        Player player1 = new Player(owningPlayerId, "John", PlayerColor.RED);
+
         DevCard card = new DevCard(DevCardType.KNIGHT);
         card.activateCard();
 
-        Player mockPlayer = EasyMock.createMock(Player.class);
         Board mockBoard = EasyMock.createMock(Board.class);
 
-        EasyMock.replay(mockPlayer, mockBoard);
+        int targetHexId = 5;
 
-        assertDoesNotThrow(() -> card.doDevCardAction(mockPlayer, mockBoard));
+        mockBoard.moveRobber(player1, targetHexId);
+        EasyMock.expectLastCall().times(1);
 
-        EasyMock.verify(mockPlayer, mockBoard);
+        EasyMock.replay(mockBoard);
+
+        card.doDevCardAction(player1, mockBoard, targetHexId);
+
+        EasyMock.verify(mockBoard);
     }
 }

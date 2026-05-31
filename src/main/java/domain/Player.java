@@ -12,6 +12,7 @@ public class Player {
     private final Map<String, Integer> inventory;
     private int victoryPoints;
     private final List<DevCard> devHand;
+    private int playedKnightCount = 0;
 
     public Player(int id, String name, PlayerColor color){
         this.id = id;
@@ -51,6 +52,14 @@ public class Player {
                 card.activateCard();
             }
         }
+    }
+
+    public void incrementPlayedKnightCount() {
+        this.playedKnightCount++;
+    }
+
+    public int getPlayedKnightCount() {
+        return this.playedKnightCount;
     }
 
 }
