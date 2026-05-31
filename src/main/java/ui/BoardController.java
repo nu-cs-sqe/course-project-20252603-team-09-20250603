@@ -37,21 +37,17 @@ public class BoardController {
     public void handleNodeSelected(int nodeId) {
         Node node = board.getNode(nodeId);
         Map<ResourceType, Integer> resources = board.getAdjacentResources(node);
-        view.setStatusMessage("Selected node " + node.getId() + " | adjacent resources: " + resources);
+        view.setStatusMessage(I18n.text("board.status.node", node.getId(), resources));
     }
 
     public void handleEdgeSelected(int edgeId) {
         Edge edge = board.getEdge(edgeId);
-        view.setStatusMessage(
-                "Selected edge " + edge.getId()
-                        + " | nodes " + edge.getNodeA().getId()
-                        + " and " + edge.getNodeB().getId()
-        );
+        view.setStatusMessage(I18n.text("board.status.edge", edge.getId(), edge.getNodeA().getId(), edge.getNodeB().getId()));
     }
 
     public void handleHexSelected(int hexId) {
         Hex hex = getHexById(hexId);
-        view.setStatusMessage("Selected hex " + hex.getId() + " | resource: " + hex.getResourceType());
+        view.setStatusMessage(I18n.text("board.status.hex", hex.getId(), hex.getResourceType()));
     }
 
     public void handleExitToWelcome() {

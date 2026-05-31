@@ -16,8 +16,9 @@ public class MainView extends BorderPane {
         // Load shared UI stylesheet so child views (setup, welcome, board) can use
         // common classes like .primary-button and .secondary-button.
         String sharedStylesheet = "/ui/common.css";
-        if (getClass().getResource(sharedStylesheet) != null) {
-            getStylesheets().add(getClass().getResource(sharedStylesheet).toExternalForm());
+        java.net.URL stylesheet = getClass().getResource(sharedStylesheet);
+        if (stylesheet != null) {
+            getStylesheets().add(stylesheet.toExternalForm());
         }
 
         showWelcomeView();

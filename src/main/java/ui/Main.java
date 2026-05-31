@@ -11,7 +11,7 @@ public class Main extends Application {
         MainView mainView = new MainView();
         Scene scene = new Scene(mainView, 1000, 700);
 
-        stage.setTitle("Catan");
+        stage.setTitle(I18n.text("app.title"));
         stage.setMinWidth(800);
         stage.setMinHeight(560);
         stage.setScene(scene);

@@ -9,8 +9,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 public class WelcomeView extends VBox {
     private static final String STYLESHEET = "/ui/welcome-view.css";
@@ -29,8 +27,9 @@ public class WelcomeView extends VBox {
         controller.setView(this);
 
         getStyleClass().add("welcome-view");
-        if (getClass().getResource(STYLESHEET) != null) {
-            getStylesheets().add(getClass().getResource(STYLESHEET).toExternalForm());
+        java.net.URL stylesheet = getClass().getResource(STYLESHEET);
+        if (stylesheet != null) {
+            getStylesheets().add(stylesheet.toExternalForm());
         }
         setMinSize(800, 560);
         setPrefSize(1000, 700);
@@ -47,12 +46,11 @@ public class WelcomeView extends VBox {
 
         englishOption.getStyleClass().add("language-option");
         englishOption.setToggleGroup(languageGroup);
-        englishOption.setSelected(true);
-        englishOption.setOnAction(event -> controller.handleLanguageSelection("English"));
+        englishOption.setOnAction(event -> controller.handleLanguageSelection(Locale.US));
 
         chineseOption.getStyleClass().add("language-option");
         chineseOption.setToggleGroup(languageGroup);
-        chineseOption.setOnAction(event -> controller.handleLanguageSelection("Chinese"));
+        chineseOption.setOnAction(event -> controller.handleLanguageSelection(Locale.SIMPLIFIED_CHINESE));
 
         HBox languageSection = new HBox(16, englishOption, chineseOption);
         languageSection.setAlignment(Pos.CENTER);
@@ -75,52 +73,24 @@ public class WelcomeView extends VBox {
             statusLabel
         );
 
-        // Initialize texts using default language (English)
-        updateLanguage("English");
+        refreshTexts();
     }
 
     public void setStatusMessage(String message) {
         statusLabel.setText(message);
     }
 
-    /**
-     * Update the visible strings on the welcome screen based on the selected language.
-     * Accepts either "English" or "Chinese" (case-insensitive). Falls back to English
-     * if the bundle cannot be loaded.
-     */
-    public void updateLanguage(String language) {
-        Locale locale = Locale.ENGLISH;
-        if (language != null && language.toLowerCase().startsWith("c")) {
-            // use simplified Chinese locale
-            locale = Locale.SIMPLIFIED_CHINESE;
-        }
+    public void refreshTexts() {
+        boolean chinese = Locale.SIMPLIFIED_CHINESE.getLanguage().equals(I18n.getLocale().getLanguage());
+        englishOption.setSelected(!chinese);
+        chineseOption.setSelected(chinese);
 
-        ResourceBundle bundle;
-        try {
-            bundle = ResourceBundle.getBundle("labels", locale);
-        } catch (MissingResourceException e) {
-            // fallback to English bundle bundled with the app
-            try {
-                bundle = ResourceBundle.getBundle("labels", Locale.ENGLISH);
-            } catch (MissingResourceException ex) {
-                // if the English bundle is missing, set hard-coded fallbacks
-                titleLabel.setText("Welcome to Catan");
-                subtitleLabel.setText("Game by: Team 09 - 20252603");
-                languageLabel.setText("Select game language:");
-                englishOption.setText("English");
-                chineseOption.setText("Chinese");
-                startButton.setText("Play Game");
-                rulesLink.setText("View Rules");
-                return;
-            }
-        }
-
-        titleLabel.setText(bundle.getString("welcome.title"));
-        subtitleLabel.setText(bundle.getString("welcome.subtitle"));
-        languageLabel.setText(bundle.getString("welcome.selectLanguage"));
-        englishOption.setText(bundle.getString("language.english"));
-        chineseOption.setText(bundle.getString("language.chinese"));
-        startButton.setText(bundle.getString("button.play"));
-        rulesLink.setText(bundle.getString("button.rules"));
+        titleLabel.setText(I18n.text("welcome.title"));
+        subtitleLabel.setText(I18n.text("welcome.subtitle"));
+        languageLabel.setText(I18n.text("welcome.selectLanguage"));
+        englishOption.setText(I18n.text("language.english"));
+        chineseOption.setText(I18n.text("language.chinese"));
+        startButton.setText(I18n.text("button.play"));
+        rulesLink.setText(I18n.text("button.rules"));
     }
 }

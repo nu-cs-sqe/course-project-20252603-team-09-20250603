@@ -25,7 +25,7 @@ public class SetupController {
             List<Player> players = gameInitializer.setupPlayers(getEnteredPlayerNames(names));
             mainView.showBoardView(players);
         } catch (IllegalArgumentException e) {
-            view.setStatusMessage("Error: " + e.getMessage());
+            view.setStatusMessage(I18n.text("setup.error", e.getMessage()));
         }
     }
 

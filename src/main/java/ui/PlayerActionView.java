@@ -14,29 +14,35 @@ public class PlayerActionView extends VBox {
         setPadding(new Insets(15));
         setSpacing(10);
         getStyleClass().add("player-action-view");
-        getStylesheets().add(getClass().getResource("/ui/player-action.css").toExternalForm());
+        java.net.URL stylesheet = getClass().getResource("/ui/player-action.css");
+        if (stylesheet != null) {
+            getStylesheets().add(stylesheet.toExternalForm());
+        }
     }
 
     public void renderCurrentPlayer(Player player, boolean isPlacingSettlement) {
         getChildren().clear();
 
-        Label title = new Label("Setup Phase Active");
+        Label title = new Label(I18n.text("playerAction.setupPhaseActive"));
         title.getStyleClass().add("action-title");
 
-        Label playerTurn = new Label(player.getName() + "'s Turn!");
+        Label playerTurn = new Label(I18n.text("playerAction.playerTurn", player.getName()));
         playerTurn.getStyleClass().add("player-turn-label");
 
         // Show infrastructure counts dynamically
-        Label invLabel = new Label("Settlements left: " + player.getInventory().get("settlements") +
-                "\nRoads left: " + player.getInventory().get("roads"));
+        Label invLabel = new Label(
+                I18n.text("playerAction.settlementsLeft", player.getInventory().get("settlements")) +
+                        "\n" +
+                        I18n.text("playerAction.roadsLeft", player.getInventory().get("roads"))
+        );
 
         getChildren().addAll(title, playerTurn, invLabel);
 
         Button actionBtn;
         if (isPlacingSettlement) {
-            actionBtn = new Button("Confirm Settlement Placement");
+            actionBtn = new Button(I18n.text("playerAction.confirmSettlement"));
         } else {
-            actionBtn = new Button("Confirm Road Placement");
+            actionBtn = new Button(I18n.text("playerAction.confirmRoad"));
         }
 
         actionBtn.setOnAction(e -> {
@@ -50,7 +56,7 @@ public class PlayerActionView extends VBox {
 
     public void renderSetupComplete() {
         getChildren().clear();
-        Label complete = new Label("Setup Phase Complete!");
+        Label complete = new Label(I18n.text("playerAction.setupComplete"));
         complete.getStyleClass().add("action-title");
         getChildren().add(complete);
     }

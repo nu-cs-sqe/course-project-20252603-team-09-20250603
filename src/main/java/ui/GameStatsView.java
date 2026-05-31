@@ -17,7 +17,10 @@ public class GameStatsView extends VBox {
         setSpacing(10);
         getStyleClass().add("game-stats-view");
 
-        getStylesheets().add(getClass().getResource("/ui/game-stats.css").toExternalForm());
+        java.net.URL stylesheet = getClass().getResource("/ui/game-stats.css");
+        if (stylesheet != null) {
+            getStylesheets().add(stylesheet.toExternalForm());
+        }
 
         // Let the controller populate the initial stats
         // This is done via setView() from MainView
@@ -26,11 +29,11 @@ public class GameStatsView extends VBox {
     public void renderStats(List<Player> players) {
         getChildren().clear();
 
-        Label title = new Label("Game Stats");
+        Label title = new Label(I18n.text("stats.title"));
         title.getStyleClass().add("stats-title");
         getChildren().add(title);
 
-        Label orderLabel = new Label("Order: " + getPlacementOrderString(players.size()));
+        Label orderLabel = new Label(I18n.text("stats.order", getPlacementOrderString(players.size())));
         orderLabel.getStyleClass().add("stats-order");
         getChildren().add(orderLabel);
 
@@ -45,7 +48,7 @@ public class GameStatsView extends VBox {
             Label nameLabel = new Label(p.getName() + " (" + p.getColor() + ")");
             nameLabel.getStyleClass().add("player-name");
 
-            Label vpLabel = new Label("Victory Points: " + p.getVictoryPoints());
+            Label vpLabel = new Label(I18n.text("stats.victoryPoints", p.getVictoryPoints()));
             vpLabel.getStyleClass().add("player-vp");
 
             playerBox.getChildren().addAll(nameLabel, vpLabel);

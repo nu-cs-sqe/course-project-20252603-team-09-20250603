@@ -25,21 +25,21 @@ public class SetupView extends VBox {
 
         for (int i = 0; i < 4; i++) {
             TextField nameField = new TextField();
-            nameField.setPromptText("Player " + (i + 1) + " Name");
+            nameField.setPromptText(I18n.text("setup.playerNamePrompt", i + 1));
             nameField.setMaxWidth(200);
             nameFields.add(nameField);
             getChildren().add(nameField);
         }
 
-        Button startButton = new Button("Start Game");
+        Button startButton = new Button(I18n.text("setup.start"));
         startButton.getStyleClass().add("primary-button");
         startButton.setOnAction(e -> controller.handleStartSetup(getEnteredNames()));
 
-        Button backButton = new Button("Back to Create Game");
+        Button backButton = new Button(I18n.text("setup.back"));
         backButton.getStyleClass().add("secondary-button");
         backButton.setOnAction(e -> controller.handleBackToWelcome());
 
-        statusLabel = new Label("Enter 3 or 4 player names.");
+        statusLabel = new Label(I18n.text("setup.enterNames"));
 
         getChildren().addAll(statusLabel, startButton, backButton);
     }
