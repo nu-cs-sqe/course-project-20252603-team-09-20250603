@@ -77,4 +77,29 @@ public class DevCardTests {
 
         EasyMock.verify(mockBoard);
     }
+
+    @Test // TC-DC-RB
+    void test_RoadBuildingCard() {
+        DevCard card = new DevCard(DevCardType.ROAD_BUILDING);
+        card.activateCard();
+
+        int owningPlayerId = 1;
+        Player player1 = new Player(owningPlayerId, "John", PlayerColor.RED);
+        Board mockBoard = EasyMock.createMock(Board.class);
+
+        int initialRoadCount = player1.getInventory().get("roads");
+        assertEquals(15, initialRoadCount);
+
+        mockBoard.freeRoads(player1, 2);
+        EasyMock.expectLastCall().times(1);
+
+        EasyMock.replay(mockBoard);
+
+        card.doDevCardAction(player1, mockBoard, -1);
+
+        EasyMock.verify(mockBoard);
+
+        int finalRoadCount = player1.getInventory().getOrDefault("roads", 15);
+        assertEquals(13, finalRoadCount);
+    }
 }

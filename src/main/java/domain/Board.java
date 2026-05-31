@@ -148,9 +148,10 @@ public class Board {
         return resources;
     }
 
-
     private int robberHexId = 0;
     public void moveRobber(Player player, int targetHexId) {
         this.robberHexId = targetHexId;
     }
+
+    public void freeRoads(Player player, int count) {}
 }

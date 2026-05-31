@@ -62,4 +62,12 @@ public class Player {
         return this.playedKnightCount;
     }
 
+    public void deductRoads(int count) {
+        int currentRoads = this.inventory.getOrDefault("roads", 0);
+        if (currentRoads < count) {
+            throw new IllegalStateException("Not enough road pieces remaining in inventory!");
+        }
+        this.inventory.put("roads", currentRoads - count);
+    }
+
 }
