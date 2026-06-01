@@ -561,6 +561,43 @@ public class PlayerTests {
         });
     }
 
+    @Test
+    void addVictoryPoints_OnePoint_IncreasesVictoryPoints() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.addVictoryPoints(1);
+
+        assertEquals(1, player.getVictoryPoints());
+    }
+
+    @Test
+    void addVictoryPoints_PlayerAlreadyHasPoint_AddsCorrectly() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.addVictoryPoints(1);
+        player.addVictoryPoints(1);
+
+        assertEquals(2, player.getVictoryPoints());
+    }
+
+    @Test
+    void addVictoryPoints_ZeroPoints_DoesNotChangeVictoryPoints() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.addVictoryPoints(0);
+
+        assertEquals(0, player.getVictoryPoints());
+    }
+
+    @Test
+    void addVictoryPoints_NegativePoints_ThrowsException() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            player.addVictoryPoints(-1);
+        });
+    }
+
 
 
 
