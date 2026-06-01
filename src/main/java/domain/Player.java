@@ -28,6 +28,10 @@ public class Player {
         this.resourceHand = new ResourceHand();
     }
 
+    public int getId() {
+        return id;
+    }
+
     public ResourceHand getResourceHand() {
         return this.resourceHand;
     }

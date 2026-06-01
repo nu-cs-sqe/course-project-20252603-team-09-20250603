@@ -20,23 +20,20 @@ public class DevCard {
     public void activateCard() {
         this.isActive = true;
     }
+    public void doKnightAction(Player player, Board board, int targetHexId) {
+        verifyCardIsPlayable(DevCardType.KNIGHT);
 
-    // if not knight card, targetHexId = -1
-    public void doDevCardAction(Player player, Board board, int targetHexId) {
-        if (!this.isActive) {
-            throw new IllegalActionException("Development cards cannot be played on the turn they were bought.");
-        }
+        player.incrementPlayedKnightCount();
+        board.moveRobber(player, targetHexId);
 
-        switch (this.type) {
-            case KNIGHT:
-                player.incrementPlayedKnightCount();
-                board.moveRobber(player, targetHexId);
-                break;
-            case ROAD_BUILDING:
-                player.deductRoads(2);
-                board.freeRoads(player, 2);
-                break;
-        }
+        this.isActive = false;
+    }
+
+    public void doRoadBuildingAction(Player player, Board board) {
+        verifyCardIsPlayable(DevCardType.ROAD_BUILDING);
+
+        player.deductRoads(2);
+        board.freeRoads(player, 2);
 
         this.isActive = false;
     }
@@ -53,5 +50,41 @@ public class DevCard {
         player.getResourceHand().addResource(choice2, 1);
 
         this.isActive = false;
+    }
+
+    public void doMonopolyAction(Player player, java.util.List<Player> gamePlayers, Board board, ResourceType targetType) {
+        if (!this.isActive) {
+            throw new IllegalActionException("Cannot play a Dev Card on the turn it was bought!");
+        }
+        if (this.type != DevCardType.MONOPOLY) {
+            throw new IllegalStateException("Card structural mismatch error: Card is not a Monopoly card.");
+        }
+
+        int totalStolenAmount = 0;
+
+        for (Player opponent : gamePlayers) {
+            if (opponent.getId() != player.getId()) {
+                int countToSteal = opponent.getResourceHand().getResourceCount(targetType);
+
+                if (countToSteal > 0) {
+                    totalStolenAmount += countToSteal;
+                    opponent.getResourceHand().setResourceCount(targetType, 0);
+                }
+            }
+        }
+
+        int currentBalance = player.getResourceHand().getResourceCount(targetType);
+        player.getResourceHand().setResourceCount(targetType, currentBalance + totalStolenAmount);
+
+        this.isActive = false;
+    }
+
+    private void verifyCardIsPlayable(DevCardType expectedType) {
+        if (!this.isActive) {
+            throw new IllegalActionException("Development cards cannot be played on the turn they were bought.");
+        }
+        if (this.type != expectedType) {
+            throw new IllegalStateException("Card type structural mismatch error.");
+        }
     }
 }

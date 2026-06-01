@@ -2,6 +2,10 @@ package domain;
 
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DevCardTests {
@@ -19,7 +23,7 @@ public class DevCardTests {
 
         int targetHexId = 5;
         assertThrows(IllegalActionException.class, () -> {
-            card.doDevCardAction(mockPlayer, mockBoard, targetHexId);
+            card.doKnightAction(mockPlayer, mockBoard, targetHexId);
         });
 
         EasyMock.verify(mockPlayer, mockBoard);
@@ -73,7 +77,7 @@ public class DevCardTests {
 
         EasyMock.replay(mockBoard);
 
-        card.doDevCardAction(player1, mockBoard, targetHexId);
+        card.doKnightAction(player1, mockBoard, targetHexId);
 
         EasyMock.verify(mockBoard);
     }
@@ -95,7 +99,7 @@ public class DevCardTests {
 
         EasyMock.replay(mockBoard);
 
-        card.doDevCardAction(player1, mockBoard, -1);
+        card.doRoadBuildingAction(player1, mockBoard);
 
         EasyMock.verify(mockBoard);
 
@@ -123,5 +127,38 @@ public class DevCardTests {
 
         assertEquals(1, player1.getResourceHand().getResourceCount(ResourceType.WOOD));
         assertEquals(1, player1.getResourceHand().getResourceCount(ResourceType.WHEAT));
+    }
+
+    @Test // TC-DC-MO
+    void test_MonopolyCard() {
+        DevCard card = new DevCard(DevCardType.MONOPOLY);
+        card.activateCard();
+
+        Board mockBoard = EasyMock.createMock(Board.class);
+
+        Player player1 = new Player(1, "John", PlayerColor.RED);
+        Player player2 = new Player(2, "Alice", PlayerColor.BLUE);
+        Player player3 = new Player(3, "Bob", PlayerColor.ORANGE);
+
+        player2.getResourceHand().setResourceCount(ResourceType.ORE, 3);
+        player3.getResourceHand().setResourceCount(ResourceType.ORE, 2);
+
+        player2.getResourceHand().setResourceCount(ResourceType.WOOD, 1);
+
+        List<Player> allPlayers = new ArrayList<>();
+        allPlayers.add(player1);
+        allPlayers.add(player2);
+        allPlayers.add(player3);
+
+        EasyMock.replay(mockBoard);
+
+        card.doMonopolyAction(player1, allPlayers, mockBoard, ResourceType.ORE);
+
+        EasyMock.verify(mockBoard);
+
+        assertEquals(0, player2.getResourceHand().getResourceCount(ResourceType.ORE));
+        assertEquals(1, player2.getResourceHand().getResourceCount(ResourceType.WOOD));
+        assertEquals(0, player3.getResourceHand().getResourceCount(ResourceType.ORE));
+        assertEquals(5, player1.getResourceHand().getResourceCount(ResourceType.ORE));
     }
 }
