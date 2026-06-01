@@ -41,11 +41,13 @@ Handles the progression of game
 | Test Case 5 | Roll is 7 and robber moves                  | Exactly one hex has robber                                 | :white_check_mark:                |
 | Test Case 6 | Roll is 7 and selected hex ID is invalid    | Throws `IllegalArgumentException`                          | :white_check_mark:                |
 
-### Method under test: `build() victory point update specifically`
 
-|             | State of the System                         | Expected output / behavior                                 | Implemented?       |
-|--------------|--------------------------------------|------------------------------------------|--------------|
-| Test Case 5  | Player successfully builds road      | Victory points do not change             | :x: |
-| Test Case 6  | Player successfully builds settlement | Victory points increase by 1            | :x: |
-| Test Case 7  | Player upgrades settlement to city   | Victory points increase by 1 more        | :x: |
-| Test Case 8  | Build fails                          | Victory points do not change             | :x: |
+## Method under test: `build(Player currentPlayer, BuildType buildType, int locationId)` victory point updates
+
+|              | State of the System                                  | Expected output / behavior                                  | Implemented? |
+|--------------|------------------------------------------------------|--------------------------------------------------------------|--------------|
+| Test Case 7  | Player successfully builds a road                    | Player victory points stay the same                          | :x: |
+| Test Case 8  | Player successfully builds a settlement              | Player victory points increase by 1                          | :x: |
+| Test Case 9  | Player upgrades their own settlement into a city     | Player victory points increase by 1 more, for 2 total points | :x: |
+| Test Case 10 | Player tries to build a settlement without resources | Build fails and player victory points stay the same          | :x: |
+| Test Case 11 | Player tries to build a city on an empty node        | Build fails and player victory points stay the same          | :x: |
