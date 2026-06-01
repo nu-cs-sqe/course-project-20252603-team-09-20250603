@@ -50,6 +50,13 @@ public class Player {
         return victoryPoints;
     }
 
+    public void addVictoryPoints(int points) {
+        if (points < 0) {
+            throw new IllegalArgumentException("Points to add cannot be negative.");
+        }
+        this.victoryPoints += points;
+    }
+
     public void addResources(Map<ResourceType, Integer> resources) {
         if (resources == null) {
             throw new IllegalArgumentException("resources cannot be null");
