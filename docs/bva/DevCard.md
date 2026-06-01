@@ -16,5 +16,5 @@ cases target these specific boundaries:
 | **TC-DC-KN** | Knight Card Execution               | Active KNIGHT card played.         | Increments player's knight count by 1 and updates the board's robber state.           | :white_checkmark: |
 | **TC-DC-RB** | Road Building Card Execution        | Active ROAD_BUILDING card played.  | Deducts 2 roads from unbuilt inventory to place them on the game board.               | :white_checkmark: |
 | **TC-DC-YP** | Year of Plenty Card Execution       | Active YEAR_OF_PLENTY card played. | Adds exactly 2 requested resources directly to the player's hand.                     | :white_checkmark: |
-| **TC-DC-MO** | Monopoly Card Execution             | Active MONOPOLY card played.       | Sweeps all resources of a target type from opponent inventories into player's hand.   | :x:               |
-| **TC-DC-VP** | Victory Point Card Passive Logic    | Active VICTORY_POINT card held.    | Permanently increments the player's calculatePoints() output by 1.                    | :x:               |
+| **TC-DC-MO** | Monopoly Card Execution             | Active MONOPOLY card played.       | Sweeps all resources of a target type from opponent inventories into player's hand.   | :white_checkmark: |
+| **TC-DC-VP** | Victory Point Card Passive Logic    | Active VICTORY_POINT card held.    | Permanently increments the player's calculatePoints() output by 1.                    | :white_checkmark: |

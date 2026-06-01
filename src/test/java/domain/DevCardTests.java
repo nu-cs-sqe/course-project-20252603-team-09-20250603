@@ -161,4 +161,21 @@ public class DevCardTests {
         assertEquals(0, player3.getResourceHand().getResourceCount(ResourceType.ORE));
         assertEquals(5, player1.getResourceHand().getResourceCount(ResourceType.ORE));
     }
+
+    @Test // TC-DC-VP
+    void test_VictoryPointCard_PassivelyIncrementsCalculatedPoints() {
+        int owningPlayerId = 1;
+        Player player1 = new Player(owningPlayerId, "John", PlayerColor.RED);
+
+        DevCard vpCard = new DevCard(DevCardType.VICTORY_POINT);
+
+        player1.calculatePoints();
+        assertEquals(0, player1.getVictoryPoints());
+
+        player1.setDevCardHand(vpCard);
+
+        player1.calculatePoints();
+
+        assertEquals(1, player1.getVictoryPoints());
+    }
 }

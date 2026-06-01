@@ -12,6 +12,8 @@ public class Player {
     private final Map<String, Integer> inventory;
     private int victoryPoints;
     private final List<DevCard> devHand;
+    private boolean hasLongestRoad;
+    private boolean hasLargestArmy;
     private int playedKnightCount = 0;
     private ResourceHand resourceHand;
 
@@ -78,6 +80,25 @@ public class Player {
             throw new IllegalStateException("Not enough road pieces remaining in inventory!");
         }
         this.inventory.put("roads", currentRoads - count);
+    }
+
+    public void calculatePoints() {
+        int calculatedTotal = 0;
+
+        for (DevCard card : this.devHand) {
+            if (card.getType() == DevCardType.VICTORY_POINT) {
+                calculatedTotal++;
+            }
+        }
+
+        if (this.hasLargestArmy) {
+            calculatedTotal += 2;
+        }
+        if (this.hasLongestRoad) {
+            calculatedTotal += 2;
+        }
+
+        this.victoryPoints = calculatedTotal;
     }
 
 }
