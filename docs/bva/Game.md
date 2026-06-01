@@ -40,3 +40,12 @@ Handles the progression of game
 | Test Case 4 | Roll is 7 and selected hex already has robber | Throws `IllegalArgumentException`                           | :white_check_mark:                |
 | Test Case 5 | Roll is 7 and robber moves                  | Exactly one hex has robber                                 | :white_check_mark:                |
 | Test Case 6 | Roll is 7 and selected hex ID is invalid    | Throws `IllegalArgumentException`                          | :white_check_mark:                |
+
+### Method under test: `build() victory point update specifically`
+
+|             | State of the System                         | Expected output / behavior                                 | Implemented?       |
+|--------------|--------------------------------------|------------------------------------------|--------------|
+| Test Case 5  | Player successfully builds road      | Victory points do not change             | :x: |
+| Test Case 6  | Player successfully builds settlement | Victory points increase by 1            | :x: |
+| Test Case 7  | Player upgrades settlement to city   | Victory points increase by 1 more        | :x: |
+| Test Case 8  | Build fails                          | Victory points do not change             | :x: |

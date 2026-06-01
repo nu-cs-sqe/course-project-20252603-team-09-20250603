@@ -102,3 +102,12 @@ Tracks a single player's identity, infrastructure inventory, and victory points.
 | Test Case 35 | Player has the resource, but not enough of it            | Throws `IllegalStateException` and resources remain unchanged    | :white_check_mark: |
 | Test Case 36 | Cost map is empty                                        | Resources remain unchanged                                       | :white_check_mark: |
 | Test Case 37 | Cost map is null                                         | Throws `IllegalArgumentException`                                | :white_check_mark: |
+
+### Method under test: `addVictoryPoints(int points)`
+
+|              | State of the System                 | Expected output / behavior          | Implemented? |
+|--------------|-------------------------------------|-------------------------------------|--------------|
+| Test Case 38 | New player receives 1 victory point | Victory points increase from 0 to 1 | :x:          |
+| Test Case 39 | Player with 1 point receives 1 more | Victory points increase from 1 to 2 | :x:          |
+| Test Case 40 | Player receives 0 victory points    | Victory points stays the same       | :x:          |
+| Test Case 41 | Player receives negative points     | Throws `IllegaleAgrumentException`  | :x:          |
