@@ -69,6 +69,12 @@ public class Game {
 
         currentPlayer.useInventoryItem(inventoryKey);
         currentPlayer.useResources(cost);
+
+        if(buildType == BuildType.SETTLEMENT){
+            currentPlayer.addVictoryPoints(1);
+        }else if(buildType == BuildType.CITY) {
+            currentPlayer.addVictoryPoints(1);
+        }
     }
 
     public void handleMoveRobber(int roll, int newHexId) {
