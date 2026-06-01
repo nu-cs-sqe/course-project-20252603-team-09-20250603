@@ -153,5 +153,9 @@ public class Board {
         this.robberHexId = targetHexId;
     }
 
+    public int getRobberHexId() {
+        return this.robberHexId;
+    }
+
     public void freeRoads(Player player, int count) {}
 }
