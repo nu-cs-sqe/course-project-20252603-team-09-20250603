@@ -30,52 +30,13 @@ Handles the progression of game
 `updatePlayerPoints(Player currentPlayer)`
     updates the player's victory points
 
-### Method under test: `getCurrentPlayer()`
+### Method under test: `handleMoveRobber()`
 
-| Test Case     | State of the System                                | Expected output                           | Implemented? |
-|---------------|----------------------------------------------------|-------------------------------------------|--------------|
-| Test Case 1   | Game has 3 players; current player is first player | Returns first player                      | :x:          |
-| Test Case 2   | Game has 4 players; current player is last player  | Returns last player                       | :x:          |
-| Test Case 3   | Game has 3 players; turn advances past last player | Returns first player again if turns cycle | :x:          |
-
-### Method under test: `nextTurn()`
-
-|              | State of the System | Expected output | Implemented? |
-|--------------|---------------------|-----------------|--------------|
-| Test Case 1  |                     |                 | :x:          |
-| Test Case 2  |                     |                 | :x:          |
-
-### Method under test: `getBoard()`
-
-|              | State of the System | Expected output | Implemented? |
-|--------------|---------------------|-----------------|--------------|
-| Test Case 1  |                     |                 | :x:          |
-| Test Case 2  |                     |                 | :x:          |
-
-### Method under test: `buildSettlement()`
-
-|              | State of the System | Expected output | Implemented? |
-|--------------|---------------------|-----------------|--------------|
-| Test Case 1  |                     |                 | :x:          |
-| Test Case 2  |                     |                 | :x:          |
-
-### Method under test: `buildRoad()`
-
-|              | State of the System | Expected output | Implemented? |
-|--------------|---------------------|-----------------|--------------|
-| Test Case 1  |                     |                 | :x:          |
-| Test Case 2  |                     |                 | :x:          |
-
-### Method under test: `buildCity()`
-
-|              | State of the System | Expected output | Implemented? |
-|--------------|---------------------|-----------------|--------------|
-| Test Case 1  |                     |                 | :x:          |
-| Test Case 2  |                     |                 | :x:          |
-
-### Method under test: `isSetupComplete()`
-
-|              | State of the System | Expected output | Implemented? |
-|--------------|---------------------|-----------------|--------------|
-| Test Case 1  |                     |                 | :x:          |
-| Test Case 2  |                     |                 | :x:          |
+|             | State of the System                         | Expected output / behavior                                 | Implemented?       |
+|-------------|---------------------------------------------|------------------------------------------------------------|--------------------|
+| Test Case 1 | Roll is not 7                               | Robber does not move                                       | :white_check_mark: |
+| Test Case 2 | Roll is 7 and no hex currently has robber   | Selected hex has robber                                    | :white_check_mark:                |
+| Test Case 3 | Roll is 7 and robber starts on another hex  | Previous hex no longer has robber; selected hex has robber | :white_check_mark:                |
+| Test Case 4 | Roll is 7 and selected hex already has robber | Throws `IllegalArgumentException`                           | :white_check_mark:                |
+| Test Case 5 | Roll is 7 and robber moves                  | Exactly one hex has robber                                 | :white_check_mark:                |
+| Test Case 6 | Roll is 7 and selected hex ID is invalid    | Throws `IllegalArgumentException`                          | :white_check_mark:                |

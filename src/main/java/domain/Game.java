@@ -71,6 +71,27 @@ public class Game {
         currentPlayer.useResources(cost);
     }
 
+    public void handleMoveRobber(int roll, int newHexId) {
+        if (roll != 7){
+            return;
+        }
+
+        Hex newHex = board.getHex(newHexId);
+
+        if (newHex == null){
+            throw new IllegalArgumentException("Selected hex does not exist.");
+        }
+
+        if (newHex.getHasRobber()) {
+            throw new IllegalStateException("Selected hex already has the robber.");
+        }
+
+        for (Hex hex : board.getHexes()) {
+            hex.setHasRobber(false);
+        }
+
+        newHex.setHasRobber(true);
+    }
     private String getInventoryKey(BuildType buildType) {
         switch (buildType) {
             case ROAD:
