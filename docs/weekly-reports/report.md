@@ -54,7 +54,7 @@
 1. No weekly meeting - continue working on week 7 tasks
 2. [80%] All: finish merging pre-week 7 branches
 3. [80%] All: pull linters branch and fix any problems
-4. [100%] Aria and Crystal: create Main class to call GameInitializer and Game, create Game class to execute initial placement rules
+4. [Done] Aria and Crystal: create Main class to call GameInitializer and Game, create Game class to execute initial placement rules
 5. [60%] Alicia: continue working on Player class, finish resource distribution by updating Player class to have a method to update the resource hand
 6. [90%] Ben: continue building GUI
 7. [50%] Chloe: devCards
@@ -63,8 +63,24 @@
 # Week 9 (05/26/2026-06/01/2026)
 1. [Done] All: weekly meeting:
    - Distributed/refreshed tasks for week 9 
-3. [20%] Aria: create internationalization files
-4. [30%] Crystal: updatePlayerPoints, moveRobber
-5. [20%] Alicia: finish Player class, handleDistributeResources
-6. [40%] Ben: continue building GUI, getPlayerAction, handleInitialPlacement
-7. [20%] Chloe: handleBuyDevCard, handleUseDevCard in game class
+2. [Done] Aria: create internationalization files
+3. [90%] Crystal: updatePlayerPoints, moveRobber
+4. [Done] Alicia: finish Player class
+5. [67%] Ben: continue building GUI, getPlayerAction, handleInitialPlacement
+6. [90%] Chloe: handleBuyDevCard, handleUseDevCard in game class
+
+# Week 10 (06/02/2026-06/08/2026)
+1. [Done] All: weekly meeting:
+     - Distributed/refreshed tasks for week 9
+     - ALL DUE 6/3:
+          - Aria review Ben's UI PR to merge into Main 
+          - Aria review Ben's handleInitialPlacement PR to merge into GameCreation
+          - Chloe, Alicia review GameCreation to merge into Main (after Ben is done)
+          - Crystal review Chloe's PR
+          - Ben review Crystal's PR
+2. [10%] Aria: getPlayerAction, Game.play
+   - End of week: finish i18n once UI finalized
+3. [90%] Crystal: updatePlayerPoints for longestRoad and then UI after 
+4. [20%] Alicia: stealing and cutting resources in half, handleDistributeResources on roll
+5. [90%] Ben: handleInitialPlacement, fix PlacementValidator 67, verify TurnManager accuracy
+7. [70%] Chloe: points for largestArmy (# knights)
