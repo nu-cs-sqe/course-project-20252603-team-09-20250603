@@ -39,6 +39,8 @@ Handles the progression of game
     Getter to pass to controller - untested as simply actas a simple getter
 `getPlayer(int id)`
     Returns the player with the matching id. Throws `IllegalArgumentException` if not found.
+`PhaseSetupCheck()`
+    returns `true` if the current phase is `SETUP`, `false` otherwise.
 
 ### Method under test: `getCurrentPlayer()`
 
@@ -99,3 +101,10 @@ Handles the progression of game
 | Test Case 3 | `id` matches a middle player in list  | Returns that `Player`             | :check_mark  |
 | Test Case 4 | `id` does not match any player        | Throws `IllegalArgumentException` | :check_mark  |
 
+## Method under test: `PhaseSetupCheck()`
+
+| Test Case   | State of the System        | Expected Output | Implemented? |
+|-------------|----------------------------|-----------------|--------------|
+| Test Case 1 | `currPhase == SETUP`       | Returns `true`  | :check_mark  |
+| Test Case 2 | `currPhase == NORMAL_PLAY` | Returns `false` | :check_mark  |
+| Test Case 3 | `currPhase == GAME_OVER`   | Returns `false` | :check_mark  |

@@ -48,6 +48,11 @@ public class Game {
         throw new IllegalArgumentException("Player not found");
     }
 
+    public boolean PhaseSetupCheck(){
+        return this.currPhase == GamePhase.SETUP;
+    }
+
+
 
     public boolean start(){
         return true;

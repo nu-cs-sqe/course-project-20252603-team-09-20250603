@@ -48,4 +48,23 @@ public class GameTests {
     public void getPlayer_InvalidId_ThrowsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> game.getPlayer(99));
     }
+
+
+    @Test
+    public void phaseSetupCheck_WhenSetup_ReturnsTrue() {
+        game.setCurrPhase(GamePhase.SETUP);
+        assertTrue(game.PhaseSetupCheck());
+    }
+
+    @Test
+    public void phaseSetupCheck_WhenNormalPlay_ReturnsFalse() {
+        game.setCurrPhase(GamePhase.NORMAL_PLAY);
+        assertFalse(game.PhaseSetupCheck());
+    }
+
+    @Test
+    public void phaseSetupCheck_WhenGameOver_ReturnsFalse() {
+        game.setCurrPhase(GamePhase.GAME_OVER);
+        assertFalse(game.PhaseSetupCheck());
+    }
 }
