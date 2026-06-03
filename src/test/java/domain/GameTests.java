@@ -67,4 +67,30 @@ public class GameTests {
         game.setCurrPhase(GamePhase.GAME_OVER);
         assertFalse(game.PhaseSetupCheck());
     }
+
+
+
+    @Test
+    public void advancePhase_WhenSetup_BecomesNormalPlay() {
+        game.setCurrPhase(GamePhase.SETUP);
+        game.advancePhase();
+        assertFalse(game.PhaseSetupCheck()); // now NORMAL_PLAY
+    }
+
+    @Test
+    public void advancePhase_WhenNormalPlay_BecomesGameOver() {
+        game.setCurrPhase(GamePhase.NORMAL_PLAY);
+        game.advancePhase();
+        assertFalse(game.PhaseSetupCheck());
+        assertDoesNotThrow(() -> game.advancePhase());
+        assertFalse(game.PhaseSetupCheck());
+    }
+
+    @Test
+    public void advancePhase_WhenGameOver_IsNoOp() {
+        game.setCurrPhase(GamePhase.GAME_OVER);
+        assertDoesNotThrow(() -> game.advancePhase());
+        assertFalse(game.PhaseSetupCheck());
+    }
+
 }

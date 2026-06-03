@@ -52,7 +52,14 @@ public class Game {
         return this.currPhase == GamePhase.SETUP;
     }
 
-
+    public void advancePhase() {
+        if (this.currPhase == GamePhase.SETUP) {
+            this.currPhase = GamePhase.NORMAL_PLAY;
+        }
+        else if (this.currPhase == GamePhase.NORMAL_PLAY){
+            this.currPhase = GamePhase.GAME_OVER;
+        }
+    }
 
     public boolean start(){
         return true;

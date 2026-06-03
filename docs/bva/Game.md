@@ -41,6 +41,8 @@ Handles the progression of game
     Returns the player with the matching id. Throws `IllegalArgumentException` if not found.
 `PhaseSetupCheck()`
     returns `true` if the current phase is `SETUP`, `false` otherwise.
+`AdvancePhase()`
+    Advances the phase forward one step: `SETUP` → `NORMAL_PLAY` → `GAME_OVER`.
 
 ### Method under test: `getCurrentPlayer()`
 
@@ -108,3 +110,11 @@ Handles the progression of game
 | Test Case 1 | `currPhase == SETUP`       | Returns `true`  | :check_mark  |
 | Test Case 2 | `currPhase == NORMAL_PLAY` | Returns `false` | :check_mark  |
 | Test Case 3 | `currPhase == GAME_OVER`   | Returns `false` | :check_mark  |
+
+## Method under test: `advancePhase()`
+
+| Test Case   | State of the System        | Expected Output                       | Implemented? |
+|-------------|----------------------------|---------------------------------------|--------------|
+| Test Case 1 | `currPhase == SETUP`       | `currPhase` becomes `NORMAL_PLAY`     | ❌           |
+| Test Case 2 | `currPhase == NORMAL_PLAY` | `currPhase` becomes `GAME_OVER`       | ❌           |
+| Test Case 3 | `currPhase == GAME_OVER`   | `currPhase` stays `GAME_OVER` (no-op) | ❌           |
