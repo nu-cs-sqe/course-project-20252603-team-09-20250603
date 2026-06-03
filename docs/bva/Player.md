@@ -53,3 +53,34 @@ Tracks a single player's identity, infrastructure inventory, and victory points.
 |              | State of the System | Expected output | Implemented? |
 |--------------|---------------------|-----------------|--------------|
 | Test Case 17 | New player is created | Returns 0 | :white_check_mark: |
+|             | State of the System                    | Expected output | Implemented?       |
+|-------------|----------------------------------------|-----------------|--------------------|
+| Test Case 6 | New player is created                  | Return 0        | :white_check_mark: |
+
+
+## Method under test: `public void addResources(Map<ResourceType, Integer>)`
+
+|          | Step 1                              | Step 2     | Step 3                                                                                                                                                                                                                      |
+|----------|-------------------------------------|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Input 1  | Type of resources                   | Cases      | - ResourceType.WOOD, ResourceType.BRICK, ResourceType.SHEEP, ResourceType.WHEAT, ResourceType.ORE, ResourceType.DESERT                                                                                                      |
+| Input 2  | Quantity of resources               | Interval   | - MIN (1), MAX (19)                                                                                                                                                                                                         |
+| Input 3  | The state of the map resourceHand   | Collection | -  empty collection<br/>- contains exactly one element<br/>- contains more than one element<br/>- ~~max list size~~<br/>- contains duplicate elements<br/>- ~~using the first element~~<br/>- ~~using the last element~~    |
+| Input 4  | The state of the input  map         | Collection | - ~~empty collection<br/>~~- contains exactly one element<br/>- contains more than one element<br/>- ~~max list size~~<br/>- contains duplicate elements<br/>- ~~using the first element~~<br/>- ~~using the last element~~ |
+| Output 1 | Signaling of unsuccessful operation | Cases      | -  IllegalStateException, "The map object is null"                                                                                                                                                                          |
+| Output 2 | The state of the map                | Collection | - empty collection<br/> - contains exactly one element<br/>- contains more than one element<br/>- ~~max list size~~<br/>- contains duplicate elements<br/>- ~~using the first element~~<br/>- ~~using the last element~~    |
+
+
+### Step 4
+
+| Test   | System under test                             | Expected output           | Implemented?       |
+|--------|-----------------------------------------------|---------------------------|--------------------|
+| Test 1 | Start with empty hand, add 1 wood             | Wood: 1                   | :white_check_mark: |
+| Test 2 | Start with empty hand, add 19 brick           | Brick: 19                 | :white_check_mark: |
+| Test 3 | Start with empty hand, add 1 sheep 1 wheat    | Sheep: 1, Wheat: 1        | :white_check_mark: |
+| Test 4 | Start with empty hand, add desert             | empty collection          | :white_check_mark: |
+| Test 5 | Start with 1 ore, add 1 sheep 1 ore           | Sheep: 1, ore: 2          | :white_check_mark: |
+| Test 6 | Start with 2 brick, add desert                | Brick: 2                  | :white_check_mark: |
+| Test 7 | Start with 2 wood, add 2 wood, 1 ore, 2 brick | Wood: 4, ore: 1, brick: 2 | :white_check_mark: |
+| Test 8 | Start with  brick, add desert                 | Brick: 1                  | :white_check_mark: |
+| Test 9 | Start with  brick, add null                   | IllegalArgumentException  | :white_check_mark: |
+

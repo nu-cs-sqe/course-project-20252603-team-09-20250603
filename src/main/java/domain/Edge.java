@@ -1,4 +1,10 @@
 package domain;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings(
+        value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"},
+        justification = "Domain objects intentionally share mutable Player references."
+)
 
 public class Edge {
     private final int id;
