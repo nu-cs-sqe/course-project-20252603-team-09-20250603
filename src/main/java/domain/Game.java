@@ -11,6 +11,7 @@ public class Game {
     private final Dice dice;
     private final TurnManager turnManager;
     private final PlacementValidator placementValidator;
+    private GamePhase currPhase;
     // TODO: add devCardDeck to constructor
 
     public Game(Board board, List<Player> players, Dice dice, TurnManager turnManager) {
@@ -19,7 +20,31 @@ public class Game {
         this.dice = dice;
         this.turnManager = turnManager;
         this.placementValidator = new PlacementValidator(board);
+        this.currPhase = GamePhase.SETUP;
     }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public List<Player> getPlayers() {
+        return new ArrayList<>(players);
+    }
+
+    public TurnManager getTurnManager() {
+        return turnManager;
+    }
+
+    public void setCurrPhase(GamePhase Phase){
+        this.currPhase = Phase;
+    }
+
+
+
+
+
+
+
 
     public boolean start(){
         return true;
@@ -36,7 +61,7 @@ public class Game {
             throw new IllegalStateException("Player does not have enough inventory");
         }
 
-        if(!currentPlayer.hasResources(cost)){
+        if(currPhase != GamePhase.SETUP && !currentPlayer.hasResources(cost)){
             throw new IllegalStateException("Player does not have enough resources");
         }
 
@@ -68,7 +93,10 @@ public class Game {
         }
 
         currentPlayer.useInventoryItem(inventoryKey);
-        currentPlayer.useResources(cost);
+
+        if(currPhase != GamePhase.SETUP) {
+            currentPlayer.useResources(cost);
+        }
     }
 
     private String getInventoryKey(BuildType buildType) {
