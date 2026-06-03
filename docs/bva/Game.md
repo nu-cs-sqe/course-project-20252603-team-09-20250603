@@ -32,11 +32,11 @@ Handles the progression of game
 `getBoard`
     Getter to pass to controller - untested as simply acts as a simple getter (discussed with Prof. Yiji in OH)
 `getPlayers`
-    Getter to pass to controller - untested as simply actas a simple getter
+    Getter to pass to controller - untested as simply acts as a simple getter
 `setCurrPhase`
-    Setter to pass to controller - untested as simply actas a simple getter
+    Setter to pass to controller - untested as simply acts as a simple getter
 `getTurnManager`
-    Getter to pass to controller - untested as simply actas a simple getter
+    Getter to pass to controller - untested as simply acts as a simple getter
 `getPlayer(int id)`
     Returns the player with the matching id. Throws `IllegalArgumentException` if not found.
 `PhaseSetupCheck()`
