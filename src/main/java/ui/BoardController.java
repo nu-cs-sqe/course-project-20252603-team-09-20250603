@@ -4,6 +4,7 @@ import domain.Board;
 import domain.Edge;
 import domain.Hex;
 import domain.Node;
+import domain.BuildType;
 import domain.Player;
 import domain.ResourceType;
 
@@ -16,7 +17,11 @@ public class BoardController {
     private BoardView view;
 
     public BoardController(List<Player> players) {
-        this.board = new Board();
+        this(new Board(), players);
+    }
+
+    public BoardController(Board board, List<Player> players) {
+        this.board = board;
         this.players = List.copyOf(players);
     }
 
@@ -32,19 +37,37 @@ public class BoardController {
         return players.size();
     }
 
+    private SetupGameController setupGameController;
+
+    public void setSetupGameController(SetupGameController setupGameController) {
+        this.setupGameController = setupGameController;
+    }
+
     public void handleNodeSelected(int nodeId) {
         Node node = board.getNode(nodeId);
-        Map<ResourceType, Integer> resources = board.getAdjacentResources(node);
-        view.setStatusMessage("Selected node " + node.getId() + " | adjacent resources: " + resources);
+
+        if (setupGameController != null) {
+            setupGameController.handleInitialPlacement(nodeId, BuildType.SETTLEMENT);
+            view.refreshBoard();
+        } else {
+            Map<ResourceType, Integer> resources = board.getAdjacentResources(node);
+            view.setStatusMessage("Selected node " + node.getId() + " | adjacent resources: " + resources);
+        }
     }
 
     public void handleEdgeSelected(int edgeId) {
         Edge edge = board.getEdge(edgeId);
-        view.setStatusMessage(
-                "Selected edge " + edge.getId()
-                        + " | nodes " + edge.getNodeA().getId()
-                        + " and " + edge.getNodeB().getId()
-        );
+
+        if (setupGameController != null) {
+            setupGameController.handleInitialPlacement(edgeId, BuildType.ROAD);
+            view.refreshBoard();
+        } else {
+            view.setStatusMessage(
+                    "Selected edge " + edge.getId()
+                            + " | nodes " + edge.getNodeA().getId()
+                            + " and " + edge.getNodeB().getId()
+            );
+        }
     }
 
     public void handleHexSelected(int hexId) {

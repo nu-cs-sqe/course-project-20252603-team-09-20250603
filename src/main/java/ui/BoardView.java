@@ -4,6 +4,7 @@ import domain.Board;
 import domain.Edge;
 import domain.Hex;
 import domain.Node;
+import domain.Player;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -32,6 +33,8 @@ public class BoardView extends BorderPane {
     private final Label statusLabel;
     private final Map<Integer, BoardPoint> hexCenters;
     private final Map<Integer, BoardPoint> nodePositions;
+    private final Map<Integer, Line> edgeShapes;
+    private final Map<Integer, Polygon> settlementShapes;
 
     private Circle selectedNode;
     private Line selectedEdge;
@@ -43,6 +46,8 @@ public class BoardView extends BorderPane {
 
         this.hexCenters = buildHexCenters();
         this.nodePositions = buildNodePositions();
+        this.edgeShapes = new HashMap<>();
+        this.settlementShapes = new HashMap<>();
         this.statusLabel = new Label("Board ready. Select a node or edge.");
 
         getStyleClass().add("board-view");
@@ -66,6 +71,26 @@ public class BoardView extends BorderPane {
 
     public void setStatusMessage(String message) {
         statusLabel.setText(message);
+    }
+
+    public void refreshBoard() {
+        Board board = controller.getBoard();
+
+        for (Edge edge : board.getEdges()) {
+            Line line = edgeShapes.get(edge.getId());
+
+            if (line != null) {
+                updateRoadStyle(line, edge.getEdgeOccupant());
+            }
+        }
+
+        for (Node node : board.getNodes()) {
+            Polygon settlement = settlementShapes.get(node.getId());
+
+            if (settlement != null) {
+                updateSettlementStyle(settlement, node.getNodeOccupant());
+            }
+        }
     }
 
     private Pane buildBoardPane(Board board) {
@@ -115,6 +140,7 @@ public class BoardView extends BorderPane {
                             + " (" + edge.getNodeA().getId()
                             + "-" + edge.getNodeB().getId() + ")"
             ));
+            edgeShapes.put(edge.getId(), line);
             line.setOnMouseClicked(event -> {
                 selectEdge(line);
                 controller.handleEdgeSelected(edge.getId());
@@ -136,7 +162,27 @@ public class BoardView extends BorderPane {
                 event.consume();
             });
             boardPane.getChildren().add(circle);
+
+            Polygon settlement = createSettlementShape(point);
+            settlement.setVisible(false);
+            settlement.setMouseTransparent(true);
+            settlementShapes.put(node.getId(), settlement);
+            boardPane.getChildren().add(settlement);
         }
+    }
+
+    private Polygon createSettlementShape(BoardPoint point) {
+        Polygon settlement = new Polygon();
+        settlement.getPoints().addAll(
+                point.x, point.y - 13.0,
+                point.x + 10.0, point.y - 4.0,
+                point.x + 7.0, point.y + 9.0,
+                point.x - 7.0, point.y + 9.0,
+                point.x - 10.0, point.y - 4.0
+        );
+
+        settlement.setStyle("-fx-fill: transparent; -fx-stroke: transparent;");
+        return settlement;
     }
 
     private Polygon createHexShape(int hexId) {
@@ -221,6 +267,43 @@ public class BoardView extends BorderPane {
                 center.x + HEX_RADIUS * Math.cos(radians),
                 center.y + HEX_RADIUS * Math.sin(radians)
         );
+    }
+
+    private void updateRoadStyle(Line line, Player occupant) {
+        if (occupant == null) {
+            line.setStyle("");
+            return;
+        }
+
+        line.setStyle("-fx-stroke: " + getPlayerColor(occupant)
+                + "; -fx-stroke-width: 12; -fx-stroke-line-cap: round;");
+    }
+
+    private void updateSettlementStyle(Polygon settlement, Player occupant) {
+        if (occupant == null) {
+            settlement.setVisible(false);
+            settlement.setStyle("-fx-fill: transparent; -fx-stroke: transparent;");
+            return;
+        }
+//board.getadjacentresources, player.addresources
+        settlement.setVisible(true);
+        settlement.setStyle("-fx-fill: " + getPlayerColor(occupant)
+                + "; -fx-stroke: #1f1a13; -fx-stroke-width: 2;");
+    }
+
+    private String getPlayerColor(Player player) {
+        switch (player.getColor()) {
+            case RED:
+                return "#d62828";
+            case BLUE:
+                return "#1d4ed8";
+            case ORANGE:
+                return "#f97316";
+            case WHITE:
+                return "#f8fafc";
+            default:
+                return "#6b7280";
+        }
     }
 
     private void selectNode(Circle circle) {

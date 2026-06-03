@@ -1,6 +1,7 @@
 package ui;
 
 import domain.Player;
+import domain.Game;
 
 import javafx.scene.layout.BorderPane;
 
@@ -28,24 +29,23 @@ public class MainView extends BorderPane {
         setCenter(setupView);
     }
 
-    public void showBoardView(List<Player> players) {
-        BoardController boardController = new BoardController(players);
-        BoardView boardView = new BoardView(boardController);
+    public void showBoardView(Game game) {
+        List<Player> players = game.getPlayers();
+
+        BoardController boardController = new BoardController(game.getBoard(), players);
+
+        SetupGameController setupGameController = new SetupGameController(game, game.getTurnManager());
+        boardController.setSetupGameController(setupGameController);
+
+       BoardView boardView = new BoardView(boardController);
+        setupGameController.setBoardView(boardView);
+        boardView.setStatusMessage("Setup Phase: Waiting for Player 1 to place a Settlement.");
+
         setCenter(boardView);
 
         GameStatsController statsController = new GameStatsController(players);
         GameStatsView statsView = new GameStatsView(statsController);
         statsController.setView(statsView);
         setLeft(statsView);
-
-        // Remove the hard Game/TurnManager instantiation from the router since
-        // they require package-private domain constructors like Dice(Random)
-        // that shouldn't be exposed directly to the UI layer yet.
-        // We will mock/defer this until GameController is established.
-
-        // PlayerActionController actionController = new PlayerActionController(players, null, null);
-        // PlayerActionView actionView = new PlayerActionView(actionController);
-        // actionController.setView(actionView);
-        // setRight(actionView);
     }
 }
