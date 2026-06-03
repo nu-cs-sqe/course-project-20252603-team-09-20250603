@@ -37,14 +37,6 @@ public class PlacementValidator {
         }
 
 
-    private boolean sharesHex(List<Hex> list1, List<Hex> list2) {
-        for (Hex h : list1) {
-            if (list2.contains(h)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public void validateInitialRoad(int edgeId, Node settlementNode) throws IllegalPlacementException {
         Edge edge = board.getEdge(edgeId);
