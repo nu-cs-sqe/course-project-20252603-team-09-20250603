@@ -12,6 +12,7 @@ public class Game {
     private final TurnManager turnManager;
     private final PlacementValidator placementValidator;
     private GamePhase currPhase;
+    private final Map<Integer, Node> setupSettlements;
     // TODO: add devCardDeck to constructor
 
     public Game(Board board, List<Player> players, Dice dice, TurnManager turnManager) {
@@ -21,6 +22,7 @@ public class Game {
         this.turnManager = turnManager;
         this.placementValidator = new PlacementValidator(board);
         this.currPhase = GamePhase.SETUP;
+        this.setupSettlements = new HashMap<>();
     }
 
     public Board getBoard() {
@@ -83,8 +85,21 @@ public class Game {
         if(buildType == BuildType.ROAD){
             try {
                 Edge edge = board.getEdge(locationId);
-                edge.buildRoad(currentPlayer);
-            }catch (IllegalPlacementException exception) {
+                if (currPhase == GamePhase.SETUP) {
+                    Node recentSettlement = setupSettlements.get(currentPlayer.getId());
+                    if (recentSettlement == null) {
+                        throw new IllegalStateException("You must build a settlement before building a road during setup.");
+                    }
+
+                    placementValidator.validateInitialRoad(locationId, recentSettlement);
+                } else {
+                    // TODO placement validator for a regular raod
+                    }
+                    edge.buildRoad(currentPlayer);
+                    if (currPhase == GamePhase.SETUP) {
+                        setupSettlements.remove(currentPlayer.getId());
+                    }
+           }catch (IllegalPlacementException exception) {
                 throw new IllegalStateException(exception.getMessage(), exception);
             }
         } else if (buildType == BuildType.SETTLEMENT){
@@ -96,6 +111,9 @@ public class Game {
                 throw new IllegalStateException(exception.getMessage(), exception);
             }
             node.buildSettlement(currentPlayer);
+            if (currPhase == GamePhase.SETUP) {
+                setupSettlements.put(currentPlayer.getId(), node);
+            }
         } else if(buildType == BuildType.CITY){
             try {
                 Node node = board.getNode(locationId);
