@@ -20,6 +20,7 @@ public class BoardController {
         this.players = List.copyOf(players);
     }
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setView(BoardView view) {
         this.view = view;
     }

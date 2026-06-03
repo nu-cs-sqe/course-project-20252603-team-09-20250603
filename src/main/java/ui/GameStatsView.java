@@ -8,10 +8,8 @@ import javafx.scene.layout.VBox;
 import java.util.List;
 
 public class GameStatsView extends VBox {
-    private GameStatsController controller;
 
     public GameStatsView(GameStatsController controller) {
-        this.controller = controller;
 
         setPadding(new Insets(15));
         setSpacing(10);

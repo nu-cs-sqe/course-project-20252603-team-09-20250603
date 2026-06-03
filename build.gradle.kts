@@ -29,12 +29,14 @@ dependencies {
     testImplementation("org.junit.platform:junit-platform-suite")
 
     testImplementation("org.easymock:easymock:5.2.0")
+    compileOnly("com.github.spotbugs:spotbugs-annotations:4.8.6")
 
     // cucumber
     testImplementation(platform("io.cucumber:cucumber-bom:7.20.1"))
     testImplementation("io.cucumber:cucumber-java")
     testImplementation("io.cucumber:cucumber-junit-platform-engine")
     testImplementation("io.cucumber:cucumber-picocontainer")
+
 }
 
 java {
@@ -95,6 +97,7 @@ configurations {}
 
 val cucumberRuntime by configurations.creating {
     extendsFrom(configurations["testImplementation"])
+    exclude(group = "org.openjfx")
 }
 
 task("cucumber") {

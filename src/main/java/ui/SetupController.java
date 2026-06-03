@@ -11,11 +11,13 @@ public class SetupController {
     private final MainView mainView;
     private final GameInitializer gameInitializer;
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public SetupController(MainView mainView) {
         this.mainView = mainView;
         this.gameInitializer = new GameInitializer();
     }
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setView(SetupView view) {
         this.view = view;
     }

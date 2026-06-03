@@ -37,6 +37,7 @@ public class BoardView extends BorderPane {
     private Line selectedEdge;
     private Polygon selectedHex;
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public BoardView(BoardController controller) {
         this.controller = controller;
         controller.setView(this);
