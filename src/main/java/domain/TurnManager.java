@@ -13,6 +13,7 @@ public class TurnManager {
     private int currentPlayerIndex = 0;
     private final int numPlayers;
     private final List<Integer> setupPlayerSequence;
+    private boolean isSetupComplete = false;
 
     public TurnManager(int numPlayers) {
         this.numPlayers = numPlayers;
@@ -24,10 +25,16 @@ public class TurnManager {
         }
     }
 
+    public boolean SetupStatus()
+    {
+        return isSetupComplete;
+    }
+
     public void nextPlayer() {
         if (!setupPlayerSequence.isEmpty()) {
             currentPlayerIndex = setupPlayerSequence.remove(0);
         } else {
+            isSetupComplete = true;
             currentPlayerIndex++;
         }
     }
