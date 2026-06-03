@@ -1,7 +1,7 @@
 package ui;
 
 import domain.GameInitializer;
-import domain.Player;
+import domain.Game;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +22,14 @@ public class SetupController {
 
     public void handleStartSetup(List<String> names) {
         try {
-            List<Player> players = gameInitializer.setupPlayers(getEnteredPlayerNames(names));
-            mainView.showBoardView(players);
+            List<String> enteredNames = getEnteredPlayerNames(names);
+            Game game = gameInitializer.setupGame(enteredNames);
+            mainView.showBoardView(game);
         } catch (IllegalArgumentException e) {
             view.setStatusMessage("Error: " + e.getMessage());
+        } catch (Exception e) {
+            view.setStatusMessage("System Error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
