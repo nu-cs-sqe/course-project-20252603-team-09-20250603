@@ -39,11 +39,14 @@ public class Game {
         this.currPhase = Phase;
     }
 
-
-
-
-
-
+    public Player getPlayer(int id) {
+        for (Player p : players) {
+            if (p.getId() == id) {
+                return p;
+            }
+        }
+        throw new IllegalArgumentException("Player not found");
+    }
 
 
     public boolean start(){

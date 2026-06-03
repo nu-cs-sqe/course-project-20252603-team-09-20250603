@@ -37,6 +37,8 @@ Handles the progression of game
     Setter to pass to controller - untested as simply actas a simple getter
 `getTurnManager`
     Getter to pass to controller - untested as simply actas a simple getter
+`getPlayer(int id)`
+    Returns the player with the matching id. Throws `IllegalArgumentException` if not found.
 
 ### Method under test: `getCurrentPlayer()`
 
@@ -87,3 +89,13 @@ Handles the progression of game
 |--------------|---------------------|-----------------|--------------|
 | Test Case 1  |                     |                 | :x:          |
 | Test Case 2  |                     |                 | :x:          |
+
+## Method under test: `getPlayer(int id)`
+
+| Test Case   | State of the System                   | Expected Output                   | Implemented? |
+|-------------|---------------------------------------|-----------------------------------|--------------|
+| Test Case 1 | `id` matches the first player in list | Returns that `Player`             | :check_mark  |
+| Test Case 2 | `id` matches the last player in list  | Returns that `Player`             | :check_mark  |
+| Test Case 3 | `id` matches a middle player in list  | Returns that `Player`             | :check_mark  |
+| Test Case 4 | `id` does not match any player        | Throws `IllegalArgumentException` | :check_mark  |
+
