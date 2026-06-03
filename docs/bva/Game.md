@@ -29,6 +29,14 @@ Handles the progression of game
     updates resources
 `updatePlayerPoints(Player currentPlayer)`
     updates the player's victory points
+`getBoard`
+    Getter to pass to controller - untested as simply acts as a simple getter (discussed with Prof. Yiji in OH)
+`getPlayers`
+    Getter to pass to controller - untested as simply actas a simple getter
+`setCurrPhase`
+    Setter to pass to controller - untested as simply actas a simple getter
+`getTurnManager`
+    Getter to pass to controller - untested as simply actas a simple getter
 
 ### Method under test: `getCurrentPlayer()`
 
