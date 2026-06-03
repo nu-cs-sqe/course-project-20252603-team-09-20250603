@@ -3,6 +3,7 @@ package domain;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TurnManagerTest {
 
@@ -46,6 +47,16 @@ public class TurnManagerTest {
         }
 
         assertEquals(1, tm.getCurrentPlayerIndex());
+        //assertTrue(tm.SetupStatus());
+    }
+
+    @Test // TC-TM-05
+    void test_SetupStatusTrueAfterAllPlacements() {
+        TurnManager tm = new TurnManager(4);
+        for (int i = 0; i < 9; i++) {
+            tm.nextPlayer();
+        }
+        assertTrue(tm.SetupStatus());
     }
 
 
