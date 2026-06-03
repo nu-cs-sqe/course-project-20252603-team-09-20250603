@@ -14,27 +14,28 @@ public class PlacementValidator {
     }
 
     public void validateSettlementPlacement(Node targetNode) throws IllegalPlacementException {
+        // 1. Check that the node is not occupied - cannot occupy an already built upon node
         if (targetNode.getNodeOccupant() != null) {
             throw new IllegalPlacementException("Node already occupied.");
         }
 
-        List<Hex> targetHexes = board.getHexesFromNode(targetNode);
+        List<Edge> allEdges = board.getEdges();
 
-        for (Map.Entry<Node, List<Hex>> entry : board.getNodeToHexesMap().entrySet()) {
-            Node potentialNeighbor = entry.getKey();
-            List<Hex> neighborHexes = entry.getValue();
+        for (Edge edge: allEdges){
 
-            if (potentialNeighbor.equals(targetNode)) {
-                continue;
-            }
-
-            if (sharesHex(targetHexes, neighborHexes)) {
-                if (potentialNeighbor.getNodeOccupant() != null) {
-                    throw new IllegalPlacementException("Violates distance rule: Adjacent node occupied.");
+                if (edge.getNodeA().equals(targetNode)){
+                    if (edge.getNodeB().getNodeOccupant() != null) {
+                        throw new IllegalPlacementException("Distance Rule Violated: Adjacent Node occupied");
+                    }
+                }
+                if (edge.getNodeB().equals(targetNode)){
+                    if (edge.getNodeA().getNodeOccupant() != null) {
+                        throw new IllegalPlacementException("Distance Rule Violated: Adjacent Node occupied");
+                    }
                 }
             }
         }
-    }
+
 
     private boolean sharesHex(List<Hex> list1, List<Hex> list2) {
         for (Hex h : list1) {
@@ -46,7 +47,8 @@ public class PlacementValidator {
     }
 
     public void validateInitialRoad(int edgeId, Node settlementNode) throws IllegalPlacementException {
-        if (edgeId != settlementNode.hashCode()) {
+        Edge edge = board.getEdge(edgeId);
+        if (!edge.getNodeA().equals(settlementNode) && !edge.getNodeB().equals(settlementNode)) {
             throw new IllegalPlacementException("Road must connect to your settlement.");
         }
     }
