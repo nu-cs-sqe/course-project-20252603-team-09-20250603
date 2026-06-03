@@ -25,7 +25,7 @@ public class TurnManager {
         }
     }
 
-    public boolean SetupStatus()
+    public boolean setupStatus()
     {
         return isSetupComplete;
     }

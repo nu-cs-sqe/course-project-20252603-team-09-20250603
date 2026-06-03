@@ -4,7 +4,6 @@
 package domain;
 
 import java.util.List;
-import java.util.Map;
 
 public class PlacementValidator {
     private final Board board;

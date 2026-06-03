@@ -2,7 +2,6 @@ package ui;
 
 import domain.BuildType;
 import domain.Game;
-import domain.GamePhase;
 import domain.Player;
 import domain.TurnManager;
 
@@ -38,15 +37,15 @@ public class SetupGameController {
                 handleInitialRoad(locationId, buildType);
             }
         } catch (IllegalStateException e) {
-            if (boardView != null) boardView.setStatusMessage("Error: " + e.getMessage());
+            if (boardView != null) {boardView.setStatusMessage("Error: " + e.getMessage());}
         } catch (Exception e) {
-            if (boardView != null) boardView.setStatusMessage("Invalid placement.");
+            if (boardView != null) {boardView.setStatusMessage("Invalid placement.");}
         }
     }
 
     private void handleInitialSettlement(int locationId, BuildType buildType) {
         if (buildType != BuildType.SETTLEMENT) {
-            if (boardView != null) boardView.setStatusMessage("Please click a node to place a Settlement.");
+            if (boardView != null) {boardView.setStatusMessage("Please click a node to place a Settlement.");}
             return;
         }
 
@@ -63,7 +62,7 @@ public class SetupGameController {
 
     private void handleInitialRoad(int locationId, BuildType buildType) {
         if (buildType != BuildType.ROAD) {
-            if (boardView != null) boardView.setStatusMessage("Please click an edge to place a Road.");
+            if (boardView != null) {boardView.setStatusMessage("Please click an edge to place a Road.");}
             return;
         }
 
@@ -74,9 +73,9 @@ public class SetupGameController {
 
         turnManager.nextPlayer();
 
-        if (turnManager.SetupStatus()) {
+        if (turnManager.setupStatus()) {
             game.advancePhase();
-            if (boardView != null) boardView.setStatusMessage("Setup complete! Starting normal play.");
+            if (boardView != null) {boardView.setStatusMessage("Setup complete! Starting normal play.");}
         } else {
             Player nextPlayer = game.getPlayer(turnManager.getCurrentPlayerIndex() - 1);
             if (boardView != null) {

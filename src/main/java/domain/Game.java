@@ -37,8 +37,8 @@ public class Game {
         return turnManager;
     }
 
-    public void setCurrPhase(GamePhase Phase){
-        this.currPhase = Phase;
+    public void setCurrPhase(GamePhase phase){
+        this.currPhase = phase;
     }
 
     public Player getPlayer(int id) {
