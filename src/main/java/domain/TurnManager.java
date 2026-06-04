@@ -35,7 +35,6 @@ public class TurnManager {
             currentPlayerIndex = setupPlayerSequence.remove(0);
         } else {
             isSetupComplete = true;
-            currentPlayerIndex++;
         }
     }
 
