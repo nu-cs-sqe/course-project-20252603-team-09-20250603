@@ -111,3 +111,13 @@ Tracks a single player's identity, infrastructure inventory, and victory points.
 | Test Case 39 | Player with 1 point receives 1 more | Victory points increase from 1 to 2 | :white_check_mark:       |
 | Test Case 40 | Player receives 0 victory points    | Victory points stays the same      | :white_check_mark:       |
 | Test Case 41 | Player receives negative points     | Throws `IllegalAgrumentException`  | :white_check_mark:       |
+
+### Method under test: `removeVictoryPoints(int points)`
+
+|              | State of the System                                  | Expected output / behavior        | Implemented? |
+|--------------|------------------------------------------------------|-----------------------------------|--------------|
+| Test Case 1  | Player has 2 points and loses 1 point                | Victory points become 1           | :x: |
+| Test Case 2  | Player has 2 points and loses exactly 2 points       | Victory points become 0           | :x: |
+| Test Case 3  | Player has 2 points and loses 0 points               | Victory points stay 2             | :x: |
+| Test Case 4  | Player tries to lose negative points                 | Throws `IllegalArgumentException` | :x: |
+| Test Case 5  | Player tries to lose more points than they have      | Victory points become 0           | :x: |
