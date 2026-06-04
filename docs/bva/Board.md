@@ -58,15 +58,52 @@
 
 ### Method under test: `private void buildEdges`
 | Test    | System under test                                    | Expected output             | Implemented? |
-|---------|------------------------------------------------------|-----------------------------|--------------|
-| Test 1  | Initialize board and nodes, there should be 72 edges | Length of board.edges == 72 | :x:          |
+|---------|------------------------------------------------------|-----------------------------|-------------|
+| Test 1  | Initialize board and nodes, there should be 72 edges | Length of board.edges == 72 | :white_check_mark:          |
 
 
 ### Method under test: `getEdgesConnectedToNode(Node node)`
 
 |              | State of the System                         | Expected output / behavior                    | Implemented? |
-|--------------|---------------------------------------------|------------------------------------------------|--------------|
-| Test Case 1  | Node is null                                | Throws `IllegalArgumentException`              | :x: |
-| Test Case 2  | Node is not part of the board               | Throws `IllegalStateException`                 | :x: |
-| Test Case 3  | Valid node has connected edges              | Returns all edges connected to that node       | :x: |
-| Test Case 4  | Valid edge node on board boundary           | Returns only the connected boundary edges      | :x: |
+|--------------|---------------------------------------------|------------------------------------------------|----------|
+| Test Case 1  | Node is null                                | Throws `IllegalArgumentException`              | :white_check_mark: |
+| Test Case 2  | Node is not part of the board               | Throws `IllegalStateException`                 | :white_check_mark: |
+| Test Case 3  | Valid node has connected edges              | Returns all edges connected to that node       | :white_check_mark: |
+| Test Case 4  | Valid edge node on board boundary           | Returns only the connected boundary edges      | :white_check_mark: |
+
+
+### Method under test: `getEdge(int edgeId)`
+
+|              | State of the System                  | Expected output / behavior        | Implemented? |
+|--------------|--------------------------------------|-----------------------------------|----------|
+| Test Case 1  | Edge ID is 0                         | Returns edge with ID 0            | :white_check_mark: |
+| Test Case 2  | Edge ID is the last valid edge ID    | Returns edge with that ID         | :white_check_mark: |
+| Test Case 3  | Edge ID is -1                        | Throws `IllegalArgumentException` | :white_check_mark: |
+| Test Case 4  | Edge ID is equal to number of edges  | Throws `IllegalArgumentException` | :white_check_mark: |
+
+### Method under test: `getHex(int hexId)`
+
+|              | State of the System                | Expected output / behavior        | Implemented? |
+|--------------|------------------------------------|-----------------------------------|----------|
+| Test Case 5  | Hex ID is 0                        | Returns hex with ID 0             | :white_check_mark: |
+| Test Case 6  | Hex ID is the last valid hex ID    | Returns hex with that ID          | :white_check_mark: |
+| Test Case 7  | Hex ID is -1                       | Throws `IllegalArgumentException` | :white_check_mark: |
+| Test Case 8  | Hex ID is equal to number of hexes | Throws `IllegalArgumentException` | :white_check_mark: |
+
+### Method under test: `getNode(int nodeId)`
+
+|              | State of the System                  | Expected output / behavior        | Implemented? |
+|--------------|--------------------------------------|-----------------------------------|----------|
+| Test Case 9  | Node ID is 0                         | Returns node with ID 0            | :white_check_mark: |
+| Test Case 10 | Node ID is the last valid node ID    | Returns node with that ID         | :white_check_mark: |
+| Test Case 11 | Node ID is -1                        | Throws `IllegalArgumentException` | :white_check_mark: |
+| Test Case 12 | Node ID is equal to number of nodes  | Throws `IllegalArgumentException` | :white_check_mark: |
+
+### Method under test: `getNode(int nodeId)`
+
+|              | State of the System                  | Expected output / behavior        | Implemented? |
+|--------------|--------------------------------------|-----------------------------------|----------|
+| Test Case 9  | Node ID is 0                         | Returns node with ID 0            | :white_check_mark: |
+| Test Case 10 | Node ID is the last valid node ID    | Returns node with that ID         | :white_check_mark: |
+| Test Case 11 | Node ID is -1                        | Throws `IllegalArgumentException` | :white_check_mark: |
+| Test Case 12 | Node ID is equal to number of nodes  | Throws `IllegalArgumentException` | :white_check_mark: |
