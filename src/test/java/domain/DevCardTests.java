@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -180,5 +181,89 @@ public class DevCardTests {
         player1.setDevCardHand(vpCard);
 
         assertEquals(1, player1.getVictoryPoints());
+    }
+
+    private Map<ResourceType, Integer> devCardCost() {
+        Map<ResourceType, Integer> cost = new HashMap<>();
+        cost.put(ResourceType.ORE, 1);
+        cost.put(ResourceType.SHEEP, 1);
+        cost.put(ResourceType.WHEAT, 1);
+        return cost;
+    }
+
+    private Game newGameWith(Player player) {
+        Board board = new Board();
+        return new Game(board, List.of(player), new Dice(new Random()), new TurnManager(1));
+    }
+
+    @Test // TC-DC-DRAW-OK
+    void test_DrawDevCard_WithEnoughResources_DrawsCardAndDeductsCost() {
+        Player player = new Player(0, "John", PlayerColor.RED);
+        player.addResources(devCardCost());
+
+        Game game = newGameWith(player);
+        game.getDevCardDeck().setNextCardType(DevCardType.KNIGHT);
+
+        assertEquals(0, player.getDevCardHand().size());
+
+        game.drawDevCard(0);
+
+        assertEquals(1, player.getDevCardHand().size());
+        assertEquals(DevCardType.KNIGHT, player.getDevCardHand().get(0).getType());
+        assertEquals(0, player.getResources().getOrDefault(ResourceType.ORE, 0));
+        assertEquals(0, player.getResources().getOrDefault(ResourceType.SHEEP, 0));
+        assertEquals(0, player.getResources().getOrDefault(ResourceType.WHEAT, 0));
+    }
+
+    @Test // TC-DC-DRAW-SURPLUS
+    void test_DrawDevCard_WithSurplusResources_OnlyDeductsCost() {
+        Player player = new Player(0, "John", PlayerColor.RED);
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.ORE, 2);
+        resources.put(ResourceType.SHEEP, 1);
+        resources.put(ResourceType.WHEAT, 1);
+        resources.put(ResourceType.WOOD, 3); // unrelated, must be untouched
+        player.addResources(resources);
+
+        Game game = newGameWith(player);
+        game.getDevCardDeck().setNextCardType(DevCardType.MONOPOLY);
+
+        game.drawDevCard(0);
+
+        assertEquals(1, player.getDevCardHand().size());
+        assertEquals(1, player.getResources().getOrDefault(ResourceType.ORE, 0));
+        assertEquals(0, player.getResources().getOrDefault(ResourceType.SHEEP, 0));
+        assertEquals(0, player.getResources().getOrDefault(ResourceType.WHEAT, 0));
+        assertEquals(3, player.getResources().getOrDefault(ResourceType.WOOD, 0));
+    }
+
+    @Test // TC-DC-DRAW-NONE
+    void test_DrawDevCard_WithNoResources_ThrowsAndDrawsNothing() {
+        Player player = new Player(0, "John", PlayerColor.RED);
+
+        Game game = newGameWith(player);
+        game.getDevCardDeck().setNextCardType(DevCardType.KNIGHT);
+
+        assertThrows(IllegalStateException.class, () -> game.drawDevCard(0));
+
+        assertEquals(0, player.getDevCardHand().size());
+    }
+
+    @Test // TC-DC-DRAW-PARTIAL
+    void test_DrawDevCard_MissingOneResource_ThrowsAndChargesNothing() {
+        Player player = new Player(0, "John", PlayerColor.RED);
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.ORE, 1);
+        resources.put(ResourceType.SHEEP, 1);
+        player.addResources(resources);
+
+        Game game = newGameWith(player);
+        game.getDevCardDeck().setNextCardType(DevCardType.KNIGHT);
+
+        assertThrows(IllegalStateException.class, () -> game.drawDevCard(0));
+
+        assertEquals(0, player.getDevCardHand().size());
+        assertEquals(1, player.getResources().getOrDefault(ResourceType.ORE, 0));
+        assertEquals(1, player.getResources().getOrDefault(ResourceType.SHEEP, 0));
     }
 }

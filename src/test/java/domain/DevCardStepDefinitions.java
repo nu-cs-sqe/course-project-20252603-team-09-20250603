@@ -200,6 +200,13 @@ public class DevCardStepDefinitions {
     @When("{string} draws a development card")
     public void player_draws_a_development_card(String playerName) {
         Player player = game.findPlayerByName(playerName);
+        // A dev card costs 1 Ore + 1 Wool (Sheep) + 1 Grain (Wheat); grant it so
+        // this scenario can focus on drawing/playing rather than on affording.
+        Map<ResourceType, Integer> cost = new HashMap<>();
+        cost.put(ResourceType.ORE, 1);
+        cost.put(ResourceType.SHEEP, 1);
+        cost.put(ResourceType.WHEAT, 1);
+        player.addResources(cost);
         game.drawDevCard(player.getId());
     }
 
