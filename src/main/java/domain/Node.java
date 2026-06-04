@@ -35,6 +35,9 @@ public class Node {
         return Integer.hashCode(id);
     }
 
+    public int getId() {
+        return id;
+    }
 
     public Player getNodeOccupant() {
         return occupant;

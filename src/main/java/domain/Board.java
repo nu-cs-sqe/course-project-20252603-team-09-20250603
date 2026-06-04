@@ -9,12 +9,17 @@ public class Board {
 
     private List<Hex> hexes;
     private List<Node> nodes;
+    private List<Edge> edges;
+
     private Map<Node, List<Hex>> nodeToHexes;
+    private Map<Hex, List<Node>> hexToNodes;
 
     public Board() {
         this.hexes = new ArrayList<>();
         this.nodes = new ArrayList<>();
+        this.edges = new ArrayList<>();
         this.nodeToHexes = new HashMap<>();
+        this.hexToNodes = new HashMap<>();
 
         initializeBoard();
     }
@@ -54,7 +59,30 @@ public class Board {
         }
 
         buildNodeToHexes();
+        buildHexToNodes();
+        buildEdges();
+    }
 
+    private void buildHexToNodes() {
+        hexToNodes.put(hexes.get(0), List.of(nodes.get(0), nodes.get(1), nodes.get(2), nodes.get(10), nodes.get(9), nodes.get(8)));
+        hexToNodes.put(hexes.get(1), List.of(nodes.get(2), nodes.get(3), nodes.get(4), nodes.get(12), nodes.get(11), nodes.get(10)));
+        hexToNodes.put(hexes.get(2), List.of(nodes.get(4), nodes.get(5), nodes.get(6), nodes.get(14), nodes.get(13), nodes.get(12)));
+        hexToNodes.put(hexes.get(3), List.of(nodes.get(7), nodes.get(8), nodes.get(9), nodes.get(19), nodes.get(18), nodes.get(17)));
+        hexToNodes.put(hexes.get(4), List.of(nodes.get(9), nodes.get(10), nodes.get(11), nodes.get(21), nodes.get(20), nodes.get(19)));
+        hexToNodes.put(hexes.get(5), List.of(nodes.get(11), nodes.get(12), nodes.get(13), nodes.get(23), nodes.get(22), nodes.get(21)));
+        hexToNodes.put(hexes.get(6), List.of(nodes.get(13), nodes.get(14), nodes.get(15), nodes.get(25), nodes.get(24), nodes.get(23)));
+        hexToNodes.put(hexes.get(7), List.of(nodes.get(16), nodes.get(17), nodes.get(18), nodes.get(29), nodes.get(28), nodes.get(27)));
+        hexToNodes.put(hexes.get(8), List.of(nodes.get(18), nodes.get(19), nodes.get(20), nodes.get(31), nodes.get(30), nodes.get(29)));
+        hexToNodes.put(hexes.get(9), List.of(nodes.get(20), nodes.get(21), nodes.get(22), nodes.get(33), nodes.get(32), nodes.get(31)));
+        hexToNodes.put(hexes.get(10), List.of(nodes.get(22), nodes.get(23), nodes.get(24), nodes.get(35), nodes.get(34), nodes.get(33)));
+        hexToNodes.put(hexes.get(11), List.of(nodes.get(24), nodes.get(25), nodes.get(26), nodes.get(37), nodes.get(36), nodes.get(35)));
+        hexToNodes.put(hexes.get(12), List.of(nodes.get(28), nodes.get(29), nodes.get(30), nodes.get(40), nodes.get(39), nodes.get(38)));
+        hexToNodes.put(hexes.get(13), List.of(nodes.get(30), nodes.get(31), nodes.get(32), nodes.get(42), nodes.get(41), nodes.get(40)));
+        hexToNodes.put(hexes.get(14), List.of(nodes.get(32), nodes.get(33), nodes.get(34), nodes.get(44), nodes.get(43), nodes.get(42)));
+        hexToNodes.put(hexes.get(15), List.of(nodes.get(34), nodes.get(35), nodes.get(36), nodes.get(46), nodes.get(45), nodes.get(44)));
+        hexToNodes.put(hexes.get(16), List.of(nodes.get(39), nodes.get(40), nodes.get(41), nodes.get(49), nodes.get(48), nodes.get(47)));
+        hexToNodes.put(hexes.get(17), List.of(nodes.get(41), nodes.get(42), nodes.get(43), nodes.get(51), nodes.get(50), nodes.get(49)));
+        hexToNodes.put(hexes.get(18), List.of(nodes.get(43), nodes.get(44), nodes.get(45), nodes.get(53), nodes.get(52), nodes.get(51)));
     }
 
     private void buildNodeToHexes() {
@@ -114,6 +142,31 @@ public class Board {
         nodeToHexes.put(nodes.get(53), List.of(hexes.get(18)));
     }
 
+    private void buildEdges() {
+        Set<String> seenEdges = new HashSet<>();
+        int edgeId = 0;
+
+        // iterate around each hex and connect adjacent nodes with edges
+        for (List<Node> nodes : hexToNodes.values()) {
+            for (int i = 0; i < 6; i++) {
+                Node nodeA = nodes.get(i);
+                Node nodeB = nodes.get((i + 1) % 6);
+
+                int min = Math.min(nodeA.getId(), nodeB.getId());
+                int max = Math.max(nodeA.getId(), nodeB.getId());
+                String key = min + "-" + max;
+
+                if (!seenEdges.contains(key)) {
+                    seenEdges.add(key);
+                    Edge newEdge = new Edge(edgeId++);
+                    newEdge.setNodeA(nodeA);
+                    newEdge.setNodeB(nodeB);
+                    edges.add(newEdge);
+                }
+            }
+        }
+    }
+
     public Map<Node, List<Hex>> getNodeToHexesMap() {
         return Collections.unmodifiableMap(this.nodeToHexes);
     }
@@ -128,6 +181,30 @@ public class Board {
         }
 
         return new ArrayList<>(nodeToHexes.get(node));
+    }
+
+    public Node getNode(int nodeId) {
+        if (nodeId < 0 || nodeId >= nodes.size()) {
+            throw new IllegalArgumentException("Invalid node ID.");
+        }
+
+        return nodes.get(nodeId);
+    }
+
+    public Edge getEdge(int edgeId) {
+        if (edgeId < 0 || edgeId >= edges.size()) {
+            throw new IllegalArgumentException("Invalid edge ID.");
+        }
+
+        return edges.get(edgeId);
+    }
+
+    public Hex getHex(int hexId) {
+        if (hexId < 0 || hexId > hexes.size()) {
+            throw new IllegalArgumentException("Invalid Hex Id");
+        }
+
+        return hexes.get(hexId);
     }
 
     public Map<ResourceType, Integer> getAdjacentResources(Node node) {
@@ -146,5 +223,17 @@ public class Board {
         }
 
         return resources;
+    }
+
+    public List<Hex> getHexes() {
+        return List.copyOf(hexes);
+    }
+
+    public List<Node> getNodes() {
+        return List.copyOf(nodes);
+    }
+
+    public List<Edge> getEdges() {
+        return List.copyOf(edges);
     }
 }

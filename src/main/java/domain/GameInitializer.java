@@ -1,9 +1,6 @@
 package domain;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class GameInitializer {
     private static final PlayerColor[] COLORS = {
@@ -12,6 +9,14 @@ public class GameInitializer {
             PlayerColor.ORANGE,
             PlayerColor.WHITE
     };
+
+    public Game setupGame(List<String> playerNames){
+        List<Player> players = setupPlayers(playerNames);
+        Board board = new Board();
+        Dice dice = new Dice(new Random());
+        TurnManager turnManager = new TurnManager(players.size());
+        return new Game(board, players, dice, turnManager);
+    }
 
     public List<Player> setupPlayers(List<String> names){
         if (names == null){
@@ -38,6 +43,8 @@ public class GameInitializer {
 
             players.add(player);
         }
+
+        // TODO: perhaps randomize and assign order or just keep as is
 
         return players;
     }
