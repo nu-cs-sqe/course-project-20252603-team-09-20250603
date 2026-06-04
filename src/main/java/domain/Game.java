@@ -18,6 +18,7 @@ public class Game {
     private final PlacementValidator placementValidator;
     private GamePhase currPhase;
     private final Map<Integer, Node> setupSettlements;
+    private final Map<Integer, Node> secondSetupSettlements;
     // TODO: add devCardDeck to constructor
 
     public Game(Board board, List<Player> players, Dice dice, TurnManager turnManager) {
@@ -28,6 +29,7 @@ public class Game {
         this.placementValidator = new PlacementValidator(board);
         this.currPhase = GamePhase.SETUP;
         this.setupSettlements = new HashMap<>();
+        this.secondSetupSettlements = new HashMap<>();
     }
 
     public Board getBoard() {
@@ -61,10 +63,20 @@ public class Game {
 
     public void advancePhase() {
         if (this.currPhase == GamePhase.SETUP) {
+            distributeSetupResources();
             this.currPhase = GamePhase.NORMAL_PLAY;
         }
         else if (this.currPhase == GamePhase.NORMAL_PLAY){
             this.currPhase = GamePhase.GAME_OVER;
+        }
+    }
+
+    public void distributeSetupResources() {
+        for (Player player : players) {
+            Node settlement = secondSetupSettlements.get(player.getId());
+            if (settlement != null) {
+                player.addResources(board.getAdjacentResources(settlement));
+            }
         }
     }
 
@@ -115,9 +127,14 @@ public class Game {
             }catch (IllegalPlacementException exception) {
                 throw new IllegalStateException(exception.getMessage(), exception);
             }
+            boolean isSecondSetupSettlement = currPhase == GamePhase.SETUP
+                    && countPlayerSettlements(currentPlayer) == 1;
             node.buildSettlement(currentPlayer);
             if (currPhase == GamePhase.SETUP) {
                 setupSettlements.put(currentPlayer.getId(), node);
+                if (isSecondSetupSettlement) {
+                    secondSetupSettlements.put(currentPlayer.getId(), node);
+                }
             }
         } else if(infraType == InfraType.CITY){
             try {
@@ -158,6 +175,16 @@ public class Game {
 
         newHex.setHasRobber(true);
     }
+    private int countPlayerSettlements(Player player) {
+        int count = 0;
+        for (Node node : board.getNodes()) {
+            if (player.equals(node.getNodeOccupant()) && node.getInfraType() == InfraType.SETTLEMENT) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     private String getInventoryKey(InfraType infraType) {
         switch (infraType) {
             case ROAD:
