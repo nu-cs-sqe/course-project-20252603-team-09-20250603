@@ -186,4 +186,27 @@ public class DevCardStepDefinitions {
 
         player.manageDevCardActivation(player.getId());
     }
+
+    @Given("{string} has played {int} knights")
+    public void player_has_played_knights(String playerName, int knightCount) {
+        Player player = findPlayerByName(playerName);
+        for (int i = 0; i < knightCount; i++) {
+            player.incrementPlayedKnightCount();
+        }
+        game.updateLargestArmyPlayer();
+    }
+
+    @Then("{string} should possess the {string} milestone")
+    public void player_should_possess_the_milestone(String playerName, String milestoneName) {
+        Player player = findPlayerByName(playerName);
+        if (milestoneName.equalsIgnoreCase("Largest Army")) {
+            assertTrue(player.isHasLargestArmy());
+        }
+    }
+
+    @Then("{string} should have {int} victory points")
+    public void player_should_have_victory_points(String playerName, int expectedPoints) {
+        Player player = findPlayerByName(playerName);
+        assertEquals(expectedPoints, player.getVictoryPoints());
+    }
 }

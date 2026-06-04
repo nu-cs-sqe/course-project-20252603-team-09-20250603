@@ -169,12 +169,9 @@ public class DevCardTests {
 
         DevCard vpCard = new DevCard(DevCardType.VICTORY_POINT);
 
-        player1.calculatePoints();
         assertEquals(0, player1.getVictoryPoints());
 
         player1.setDevCardHand(vpCard);
-
-        player1.calculatePoints();
 
         assertEquals(1, player1.getVictoryPoints());
     }

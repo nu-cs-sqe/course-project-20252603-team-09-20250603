@@ -11,3 +11,4 @@ Feature: Knight Development Card Execution
     Then the robber should be located on hex 5
     And "John" should have 1 played knight counted in their army pool
     And "John" should no longer have the "KNIGHT" card in hand
+

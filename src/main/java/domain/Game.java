@@ -9,6 +9,8 @@ public class Game {
     private final Map<Integer, Player> players;
     private final DevCardDeck devCardDeck;
     private Board board;
+    private Player largestArmyPlayer = null;
+    private int largestArmySize = 2;
 
     public Game() {
         this.players = new HashMap<>();
@@ -50,6 +52,7 @@ public class Game {
         switch (cardType) {
             case KNIGHT:
                 cardToPlay.doKnightAction(player, this.board, targetHexId);
+                this.updateLargestArmyPlayer();
                 break;
             case ROAD_BUILDING:
                 cardToPlay.doRoadBuildingAction(player, this.board);
@@ -66,6 +69,29 @@ public class Game {
         }
 
         player.getDevCardHand().remove(cardToPlay);
+    }
+
+    public void updateLargestArmyPlayer() {
+        Player currentContender = largestArmyPlayer;
+        int maxKnights = largestArmySize;
+
+        for (Player p : players.values()) {
+            if (p.getPlayedKnightCount() > maxKnights) {
+                maxKnights = p.getPlayedKnightCount();
+                currentContender = p;
+            }
+        }
+
+        if (currentContender != largestArmyPlayer) {
+            if (largestArmyPlayer != null) {
+                largestArmyPlayer.setHasLargestArmy(false);
+            }
+
+            largestArmyPlayer = currentContender;
+            largestArmySize = maxKnights;
+
+            largestArmyPlayer.setHasLargestArmy(true);
+        }
     }
 
 }

@@ -47,16 +47,56 @@ public class Player {
     }
 
     public Map<String, Integer> getInventory() {
-        return new HashMap<>(inventory);
+        return this.inventory;
+    }
+
+    public void setHasLargestArmy(boolean hasLargestArmy) {
+        if (this.hasLargestArmy != hasLargestArmy) {
+            this.hasLargestArmy = hasLargestArmy;
+            if (hasLargestArmy) {
+                this.addVictoryPoints(2);
+            } else {
+                this.removeVictoryPoints(2);
+            }
+        }
+    }
+
+    public boolean isHasLargestArmy() {
+        return this.hasLargestArmy;
     }
 
     public int getVictoryPoints(){
         return victoryPoints;
     }
 
+    public void addVictoryPoints(int points) {
+        if (points < 0) {
+            throw new IllegalArgumentException("Points to add cannot be negative.");
+        }
+        this.victoryPoints += points;
+    }
+
+    public void removeVictoryPoints(int points) {
+        if (points < 0) {
+            throw new IllegalArgumentException("Points to remove cannot be negative.");
+        }
+        if (this.victoryPoints - points < 0) {
+            this.victoryPoints = 0;
+        } else {
+            this.victoryPoints -= points;
+        }
+    }
+
     public List<DevCard> getDevCardHand() { return this.devHand; }
 
-    public void setDevCardHand(DevCard devCard) { this.devHand.add(devCard); }
+    public void setDevCardHand(DevCard devCard) {
+        this.devHand.add(devCard);
+
+        if (devCard.getType() == DevCardType.VICTORY_POINT) {
+            this.addVictoryPoints(1); // Scoreboard updates immediately upon drawing!
+        }
+    }
+
 
     public void manageDevCardActivation(int activePlayerId) {
         if (this.id == activePlayerId) {
@@ -82,23 +122,5 @@ public class Player {
         this.inventory.put("roads", currentRoads - count);
     }
 
-    public void calculatePoints() {
-        int calculatedTotal = 0;
-
-        for (DevCard card : this.devHand) {
-            if (card.getType() == DevCardType.VICTORY_POINT) {
-                calculatedTotal++;
-            }
-        }
-
-        if (this.hasLargestArmy) {
-            calculatedTotal += 2;
-        }
-        if (this.hasLongestRoad) {
-            calculatedTotal += 2;
-        }
-
-        this.victoryPoints = calculatedTotal;
-    }
 
 }
