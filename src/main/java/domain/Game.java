@@ -201,9 +201,9 @@ public class Game {
             return;
         }
 
-//        if (longestRoadPlayer != null) {
-//            longestRoadPlayer.removeVictoryPoints(2);
-//        }
+        if (longestRoadPlayer != null) {
+            longestRoadPlayer.removeVictoryPoints(2);
+        }
 
         candidate.addVictoryPoints(2);
         longestRoadPlayer = candidate;
