@@ -1,10 +1,7 @@
 package domain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.util.*;
 
 public class Game {
     private final Board board;
@@ -19,6 +16,7 @@ public class Game {
     private GamePhase currPhase;
     private final Map<Integer, Node> setupSettlements;
     private final Map<Integer, Node> secondSetupSettlements;
+    private Player longestRoadPlayer;
     // TODO: add devCardDeck to constructor
 
     public Game(Board board, List<Player> players, Dice dice, TurnManager turnManager) {
@@ -151,6 +149,11 @@ public class Game {
 
         if(currPhase != GamePhase.SETUP) {
             currentPlayer.useResources(cost);
+            if(infraType == InfraType.SETTLEMENT || InfraType == infraType.CITY){
+              currentPlayer.addVictoryPoints(1);
+            }
+        currentPlayer.useResources(cost);
+
         }
     }
 
@@ -221,5 +224,82 @@ public class Game {
         }
 
         return cost;
+    }
+
+    public int calculateLongestRoad(Player player) {
+        int longestRoad = 0;
+
+        for (Node node : board.getNodes()) {
+            int roadLength = calculateLongestRoadFromNode(player, node, new HashSet<>());
+            longestRoad = Math.max(longestRoad, roadLength);
+        }
+
+        return longestRoad;
+    }
+
+    private int calculateLongestRoadFromNode(
+            Player player,
+            Node currentNode,
+            Set<Edge> usedEdges
+    ) {
+        if (isBlockedByOtherPlayer(player, currentNode)) {
+            return 0;
+        }
+
+        int longest = 0;
+
+        for (Edge edge : board.getEdgesConnectedToNode(currentNode)) {
+            if (edge.getEdgeOccupant() != player || usedEdges.contains(edge)) {
+                continue;
+            }
+
+            usedEdges.add(edge);
+
+            Node nextNode = getOtherNode(edge, currentNode);
+            int pathLength = 1 + calculateLongestRoadFromNode(player, nextNode, usedEdges);
+
+            longest = Math.max(longest, pathLength);
+
+            usedEdges.remove(edge);
+        }
+
+        return longest;
+    }
+
+    private Node getOtherNode(Edge edge, Node currentNode) {
+        if (edge.getNodeA().equals(currentNode)) {
+            return edge.getNodeB();
+        }
+
+        return edge.getNodeA();
+    }
+
+    private boolean isBlockedByOtherPlayer(Player player, Node node) {
+        return node.getNodeOccupant() != null && node.getNodeOccupant() != player;
+    }
+
+    public void updateLongestRoadBonus() {
+        Player candidate = null;
+        int candidateLength = 0;
+
+        for (Player player : players) {
+            int roadLength = calculateLongestRoad(player);
+
+            if (roadLength >= 5 && roadLength > candidateLength) {
+                candidate = player;
+                candidateLength = roadLength;
+            }
+        }
+
+        if (candidate == null || candidate == longestRoadPlayer) {
+            return;
+        }
+
+        if (longestRoadPlayer != null) {
+            longestRoadPlayer.removeVictoryPoints(2);
+        }
+
+        candidate.addVictoryPoints(2);
+        longestRoadPlayer = candidate;
     }
 }
