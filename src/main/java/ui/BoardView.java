@@ -23,22 +23,26 @@ import java.util.Map;
 
 public class BoardView extends BorderPane {
     private static final String STYLESHEET = "/ui/board-view.css";
-    private static final String BOARD_IMAGE = "/ui/catan-board3.png";
-    private static final double IMAGE_WIDTH = 1454.0;
-    private static final double IMAGE_HEIGHT = 1452.0;
+    private static final String BOARD_IMAGE = "/ui/CATAN-BOARD.png";
+    private static final double IMAGE_WIDTH = 1254.0;
+    private static final double IMAGE_HEIGHT = 1254.0;
     /** Shown size in the UI (image + overlays are scaled down together). */
     private static final double BOARD_WIDTH = 880.0;
     private static final double BOARD_HEIGHT = IMAGE_HEIGHT * (BOARD_WIDTH / IMAGE_WIDTH);
     private static final double DISPLAY_SCALE = BOARD_WIDTH / IMAGE_WIDTH;
-    /** Reference board size the hex layout was originally tuned against. */
-    private static final double REF_BOARD_WIDTH = 900.0;
-    private static final double REF_BOARD_HEIGHT = 733.0;
-    private static final double LAYOUT_SCALE_X = IMAGE_WIDTH / REF_BOARD_WIDTH;
-    private static final double LAYOUT_SCALE_Y = IMAGE_HEIGHT / REF_BOARD_HEIGHT;
-    private static final double HEX_RADIUS_X = 82.0 * LAYOUT_SCALE_X * DISPLAY_SCALE;
-    private static final double HEX_RADIUS_Y = 82.0 * LAYOUT_SCALE_Y * DISPLAY_SCALE;
-    private static final double NUDGE_X = 41.0;
-    private static final double NUDGE_Y = 21.0;
+
+    // --- Hex grid geometry in SOURCE-IMAGE pixels. Tune these three to align the overlay. ---
+    /** Center of the board = the desert (hex 9), in source-image pixels. */
+    private static final double HEX_CENTER_X = 627.0;
+    private static final double HEX_CENTER_Y = 634.5;
+    /** Horizontal spacing between adjacent hex centers in the same row. */
+    private static final double HEX_DX = 226.2;
+    /** Derived: vertical row spacing and hex radius for a regular pointy-top hex. */
+    private static final double HEX_DY = HEX_DX * 0.866;
+    private static final double HEX_SIZE = HEX_DX / Math.sqrt(3.0);
+
+    private static final double HEX_RADIUS_X = HEX_SIZE * DISPLAY_SCALE;
+    private static final double HEX_RADIUS_Y = HEX_SIZE * DISPLAY_SCALE;
     private static final double NODE_RADIUS = 6.0;
     private static final double[] HEX_VERTEX_ANGLES = {-150.0, -90.0, -30.0, 30.0, 90.0, 150.0};
 
@@ -217,34 +221,24 @@ public class BoardView extends BorderPane {
     private Map<Integer, BoardPoint> buildHexCenters() {
         Map<Integer, BoardPoint> centers = new HashMap<>();
 
-        putCenter(centers, 0, 315.0, 112.0);
-        putCenter(centers, 1, 451.0, 112.0);
-        putCenter(centers, 2, 587.0, 112.0);
-        putCenter(centers, 3, 247.0, 229.0);
-        putCenter(centers, 4, 383.0, 229.0);
-        putCenter(centers, 5, 519.0, 229.0);
-        putCenter(centers, 6, 655.0, 229.0);
-        putCenter(centers, 7, 179.0, 346.0);
-        putCenter(centers, 8, 315.0, 346.0);
-        putCenter(centers, 9, 451.0, 346.0);
-        putCenter(centers, 10, 587.0, 346.0);
-        putCenter(centers, 11, 723.0, 346.0);
-        putCenter(centers, 12, 247.0, 463.0);
-        putCenter(centers, 13, 383.0, 463.0);
-        putCenter(centers, 14, 519.0, 463.0);
-        putCenter(centers, 15, 655.0, 463.0);
-        putCenter(centers, 16, 315.0, 580.0);
-        putCenter(centers, 17, 451.0, 580.0);
-        putCenter(centers, 18, 587.0, 580.0);
+        // Rows of 3,4,5,4,3 pointy-top hexes, centered on (HEX_CENTER_X, HEX_CENTER_Y).
+        // Hex ids are assigned row by row (0..18), identical to the original ordering.
+        int[] rowCounts = {3, 4, 5, 4, 3};
+        int hexId = 0;
+
+        for (int row = 0; row < rowCounts.length; row++) {
+            int count = rowCounts[row];
+            double rowY = HEX_CENTER_Y + (row - 2) * HEX_DY;
+            double rowStartX = HEX_CENTER_X - (count - 1) * HEX_DX / 2.0;
+
+            for (int col = 0; col < count; col++) {
+                double x = rowStartX + col * HEX_DX;
+                centers.put(hexId, toDisplayPoint(x, rowY));
+                hexId++;
+            }
+        }
 
         return centers;
-    }
-
-    private void putCenter(Map<Integer, BoardPoint> centers, int hexId, double refX, double refY) {
-        centers.put(hexId, toDisplayPoint(
-                refX * LAYOUT_SCALE_X + NUDGE_X,
-                refY * LAYOUT_SCALE_Y + NUDGE_Y
-        ));
     }
 
     private BoardPoint toDisplayPoint(double layoutX, double layoutY) {
