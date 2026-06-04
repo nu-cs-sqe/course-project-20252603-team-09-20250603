@@ -68,7 +68,7 @@ public class Game {
         currentPlayer.useInventoryItem(inventoryKey);
         currentPlayer.useResources(cost);
 
-        if(buildType == BuildType.SETTLEMENT || buildType == BuildType.CITY){
+        if(infraType == InfraType.SETTLEMENT || infraType == infraType.CITY){
             currentPlayer.addVictoryPoints(1);
         }
     }

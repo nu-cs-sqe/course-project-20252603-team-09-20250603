@@ -19,7 +19,7 @@ public class GameVictoryPointTests {
 
         player.addResources(roadCost());
 
-        game.build(player, BuildType.ROAD, 1);
+        game.build(player, InfraType.ROAD, 1);
 
         assertEquals(0, player.getVictoryPoints());
     }
@@ -32,7 +32,7 @@ public class GameVictoryPointTests {
 
         player.addResources(settlementCost());
 
-        game.build(player, BuildType.SETTLEMENT, 1);
+        game.build(player, InfraType.SETTLEMENT, 1);
 
         assertEquals(1, player.getVictoryPoints());
     }
@@ -44,12 +44,12 @@ public class GameVictoryPointTests {
         Game game = createGame(board, player);
 
         player.addResources(settlementCost());
-        game.build(player, BuildType.SETTLEMENT, 1);
+        game.build(player, InfraType.SETTLEMENT, 1);
 
         assertEquals(1, player.getVictoryPoints());
 
         player.addResources(cityCost());
-        game.build(player, BuildType.CITY, 1);
+        game.build(player, InfraType.CITY, 1);
 
         assertEquals(2, player.getVictoryPoints());
     }
@@ -63,7 +63,7 @@ public class GameVictoryPointTests {
         player.addVictoryPoints(1);
 
         assertThrows(IllegalStateException.class, () -> {
-            game.build(player, BuildType.SETTLEMENT, 1);
+            game.build(player, InfraType.SETTLEMENT, 1);
         });
 
         assertEquals(1, player.getVictoryPoints());
@@ -80,7 +80,7 @@ public class GameVictoryPointTests {
         player.addResources(cityCost());
 
         assertThrows(IllegalStateException.class, () -> {
-            game.build(player, BuildType.CITY, 1);
+            game.build(player, InfraType.CITY, 1);
         });
 
         assertEquals(1, player.getVictoryPoints());
