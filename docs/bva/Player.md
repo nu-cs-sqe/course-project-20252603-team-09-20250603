@@ -105,9 +105,9 @@ Tracks a single player's identity, infrastructure inventory, and victory points.
 
 ### Method under test: `addVictoryPoints(int points)`
 
-|              | State of the System                 | Expected output / behavior          | Implemented? |
-|--------------|-------------------------------------|-------------------------------------|--------------|
-| Test Case 38 | New player receives 1 victory point | Victory points increase from 0 to 1 | :x:          |
-| Test Case 39 | Player with 1 point receives 1 more | Victory points increase from 1 to 2 | :x:          |
-| Test Case 40 | Player receives 0 victory points    | Victory points stays the same       | :x:          |
-| Test Case 41 | Player receives negative points     | Throws `IllegaleAgrumentException`  | :x:          |
+|              | State of the System                 | Expected output / behavior         | Implemented? |
+|--------------|-------------------------------------|------------------------------------|----------|
+| Test Case 38 | New player receives 1 victory point | Victory points increase from 0 to 1 | :white_check_mark:       |
+| Test Case 39 | Player with 1 point receives 1 more | Victory points increase from 1 to 2 | :white_check_mark:       |
+| Test Case 40 | Player receives 0 victory points    | Victory points stays the same      | :white_check_mark:       |
+| Test Case 41 | Player receives negative points     | Throws `IllegalAgrumentException`  | :white_check_mark:       |
