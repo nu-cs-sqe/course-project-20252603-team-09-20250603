@@ -598,7 +598,55 @@ public class PlayerTests {
         });
     }
 
+    @Test
+    void removeVictoryPoints_PlayerHasTwoPointsAndLosesOne_DecreasesToOne() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
 
+        player.addVictoryPoints(2);
+        player.removeVictoryPoints(1);
+
+        assertEquals(1, player.getVictoryPoints());
+    }
+
+    @Test
+    void removeVictoryPoints_PlayerHasTwoPointsAndLosesTwo_DecreasesToZero() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.addVictoryPoints(2);
+        player.removeVictoryPoints(2);
+
+        assertEquals(0, player.getVictoryPoints());
+    }
+
+    @Test
+    void removeVictoryPoints_RemoveZero_PointsStaySame() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.addVictoryPoints(2);
+        player.removeVictoryPoints(0);
+
+        assertEquals(2, player.getVictoryPoints());
+    }
+
+    @Test
+    void removeVictoryPoints_NegativePoints_ThrowsException() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            player.removeVictoryPoints(-1);
+        });
+    }
+
+    @Test
+    void removeVictoryPoints_RemoveMoreThanPlayerHas_PlayerHasZero() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.addVictoryPoints(1);
+
+        player.removeVictoryPoints(2);
+
+        assertEquals(0, player.getVictoryPoints());
+    }
 
 
 
