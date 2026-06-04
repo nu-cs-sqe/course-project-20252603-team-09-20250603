@@ -241,4 +241,48 @@ public class BoardTests {
 
         assertEquals(72, edges.size());
     }
+
+    @Test
+    void getEdgesConnectedToNode_NullNode_ThrowsException() {
+        Board board = new Board();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            board.getEdgesConnectedToNode(null);
+        });
+    }
+
+    @Test
+    void getEdgesConnectedToNode_NodeNotOnBoard_ThrowsException() {
+        Board board = new Board();
+        Node invalidNode = new Node(999);
+
+        assertThrows(IllegalStateException.class, () -> {
+            board.getEdgesConnectedToNode(invalidNode);
+        });
+    }
+
+    @Test
+    void getEdgesConnectedToNode_ValidNode_ReturnsConnectedEdges() {
+        Board board = new Board();
+        Node node = board.getNode(0);
+
+        List<Edge> connectedEdges = board.getEdgesConnectedToNode(node);
+
+        for (Edge edge : connectedEdges) {
+            boolean edgeContainsNode =
+                    edge.getNodeA().equals(node) || edge.getNodeB().equals(node);
+
+            assertTrue(edgeContainsNode);
+        }
+    }
+
+    @Test
+    void getEdgesConnectedToNode_BoundaryNode_ReturnsExpectedNumberOfEdges() {
+        Board board = new Board();
+        Node node = board.getNode(0);
+
+        List<Edge> connectedEdges = board.getEdgesConnectedToNode(node);
+
+        assertEquals(2, connectedEdges.size());
+    }
 }
