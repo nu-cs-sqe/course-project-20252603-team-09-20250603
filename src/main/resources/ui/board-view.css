@@ -1,0 +1,74 @@
+.board-view {
+    -fx-background-color: #f2efe6;
+}
+
+.board-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 10 0;
+}
+
+.board-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: #8f846f;
+    -fx-border-width: 1;
+}
+
+.board-pane {
+    -fx-background-color: #111111;
+}
+
+.board-status {
+    -fx-font-size: 14px;
+    -fx-padding: 10 0 0 0;
+}
+
+.hex-overlay {
+    -fx-fill: rgba(255, 105, 180, 0.04);
+    -fx-stroke: rgba(255, 105, 180, 0.20);
+    -fx-stroke-width: 1;
+}
+
+.hex-overlay:hover {
+    -fx-fill: rgba(255, 105, 180, 0.14);
+    -fx-stroke: rgba(255, 105, 180, 0.75);
+}
+
+.selected-hex {
+    -fx-fill: rgba(255, 105, 180, 0.18);
+    -fx-stroke: #ff4fb3;
+    -fx-stroke-width: 3;
+}
+
+.edge-overlay {
+    -fx-stroke: rgba(46, 119, 255, 0.45);
+    -fx-stroke-width: 10;
+    -fx-stroke-line-cap: round;
+}
+
+.edge-overlay:hover {
+    -fx-stroke: rgba(46, 119, 255, 0.80);
+}
+
+.selected-edge {
+    -fx-stroke: #005cff;
+    -fx-stroke-width: 13;
+}
+
+.node-overlay {
+    -fx-fill: rgba(255, 255, 255, 0.80);
+    -fx-stroke: #222222;
+    -fx-stroke-width: 2;
+}
+
+.node-overlay:hover {
+    -fx-fill: #ffffff;
+    -fx-stroke: #005cff;
+    -fx-stroke-width: 3;
+}
+
+.selected-node {
+    -fx-fill: #ffffff;
+    -fx-stroke: #005cff;
+    -fx-stroke-width: 4;
+}

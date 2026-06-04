@@ -3,6 +3,8 @@ import com.github.spotbugs.snom.Effort
 
 plugins {
     id("java")
+    id("application")
+    id("org.openjfx.javafxplugin") version "0.1.0"
     checkstyle
     id("com.github.spotbugs") version "6.0.25"
     jacoco
@@ -27,19 +29,29 @@ dependencies {
     testImplementation("org.junit.platform:junit-platform-suite")
 
     testImplementation("org.easymock:easymock:5.2.0")
+    compileOnly("com.github.spotbugs:spotbugs-annotations:4.8.6")
 
     // cucumber
     testImplementation(platform("io.cucumber:cucumber-bom:7.20.1"))
     testImplementation("io.cucumber:cucumber-java")
     testImplementation("io.cucumber:cucumber-junit-platform-engine")
     testImplementation("io.cucumber:cucumber-picocontainer")
-    compileOnly("com.github.spotbugs:spotbugs-annotations:4.8.6")
+
 }
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(11)
     }
+}
+
+application {
+    mainClass.set("ui.Main")
+}
+
+javafx {
+    version = "17.0.16"
+    modules("javafx.controls", "javafx.fxml")
 }
 
 tasks.compileJava {
@@ -85,6 +97,7 @@ configurations {}
 
 val cucumberRuntime by configurations.creating {
     extendsFrom(configurations["testImplementation"])
+    exclude(group = "org.openjfx")
 }
 
 task("cucumber") {
