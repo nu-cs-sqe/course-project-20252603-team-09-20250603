@@ -2,12 +2,15 @@ package ui;
 
 import domain.Player;
 import javafx.geometry.Insets;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 import java.util.List;
 
 public class GameStatsView extends VBox {
+    private static final String BUILDING_COSTS_IMAGE = "/ui/building-costs.jpg";
 
     public GameStatsView(GameStatsController controller) {
 
@@ -49,6 +52,16 @@ public class GameStatsView extends VBox {
             playerBox.getChildren().addAll(nameLabel, vpLabel);
             getChildren().add(playerBox);
         }
+
+        ImageView buildingCostsImage = new ImageView(
+                new Image(getClass().getResource(BUILDING_COSTS_IMAGE).toExternalForm())
+        );
+        buildingCostsImage.getStyleClass().add("building-costs-image");
+        buildingCostsImage.setFitWidth(190.0);
+        buildingCostsImage.setPreserveRatio(true);
+
+        VBox.setMargin(buildingCostsImage, new Insets(12, 0, 0, 0));
+        getChildren().add(buildingCostsImage);
     }
 
     // Snake draft placeholder

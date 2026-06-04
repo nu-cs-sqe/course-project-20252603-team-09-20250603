@@ -1,8 +1,9 @@
 .player-action-view {
     -fx-background-color: #e8e4d9;
     -fx-border-color: #d1ccb8;
-    -fx-border-width: 0 0 0 2px;
-    -fx-min-width: 220px;
+    -fx-border-width: 2px 0 0 0;
+    -fx-background-insets: 0;
+    -fx-padding: 14px 16px;
 }
 
 .action-title {
@@ -10,10 +11,37 @@
     -fx-font-weight: bold;
 }
 
-.player-turn-label {
-    -fx-font-size: 16px;
-    -fx-text-fill: #2c3e50;
-    -fx-font-style: italic;
-    -fx-padding: 10px 0;
+.action-header {
+    -fx-spacing: 2px;
 }
 
+.player-turn-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.action-prompt-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #2c3e50;
+}
+
+.action-button-row {
+    -fx-padding: 8px 0 0 0;
+}
+
+.action-bar-button {
+    -fx-background-color: #f7f4ec;
+    -fx-border-color: #c6c0ad;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 12px;
+}
+
+.action-bar-button:hover {
+    -fx-background-color: #ffffff;
+}
+
+.action-bar-button:pressed {
+    -fx-background-color: #ded8c7;
+}

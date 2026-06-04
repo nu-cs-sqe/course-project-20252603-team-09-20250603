@@ -17,12 +17,16 @@ public class MainView extends BorderPane {
     }
 
     public void showWelcomeView() {
+        setLeft(null);
+        setBottom(null);
         WelcomeController welcomeController = new WelcomeController(this);
         WelcomeView welcomeView = new WelcomeView(welcomeController);
         setCenter(welcomeView);
     }
 
     public void showSetupView() {
+        setLeft(null);
+        setBottom(null);
         SetupController setupController = new SetupController(this);
         SetupView setupView = new SetupView(setupController);
         setCenter(setupView);
@@ -38,14 +42,7 @@ public class MainView extends BorderPane {
         statsController.setView(statsView);
         setLeft(statsView);
 
-        // Remove the hard Game/TurnManager instantiation from the router since
-        // they require package-private domain constructors like Dice(Random)
-        // that shouldn't be exposed directly to the UI layer yet.
-        // We will mock/defer this until GameController is established.
-
-        // PlayerActionController actionController = new PlayerActionController(players, null, null);
-        // PlayerActionView actionView = new PlayerActionView(actionController);
-        // actionController.setView(actionView);
-        // setRight(actionView);
+        PlayerActionView actionView = new PlayerActionView(players);
+        setBottom(actionView);
     }
 }

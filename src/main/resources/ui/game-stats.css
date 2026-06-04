@@ -33,3 +33,8 @@
     -fx-font-size: 12px;
     -fx-text-fill: #555555;
 }
+
+.building-costs-image {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.10), 6, 0.2, 0, 1);
+}
+
