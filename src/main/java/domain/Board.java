@@ -200,7 +200,7 @@ public class Board {
     }
 
     public Hex getHex(int hexId) {
-        if (hexId < 0 || hexId > hexes.size()) {
+        if (hexId < 0 || hexId >= hexes.size()) {
             throw new IllegalArgumentException("Invalid Hex Id");
         }
 
@@ -247,4 +247,23 @@ public class Board {
     }
 
     public void freeRoads(Player player, int count) {}
+    public List<Edge> getEdgesConnectedToNode(Node node) {
+        if (node == null) {
+            throw new IllegalArgumentException("The node object is null");
+        }
+
+        if (!nodes.contains(node)) {
+            throw new IllegalStateException("The node object is not valid");
+        }
+
+        List<Edge> connectedEdges = new ArrayList<>();
+
+        for (Edge edge : edges) {
+            if (edge.getNodeA().equals(node) || edge.getNodeB().equals(node)) {
+                connectedEdges.add(edge);
+            }
+        }
+
+        return connectedEdges;
+    }
 }
