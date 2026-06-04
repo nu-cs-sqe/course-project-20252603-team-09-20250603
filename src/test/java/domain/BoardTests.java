@@ -241,4 +241,162 @@ public class BoardTests {
 
         assertEquals(72, edges.size());
     }
+
+    @Test
+    void getEdgesConnectedToNode_NullNode_ThrowsException() {
+        Board board = new Board();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            board.getEdgesConnectedToNode(null);
+        });
+    }
+
+    @Test
+    void getEdgesConnectedToNode_NodeNotOnBoard_ThrowsException() {
+        Board board = new Board();
+        Node invalidNode = new Node(999);
+
+        assertThrows(IllegalStateException.class, () -> {
+            board.getEdgesConnectedToNode(invalidNode);
+        });
+    }
+
+    @Test
+    void getEdgesConnectedToNode_ValidNode_ReturnsConnectedEdges() {
+        Board board = new Board();
+        Node node = board.getNode(0);
+
+        List<Edge> connectedEdges = board.getEdgesConnectedToNode(node);
+
+        for (Edge edge : connectedEdges) {
+            boolean edgeContainsNode =
+                    edge.getNodeA().equals(node) || edge.getNodeB().equals(node);
+
+            assertTrue(edgeContainsNode);
+        }
+    }
+
+    @Test
+    void getEdgesConnectedToNode_BoundaryNode_ReturnsExpectedNumberOfEdges() {
+        Board board = new Board();
+        Node node = board.getNode(0);
+
+        List<Edge> connectedEdges = board.getEdgesConnectedToNode(node);
+
+        assertEquals(2, connectedEdges.size());
+    }
+
+    @Test
+    void getEdge_FirstValidEdgeId_ReturnsEdge() {
+        Board board = new Board();
+
+        Edge edge = board.getEdge(0);
+
+        assertEquals(0, edge.getId());
+    }
+
+    @Test
+    void getEdge_LastValidEdgeId_ReturnsEdge() {
+        Board board = new Board();
+        int lastValidEdgeId = board.getEdges().size() - 1;
+
+        Edge edge = board.getEdge(lastValidEdgeId);
+
+        assertEquals(lastValidEdgeId, edge.getId());
+    }
+
+    @Test
+    void getEdge_NegativeEdgeId_ThrowsException() {
+        Board board = new Board();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            board.getEdge(-1);
+        });
+    }
+
+    @Test
+    void getEdge_EdgeIdEqualToNumberOfEdges_ThrowsException() {
+        Board board = new Board();
+        int invalidEdgeId = board.getEdges().size();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            board.getEdge(invalidEdgeId);
+        });
+    }
+
+    @Test
+    void getHex_FirstValidHexId_ReturnsHex() {
+        Board board = new Board();
+
+        Hex hex = board.getHex(0);
+
+        assertEquals(0, hex.getId());
+    }
+
+    @Test
+    void getHex_LastValidHexId_ReturnsHex() {
+        Board board = new Board();
+        int lastValidHexId = board.getHexes().size() - 1;
+
+        Hex hex = board.getHex(lastValidHexId);
+
+        assertEquals(lastValidHexId, hex.getId());
+    }
+
+    @Test
+    void getHex_NegativeHexId_ThrowsException() {
+        Board board = new Board();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            board.getHex(-1);
+        });
+    }
+
+    @Test
+    void getHex_HexIdEqualToNumberOfHexes_ThrowsException() {
+        Board board = new Board();
+        int invalidHexId = board.getHexes().size();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            board.getHex(invalidHexId);
+        });
+    }
+
+    @Test
+    void getNode_FirstValidNodeId_ReturnsNode() {
+        Board board = new Board();
+
+        Node node = board.getNode(0);
+
+        assertEquals(0, node.getId());
+    }
+
+    @Test
+    void getNode_LastValidNodeId_ReturnsNode() {
+        Board board = new Board();
+        int lastValidNodeId = board.getNodes().size() - 1;
+
+        Node node = board.getNode(lastValidNodeId);
+
+        assertEquals(lastValidNodeId, node.getId());
+    }
+
+    @Test
+    void getNode_NegativeNodeId_ThrowsException() {
+        Board board = new Board();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            board.getNode(-1);
+        });
+    }
+
+    @Test
+    void getNode_NodeIdEqualToNumberOfNodes_ThrowsException() {
+        Board board = new Board();
+        int invalidNodeId = board.getNodes().size();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            board.getNode(invalidNodeId);
+        });
+    }
 }
