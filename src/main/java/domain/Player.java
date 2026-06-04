@@ -143,26 +143,6 @@ public class Player {
         return true;
     }
 
-
-
-    public void addVictoryPoints(int points) {
-        if (points < 0) {
-            throw new IllegalArgumentException("Points to add cannot be negative.");
-        }
-        this.victoryPoints += points;
-    }
-
-    public void removeVictoryPoints(int points) {
-        if (points < 0) {
-            throw new IllegalArgumentException("Points to remove cannot be negative.");
-        }
-        if (this.victoryPoints - points < 0) {
-            this.victoryPoints = 0;
-        } else {
-            this.victoryPoints -= points;
-        }
-    }
-
     public List<DevCard> getDevCardHand() { return this.devHand; }
 
     public void setDevCardHand(DevCard devCard) {
