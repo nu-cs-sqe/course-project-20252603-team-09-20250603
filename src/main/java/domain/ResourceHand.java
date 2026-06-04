@@ -27,7 +27,7 @@ public class ResourceHand {
     }
 
     public void addResource(ResourceType type, int amount) {
-        if (type == null || amount <= 0) return;
+        if (type == null || amount <= 0) {return;}
         int current = getResourceCount(type);
         this.hand.put(type, current + amount);
     }
