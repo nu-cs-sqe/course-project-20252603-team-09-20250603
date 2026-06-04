@@ -1,21 +1,18 @@
 package domain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Player {
     private final int id;
     private final String name;
     private final PlayerColor color;
     private final Map<String, Integer> inventory;
+    private final Map<ResourceType, Integer> resourceHand;
     private int victoryPoints;
     private final List<DevCard> devHand;
     private boolean hasLongestRoad;
     private boolean hasLargestArmy;
     private int playedKnightCount = 0;
-    private ResourceHand resourceHand;
 
     public Player(int id, String name, PlayerColor color){
         this.id = id;
@@ -27,15 +24,11 @@ public class Player {
         this.inventory.put("cities", 4);
         this.victoryPoints = 0;
         this.devHand = new ArrayList<>();
-        this.resourceHand = new ResourceHand();
+        this.resourceHand = new HashMap<>();
     }
 
     public int getId() {
         return id;
-    }
-
-    public ResourceHand getResourceHand() {
-        return this.resourceHand;
     }
 
     public String getName(){
@@ -47,7 +40,7 @@ public class Player {
     }
 
     public Map<String, Integer> getInventory() {
-        return this.inventory;
+        return new HashMap<>(inventory);
     }
 
     public void setHasLargestArmy(boolean hasLargestArmy) {
@@ -65,9 +58,74 @@ public class Player {
         return this.hasLargestArmy;
     }
 
+    public void useInventoryItem(String item) {
+        int currentAmount = inventory.getOrDefault(item, 0);
+
+        if (currentAmount <= 0) {
+            throw new IllegalStateException("No " + item + " remaining.");
+        }
+
+        inventory.put(item, currentAmount - 1);
+    }
+
+
     public int getVictoryPoints(){
         return victoryPoints;
     }
+
+    public void addResources(Map<ResourceType, Integer> resources) {
+        if (resources == null) {
+            throw new IllegalArgumentException("resources cannot be null");
+        }
+
+        for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
+            ResourceType resource = entry.getKey();
+            int amount = entry.getValue();
+
+            if (resource != ResourceType.DESERT) {
+            resourceHand.put(
+                    resource,
+                    resourceHand.getOrDefault(resource, 0) + amount
+                );
+            }
+        }
+    }
+
+    public Map<ResourceType, Integer> getResources() {
+        return new HashMap<>(resourceHand);
+    }
+
+    public void useResources(Map<ResourceType, Integer> cost) {
+        if (!hasResources(cost)) {
+            throw new IllegalStateException("Player does not have enough resources.");
+        }
+
+        for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
+            ResourceType resource = entry.getKey();
+            int amount = entry.getValue();
+
+            resourceHand.put(resource, resourceHand.getOrDefault(resource, 0) - amount);
+        }
+    }
+
+    public boolean hasResources(Map<ResourceType, Integer> cost) {
+        if (cost == null) {
+            throw new IllegalArgumentException("cost cannot be null");
+        }
+
+        for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
+            ResourceType resource = entry.getKey();
+            int requiredAmount = entry.getValue();
+
+            if (resourceHand.getOrDefault(resource, 0) < requiredAmount) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
 
     public void addVictoryPoints(int points) {
         if (points < 0) {

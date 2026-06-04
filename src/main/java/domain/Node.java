@@ -1,5 +1,10 @@
 package domain;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+@SuppressFBWarnings(
+        value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"},
+        justification = "Domain objects intentionally share mutable Player references."
+)
 
 public class Node {
     private int id;
@@ -30,6 +35,9 @@ public class Node {
         return Integer.hashCode(id);
     }
 
+    public int getId() {
+        return id;
+    }
 
     public Player getNodeOccupant() {
         return occupant;

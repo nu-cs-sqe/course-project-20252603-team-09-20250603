@@ -1,5 +1,8 @@
 package domain;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class DevCard {
     private final DevCardType type;
     private boolean isActive;
@@ -46,8 +49,11 @@ public class DevCard {
             throw new IllegalStateException("This card is not a Year of Plenty card!");
         }
 
-        player.getResourceHand().addResource(choice1, 1);
-        player.getResourceHand().addResource(choice2, 1);
+        Map<ResourceType, Integer> chosenResources = new HashMap<>();
+        chosenResources.put(choice1, chosenResources.getOrDefault(choice1, 0) + 1);
+        chosenResources.put(choice2, chosenResources.getOrDefault(choice2, 0) + 1);
+
+        player.addResources(chosenResources);
 
         this.isActive = false;
     }
@@ -64,17 +70,23 @@ public class DevCard {
 
         for (Player opponent : gamePlayers) {
             if (opponent.getId() != player.getId()) {
-                int countToSteal = opponent.getResourceHand().getResourceCount(targetType);
+                int countToSteal = opponent.getResources().getOrDefault(targetType, 0);
 
                 if (countToSteal > 0) {
                     totalStolenAmount += countToSteal;
-                    opponent.getResourceHand().setResourceCount(targetType, 0);
+
+                    Map<ResourceType, Integer> resourceCost = new HashMap<>();
+                    resourceCost.put(targetType, countToSteal);
+                    opponent.useResources(resourceCost);
                 }
             }
         }
 
-        int currentBalance = player.getResourceHand().getResourceCount(targetType);
-        player.getResourceHand().setResourceCount(targetType, currentBalance + totalStolenAmount);
+        if (totalStolenAmount > 0) {
+            Map<ResourceType, Integer> stolenResources = new HashMap<>();
+            stolenResources.put(targetType, totalStolenAmount);
+            player.addResources(stolenResources);
+        }
 
         this.isActive = false;
     }

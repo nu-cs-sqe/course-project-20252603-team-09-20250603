@@ -4,7 +4,9 @@ import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -116,8 +118,8 @@ public class DevCardTests {
         Player player1 = new Player(owningPlayerId, "John", PlayerColor.RED);
         Board mockBoard = EasyMock.createMock(Board.class);
 
-        assertEquals(0, player1.getResourceHand().getResourceCount(ResourceType.WOOD));
-        assertEquals(0, player1.getResourceHand().getResourceCount(ResourceType.WHEAT));
+        assertEquals(0, player1.getResources().getOrDefault(ResourceType.WOOD, 0));
+        assertEquals(0, player1.getResources().getOrDefault(ResourceType.WHEAT, 0));
 
         EasyMock.replay(mockBoard);
 
@@ -125,8 +127,8 @@ public class DevCardTests {
 
         EasyMock.verify(mockBoard);
 
-        assertEquals(1, player1.getResourceHand().getResourceCount(ResourceType.WOOD));
-        assertEquals(1, player1.getResourceHand().getResourceCount(ResourceType.WHEAT));
+        assertEquals(1, player1.getResources().getOrDefault(ResourceType.WOOD, 0));
+        assertEquals(1, player1.getResources().getOrDefault(ResourceType.WHEAT, 0));
     }
 
     @Test // TC-DC-MO
@@ -140,10 +142,14 @@ public class DevCardTests {
         Player player2 = new Player(2, "Alice", PlayerColor.BLUE);
         Player player3 = new Player(3, "Bob", PlayerColor.ORANGE);
 
-        player2.getResourceHand().setResourceCount(ResourceType.ORE, 3);
-        player3.getResourceHand().setResourceCount(ResourceType.ORE, 2);
+        Map<ResourceType, Integer> p2Resources = new HashMap<>();
+        p2Resources.put(ResourceType.ORE, 3);
+        p2Resources.put(ResourceType.WOOD, 1);
+        player2.addResources(p2Resources);
 
-        player2.getResourceHand().setResourceCount(ResourceType.WOOD, 1);
+        Map<ResourceType, Integer> p3Resources = new HashMap<>();
+        p3Resources.put(ResourceType.ORE, 2);
+        player3.addResources(p3Resources);
 
         List<Player> allPlayers = new ArrayList<>();
         allPlayers.add(player1);
@@ -156,10 +162,10 @@ public class DevCardTests {
 
         EasyMock.verify(mockBoard);
 
-        assertEquals(0, player2.getResourceHand().getResourceCount(ResourceType.ORE));
-        assertEquals(1, player2.getResourceHand().getResourceCount(ResourceType.WOOD));
-        assertEquals(0, player3.getResourceHand().getResourceCount(ResourceType.ORE));
-        assertEquals(5, player1.getResourceHand().getResourceCount(ResourceType.ORE));
+        assertEquals(0, player2.getResources().getOrDefault(ResourceType.ORE, 0));
+        assertEquals(1, player2.getResources().getOrDefault(ResourceType.WOOD, 0));
+        assertEquals(0, player3.getResources().getOrDefault(ResourceType.ORE, 0));
+        assertEquals(5, player1.getResources().getOrDefault(ResourceType.ORE, 0));
     }
 
     @Test // TC-DC-VP
