@@ -25,6 +25,14 @@ public class Game {
         return true;
     }
 
+    public List<Player> getPlayers() {
+        return new ArrayList<>(players);
+    }
+
+    public TurnManager getTurnManager() {
+        return turnManager;
+    }
+
     public void build(Player currentPlayer, InfraType infraType, int locationId) {
         if (infraType == null){
             throw new IllegalArgumentException("Build type cannot be null");
