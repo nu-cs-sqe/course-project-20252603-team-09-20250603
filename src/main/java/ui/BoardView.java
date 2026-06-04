@@ -23,10 +23,23 @@ import java.util.Map;
 
 public class BoardView extends BorderPane {
     private static final String STYLESHEET = "/ui/board-view.css";
-    private static final String BOARD_IMAGE = "/ui/catan-board.png";
-    private static final double BOARD_WIDTH = 900.0;
-    private static final double BOARD_HEIGHT = 733.0;
-    private static final double HEX_RADIUS = 78.0;
+    private static final String BOARD_IMAGE = "/ui/catan-board3.png";
+    private static final double IMAGE_WIDTH = 1454.0;
+    private static final double IMAGE_HEIGHT = 1452.0;
+    /** Shown size in the UI (image + overlays are scaled down together). */
+    private static final double BOARD_WIDTH = 880.0;
+    private static final double BOARD_HEIGHT = IMAGE_HEIGHT * (BOARD_WIDTH / IMAGE_WIDTH);
+    private static final double DISPLAY_SCALE = BOARD_WIDTH / IMAGE_WIDTH;
+    /** Reference board size the hex layout was originally tuned against. */
+    private static final double REF_BOARD_WIDTH = 900.0;
+    private static final double REF_BOARD_HEIGHT = 733.0;
+    private static final double LAYOUT_SCALE_X = IMAGE_WIDTH / REF_BOARD_WIDTH;
+    private static final double LAYOUT_SCALE_Y = IMAGE_HEIGHT / REF_BOARD_HEIGHT;
+    private static final double HEX_RADIUS_X = 82.0 * LAYOUT_SCALE_X * DISPLAY_SCALE;
+    private static final double HEX_RADIUS_Y = 82.0 * LAYOUT_SCALE_Y * DISPLAY_SCALE;
+    private static final double NUDGE_X = 41.0;
+    private static final double NUDGE_Y = 21.0;
+    private static final double NODE_RADIUS = 6.0;
     private static final double[] HEX_VERTEX_ANGLES = {-150.0, -90.0, -30.0, 30.0, 90.0, 150.0};
 
     private final BoardController controller;
@@ -106,6 +119,7 @@ public class BoardView extends BorderPane {
         imageView.setFitWidth(BOARD_WIDTH);
         imageView.setFitHeight(BOARD_HEIGHT);
         imageView.setPreserveRatio(false);
+        imageView.setSmooth(true);
         boardPane.getChildren().add(imageView);
 
         drawHexes(boardPane, board);
@@ -154,7 +168,7 @@ public class BoardView extends BorderPane {
     private void drawNodes(Pane boardPane, Board board) {
         for (Node node : board.getNodes()) {
             BoardPoint point = nodePositions.get(node.getId());
-            Circle circle = new Circle(point.x, point.y, 8.0);
+            Circle circle = new Circle(point.x, point.y, NODE_RADIUS);
             circle.getStyleClass().add("node-overlay");
             Tooltip.install(circle, new Tooltip("Node " + node.getId()));
             circle.setOnMouseClicked(event -> {
@@ -174,12 +188,13 @@ public class BoardView extends BorderPane {
 
     private Polygon createSettlementShape(BoardPoint point) {
         Polygon settlement = new Polygon();
+        double s = DISPLAY_SCALE;
         settlement.getPoints().addAll(
-                point.x, point.y - 13.0,
-                point.x + 10.0, point.y - 4.0,
-                point.x + 7.0, point.y + 9.0,
-                point.x - 7.0, point.y + 9.0,
-                point.x - 10.0, point.y - 4.0
+                point.x, point.y - 16.0 * s,
+                point.x + 12.0 * s, point.y - 5.0 * s,
+                point.x + 9.0 * s, point.y + 11.0 * s,
+                point.x - 9.0 * s, point.y + 11.0 * s,
+                point.x - 12.0 * s, point.y - 5.0 * s
         );
 
         settlement.setStyle("-fx-fill: transparent; -fx-stroke: transparent;");
@@ -192,8 +207,8 @@ public class BoardView extends BorderPane {
 
         for (double angle : HEX_VERTEX_ANGLES) {
             double radians = Math.toRadians(angle);
-            polygon.getPoints().add(center.x + HEX_RADIUS * Math.cos(radians));
-            polygon.getPoints().add(center.y + HEX_RADIUS * Math.sin(radians));
+            polygon.getPoints().add(center.x + HEX_RADIUS_X * Math.cos(radians));
+            polygon.getPoints().add(center.y + HEX_RADIUS_Y * Math.sin(radians));
         }
 
         return polygon;
@@ -202,27 +217,38 @@ public class BoardView extends BorderPane {
     private Map<Integer, BoardPoint> buildHexCenters() {
         Map<Integer, BoardPoint> centers = new HashMap<>();
 
-        centers.put(0, new BoardPoint(315.0, 112.0));
-        centers.put(1, new BoardPoint(451.0, 112.0));
-        centers.put(2, new BoardPoint(587.0, 112.0));
-        centers.put(3, new BoardPoint(247.0, 229.0));
-        centers.put(4, new BoardPoint(383.0, 229.0));
-        centers.put(5, new BoardPoint(519.0, 229.0));
-        centers.put(6, new BoardPoint(655.0, 229.0));
-        centers.put(7, new BoardPoint(179.0, 346.0));
-        centers.put(8, new BoardPoint(315.0, 346.0));
-        centers.put(9, new BoardPoint(451.0, 346.0));
-        centers.put(10, new BoardPoint(587.0, 346.0));
-        centers.put(11, new BoardPoint(723.0, 346.0));
-        centers.put(12, new BoardPoint(247.0, 463.0));
-        centers.put(13, new BoardPoint(383.0, 463.0));
-        centers.put(14, new BoardPoint(519.0, 463.0));
-        centers.put(15, new BoardPoint(655.0, 463.0));
-        centers.put(16, new BoardPoint(315.0, 580.0));
-        centers.put(17, new BoardPoint(451.0, 580.0));
-        centers.put(18, new BoardPoint(587.0, 580.0));
+        putCenter(centers, 0, 315.0, 112.0);
+        putCenter(centers, 1, 451.0, 112.0);
+        putCenter(centers, 2, 587.0, 112.0);
+        putCenter(centers, 3, 247.0, 229.0);
+        putCenter(centers, 4, 383.0, 229.0);
+        putCenter(centers, 5, 519.0, 229.0);
+        putCenter(centers, 6, 655.0, 229.0);
+        putCenter(centers, 7, 179.0, 346.0);
+        putCenter(centers, 8, 315.0, 346.0);
+        putCenter(centers, 9, 451.0, 346.0);
+        putCenter(centers, 10, 587.0, 346.0);
+        putCenter(centers, 11, 723.0, 346.0);
+        putCenter(centers, 12, 247.0, 463.0);
+        putCenter(centers, 13, 383.0, 463.0);
+        putCenter(centers, 14, 519.0, 463.0);
+        putCenter(centers, 15, 655.0, 463.0);
+        putCenter(centers, 16, 315.0, 580.0);
+        putCenter(centers, 17, 451.0, 580.0);
+        putCenter(centers, 18, 587.0, 580.0);
 
         return centers;
+    }
+
+    private void putCenter(Map<Integer, BoardPoint> centers, int hexId, double refX, double refY) {
+        centers.put(hexId, toDisplayPoint(
+                refX * LAYOUT_SCALE_X + NUDGE_X,
+                refY * LAYOUT_SCALE_Y + NUDGE_Y
+        ));
+    }
+
+    private BoardPoint toDisplayPoint(double layoutX, double layoutY) {
+        return new BoardPoint(layoutX * DISPLAY_SCALE, layoutY * DISPLAY_SCALE);
     }
 
     private Map<Integer, BoardPoint> buildNodePositions() {
@@ -265,8 +291,8 @@ public class BoardView extends BorderPane {
         double radians = Math.toRadians(HEX_VERTEX_ANGLES[vertexIndex]);
 
         return new BoardPoint(
-                center.x + HEX_RADIUS * Math.cos(radians),
-                center.y + HEX_RADIUS * Math.sin(radians)
+                center.x + HEX_RADIUS_X * Math.cos(radians),
+                center.y + HEX_RADIUS_Y * Math.sin(radians)
         );
     }
 
@@ -277,7 +303,7 @@ public class BoardView extends BorderPane {
         }
 
         line.setStyle("-fx-stroke: " + getPlayerColor(occupant)
-                + "; -fx-stroke-width: 12; -fx-stroke-line-cap: round;");
+                + "; -fx-stroke-width: " + (10 * DISPLAY_SCALE) + "; -fx-stroke-line-cap: round;");
     }
 
     private void updateSettlementStyle(Polygon settlement, Player occupant) {
