@@ -199,6 +199,14 @@ public class Board {
         return edges.get(edgeId);
     }
 
+    public Hex getHex(int hexId) {
+        if (hexId < 0 || hexId > hexes.size()) {
+            throw new IllegalArgumentException("Invalid Hex Id");
+        }
+
+        return hexes.get(hexId);
+    }
+
     public Map<ResourceType, Integer> getAdjacentResources(Node node) {
         Map<ResourceType, Integer> resources = new HashMap<>();
 
