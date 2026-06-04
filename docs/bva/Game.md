@@ -55,18 +55,18 @@ Handles the progression of game
 ## Method under test: `calculateLongestRoad(Player player)`
 
 |              | State of the System                            | Expected output / behavior                         | Implemented? |
-|--------------|------------------------------------------------|-----------------------------------------------------|--------------|
-| Test Case 12 | Player has no roads                            | Returns 0                                           | :x: |
-| Test Case 13 | Player has one road                            | Returns 1                                           | :x: |
-| Test Case 14 | Player has a chain of three connected roads    | Returns 3                                           | :x: |
-| Test Case 15 | Board has roads from multiple players          | Only the selected player's roads are counted        | :x: |
-| Test Case 16 | Player has at least five connected roads       | Player qualifies for longest road bonus             | :x: |
+|--------------|------------------------------------------------|-----------------------------------------------------|---------|
+| Test Case 12 | Player has no roads                            | Returns 0                                           | :white_check_mark: |
+| Test Case 13 | Player has one road                            | Returns 1                                           | :white_check_mark: |
+| Test Case 14 | Player has a chain of three connected roads    | Returns 3                                           | :white_check_mark: |
+| Test Case 15 | Board has roads from multiple players          | Only the selected player's roads are counted        | :white_check_mark: |
+| Test Case 16 | Player has at least five connected roads       | Player qualifies for longest road bonus             | :white_check_mark: |
 
 ## Method under test: `updateLongestRoadBonus()`
 
 |              | State of the System                              | Expected output / behavior                         | Implemented? |
-|--------------|--------------------------------------------------|-----------------------------------------------------|--------------|
-| Test Case 17 | No player has a road of length at least 5        | No victory points are awarded                       | :x: |
-| Test Case 18 | One player reaches a road length of 5            | That player gains 2 victory points                  | :x: |
-| Test Case 19 | Same player still has longest road               | Victory points do not change again                  | :x: |
-| Test Case 20 | Another player exceeds the current longest road  | Old player loses 2 points; new player gains 2       | :x: |
+|--------------|--------------------------------------------------|-----------------------------------------------------|----------|
+| Test Case 17 | No player has a road of length at least 5        | No victory points are awarded                       | :white_check_mark:       |
+| Test Case 18 | One player reaches a road length of 5            | That player gains 2 victory points                  | :white_check_mark:       |
+| Test Case 19 | Same player still has longest road               | Victory points do not change again                  | :white_check_mark:       |
+| Test Case 20 | Another player exceeds the current longest road  | Old player loses 2 points; new player gains 2       | :white_check_mark:       |
