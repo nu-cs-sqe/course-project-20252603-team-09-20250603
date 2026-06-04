@@ -10,15 +10,15 @@ Feature: Game handleBuild
   Scenario Outline: Player successfully builds a road or settlement with sufficient resources and inventory through the controller
     When player chooses build option <optionNumber>
     And enters to build at <locationType> <locationId>
-    And the game validates that player has the resources needed to build <buildType>
-    And the game validates that player has at least one <buildType> in their inventory
-    And the game validates that <locationType> <locationId> is available for building <buildType>
-    Then the <locationType> <locationId> should be occupied by the player's <buildType>
-    And the player's inventory should decrease by one <buildType>
-    And the player's resources should decrease by the cost of building <buildType>
+    And the game validates that player has the resources needed to build <infraType>
+    And the game validates that player has at least one <infraType> in their inventory
+    And the game validates that <locationType> <locationId> is available for building <infraType>
+    Then the <locationType> <locationId> should be occupied by the player's <infraType>
+    And the player's inventory should decrease by one <infraType>
+    And the player's resources should decrease by the cost of building <infraType>
 
     Examples:
-    |optionNumber |buildType   | locationType | locationId |
+    |optionNumber |infraType   | locationType | locationId |
     |1            | road       | edge         | 1          |
     |1            | road       | edge         | 10         |
     |2            | settlement | node         | 1          |
@@ -43,16 +43,16 @@ Feature: Game handleBuild
   Scenario Outline: Player cannot build without enough infrastructure inventory through the controller
     When player chooses build option <optionNumber>
     And enters to build at <locationType> <locationId>
-    And the game validates that player has the resources needed to build <buildType>
-    And the game validates that player does not have any <buildType> in their inventory
-    And the game validates that <locationType> <locationId> is available for building <buildType>
+    And the game validates that player has the resources needed to build <infraType>
+    And the game validates that player does not have any <infraType> in their inventory
+    And the game validates that <locationType> <locationId> is available for building <infraType>
     Then the game should prevent the player from building
-    And <locationType> <locationId> should not be occupied by the player's <buildType>
+    And <locationType> <locationId> should not be occupied by the player's <infraType>
     And the player's inventory should remain unchanged
     And the player's resources should remain unchanged
 
     Examples:
-    |optionNumber |buildType   | locationType | locationId |
+    |optionNumber |infraType   | locationType | locationId |
     |1            | road       | edge         | 1          |
     |1            | road       | edge         | 10         |
     |2            | settlement | node         | 1          |
@@ -61,16 +61,16 @@ Feature: Game handleBuild
   Scenario Outline: Player cannot build without enough resources through the controller
     When player chooses build option <optionNumber>
     And enters to build at <locationType> <locationId>
-    And the game validates that player does not have the resources needed to build <buildType>
-    And the game validates that player has at least one <buildType> in their inventory
-    And the game validates that <locationType> <locationId> is available for building <buildType>
+    And the game validates that player does not have the resources needed to build <infraType>
+    And the game validates that player has at least one <infraType> in their inventory
+    And the game validates that <locationType> <locationId> is available for building <infraType>
     Then the game should prevent the player from building
-    And <locationType> <locationId> should not be occupied by the player's <buildType>
+    And <locationType> <locationId> should not be occupied by the player's <infraType>
     And the player's inventory should remain unchanged
     And the player's resources should remain unchanged
 
     Examples:
-      | optionNumber | buildType  | locationType | locationId |
+      | optionNumber | infraType  | locationType | locationId |
       | 1            | road       | edge         | 1          |
       | 2            | settlement | node         | 1          |
 
@@ -93,8 +93,8 @@ Feature: Game handleBuild
   Scenario Outline: Player cannot build a settlement or road on an occupied node or edge through the controller
     When player chooses build option <optionNumber>
     And enters to build at <locationType> <locationId>
-    And the game validates that player has the resources needed to build <buildType>
-    And the game validates that player has at least one <buildType> in their inventory
+    And the game validates that player has the resources needed to build <infraType>
+    And the game validates that player has at least one <infraType> in their inventory
     And the game validates that <locationType> <locationId> is occupied by another player
     Then the game should prevent the player from building
     And <locationType> <locationId> should remain occupied by the other player
@@ -102,7 +102,7 @@ Feature: Game handleBuild
     And the player's resources should remain unchanged
 
     Examples:
-    |optionNumber |buildType   | locationType | locationId |
+    |optionNumber |infraType   | locationType | locationId |
     |1            | road       | edge         | 1          |
     |1            | road       | edge         | 10         |
     |2            | settlement | node         | 1          |
