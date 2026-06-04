@@ -178,9 +178,6 @@ public class PlayerTests {
         assertEquals(4, player.getInventory().get("cities"));
     }
 
-
-
-
     @Test
     public void addResources_emptyHand_addOneWood_returnsWoodOne() {
         Player player = new Player(1, "Alice", PlayerColor.RED);
