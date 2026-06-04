@@ -16,6 +16,7 @@ public class SetupGameController {
 
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Shares mutable board UI view")
     private BoardView boardView;
+    @SuppressFBWarnings( value = "EI_EXPOSE_REP2", justification = "Shares mutable UI controller collaborator")
     private PlayerActionController playerActionController;
     private Runnable onSetupComplete;
 
