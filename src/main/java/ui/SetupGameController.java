@@ -79,7 +79,7 @@ public class SetupGameController {
 
         if (boardView != null) {
             boardView.setStatusMessage(currentPlayer.getName()
-                    + " placed settlement. Now place a road.");
+                    + " placed settlement at node id = " + locationId  + ". Now place a road.");
             boardView.refreshBoard();
         }
         refreshSidePanel();
@@ -112,7 +112,7 @@ public class SetupGameController {
         } else {
             Player nextPlayer = game.getPlayer(turnManager.getCurrentPlayerIndex() - 1);
             if (boardView != null) {
-                boardView.setStatusMessage("Next up: " + nextPlayer.getName() + " - Place a settlement.");
+                boardView.setStatusMessage("Road placed at edge id = " + locationId + ". Next up: " + nextPlayer.getName() + " - Place a settlement.");
             }
             refreshSidePanel();
         }
