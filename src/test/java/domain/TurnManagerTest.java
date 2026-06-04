@@ -56,7 +56,7 @@ public class TurnManagerTest {
         for (int i = 0; i < 9; i++) {
             tm.nextPlayer();
         }
-        assertTrue(tm.SetupStatus());
+        assertTrue(tm.setupStatus());
     }
 
 

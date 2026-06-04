@@ -1,18 +1,23 @@
 package ui;
 
-import domain.BuildType;
+import domain.InfraType;
 import domain.Game;
 import domain.Player;
 import domain.TurnManager;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class SetupGameController {
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Shares mutable game model")
     private final Game game;
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Shares mutable turn tracker")
     private final TurnManager turnManager;
 
     private boolean waitingForRoad = false;
-    private int lastSettlementNode = -1;
+
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Shares mutable board UI view")
     private BoardView boardView;
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public SetupGameController(Game game, TurnManager turnManager) {
         this.game = game;
         this.turnManager = turnManager;
@@ -25,8 +30,8 @@ public class SetupGameController {
         boardView.setStatusMessage(first.getName() + " - Place your first settlement.");
     }
 
-    public void handleInitialPlacement(int locationId, BuildType buildType) {
-        if (!game.PhaseSetupCheck()) {
+    public void handleInitialPlacement(int locationId, InfraType buildType) {
+        if (!game.phaseSetupCheck()) {
             return;
         }
 
@@ -43,15 +48,14 @@ public class SetupGameController {
         }
     }
 
-    private void handleInitialSettlement(int locationId, BuildType buildType) {
-        if (buildType != BuildType.SETTLEMENT) {
+    private void handleInitialSettlement(int locationId, InfraType buildType) {
+        if (buildType != InfraType.SETTLEMENT) {
             if (boardView != null) {boardView.setStatusMessage("Please click a node to place a Settlement.");}
             return;
         }
 
         Player currentPlayer = game.getPlayer(turnManager.getCurrentPlayerIndex() - 1);
-        game.build(currentPlayer, BuildType.SETTLEMENT, locationId);
-        lastSettlementNode = locationId;
+        game.build(currentPlayer, InfraType.SETTLEMENT, locationId);
         waitingForRoad = true;
 
         if (boardView != null) {
@@ -60,16 +64,15 @@ public class SetupGameController {
         }
     }
 
-    private void handleInitialRoad(int locationId, BuildType buildType) {
-        if (buildType != BuildType.ROAD) {
+    private void handleInitialRoad(int locationId, InfraType buildType) {
+        if (buildType != InfraType.ROAD) {
             if (boardView != null) {boardView.setStatusMessage("Please click an edge to place a Road.");}
             return;
         }
 
         Player currentPlayer = game.getPlayer(turnManager.getCurrentPlayerIndex() - 1);
-        game.build(currentPlayer, BuildType.ROAD, locationId);
+        game.build(currentPlayer, InfraType.ROAD, locationId);
         waitingForRoad = false;
-        lastSettlementNode = -1;
 
         turnManager.nextPlayer();
 

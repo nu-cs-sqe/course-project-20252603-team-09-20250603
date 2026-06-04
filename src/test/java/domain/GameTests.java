@@ -53,19 +53,19 @@ public class GameTests {
     @Test
     public void phaseSetupCheck_WhenSetup_ReturnsTrue() {
         game.setCurrPhase(GamePhase.SETUP);
-        assertTrue(game.PhaseSetupCheck());
+        assertTrue(game.phaseSetupCheck());
     }
 
     @Test
     public void phaseSetupCheck_WhenNormalPlay_ReturnsFalse() {
         game.setCurrPhase(GamePhase.NORMAL_PLAY);
-        assertFalse(game.PhaseSetupCheck());
+        assertFalse(game.phaseSetupCheck());
     }
 
     @Test
     public void phaseSetupCheck_WhenGameOver_ReturnsFalse() {
         game.setCurrPhase(GamePhase.GAME_OVER);
-        assertFalse(game.PhaseSetupCheck());
+        assertFalse(game.phaseSetupCheck());
     }
 
 
@@ -74,23 +74,23 @@ public class GameTests {
     public void advancePhase_WhenSetup_BecomesNormalPlay() {
         game.setCurrPhase(GamePhase.SETUP);
         game.advancePhase();
-        assertFalse(game.PhaseSetupCheck()); // now NORMAL_PLAY
+        assertFalse(game.phaseSetupCheck()); // now NORMAL_PLAY
     }
 
     @Test
     public void advancePhase_WhenNormalPlay_BecomesGameOver() {
         game.setCurrPhase(GamePhase.NORMAL_PLAY);
         game.advancePhase();
-        assertFalse(game.PhaseSetupCheck());
+        assertFalse(game.phaseSetupCheck());
         assertDoesNotThrow(() -> game.advancePhase());
-        assertFalse(game.PhaseSetupCheck());
+        assertFalse(game.phaseSetupCheck());
     }
 
     @Test
     public void advancePhase_WhenGameOver_IsNoOp() {
         game.setCurrPhase(GamePhase.GAME_OVER);
         assertDoesNotThrow(() -> game.advancePhase());
-        assertFalse(game.PhaseSetupCheck());
+        assertFalse(game.phaseSetupCheck());
     }
 
 }

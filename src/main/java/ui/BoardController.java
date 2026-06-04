@@ -4,7 +4,7 @@ import domain.Board;
 import domain.Edge;
 import domain.Hex;
 import domain.Node;
-import domain.BuildType;
+import domain.InfraType;
 import domain.Player;
 import domain.ResourceType;
 
@@ -33,10 +33,7 @@ public class BoardController {
         return board;
     }
 
-    public int getPlayerCount() {
-        return players.size();
-    }
-
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     private SetupGameController setupGameController;
 
     public void setSetupGameController(SetupGameController setupGameController) {
@@ -47,7 +44,7 @@ public class BoardController {
         Node node = board.getNode(nodeId);
 
         if (setupGameController != null) {
-            setupGameController.handleInitialPlacement(nodeId, BuildType.SETTLEMENT);
+            setupGameController.handleInitialPlacement(nodeId, InfraType.SETTLEMENT);
             view.refreshBoard();
         } else {
             Map<ResourceType, Integer> resources = board.getAdjacentResources(node);
@@ -59,7 +56,7 @@ public class BoardController {
         Edge edge = board.getEdge(edgeId);
 
         if (setupGameController != null) {
-            setupGameController.handleInitialPlacement(edgeId, BuildType.ROAD);
+            setupGameController.handleInitialPlacement(edgeId, InfraType.ROAD);
             view.refreshBoard();
         } else {
             view.setStatusMessage(

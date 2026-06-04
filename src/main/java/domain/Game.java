@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class Game {
     private final Board board;
     private final List<Player> players;
     private final Dice dice;
+    @SuppressFBWarnings(
+            value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"},
+            justification = "Game has to share/mutate the same TurnManager instance used by the controller."
+    )
     private final TurnManager turnManager;
     private final PlacementValidator placementValidator;
     private GamePhase currPhase;
@@ -50,7 +55,7 @@ public class Game {
         throw new IllegalArgumentException("Player not found");
     }
 
-    public boolean PhaseSetupCheck(){
+    public boolean phaseSetupCheck(){
         return this.currPhase == GamePhase.SETUP;
     }
 

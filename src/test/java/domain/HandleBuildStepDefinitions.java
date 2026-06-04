@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HandleBuildStepDefinitions {
@@ -42,6 +41,7 @@ public class HandleBuildStepDefinitions {
         board = new Board();
         placementValidator = new PlacementValidator(board);
         game = new Game(board, List.of(currentPlayer), dice, turnManager);
+        game.setCurrPhase(GamePhase.NORMAL_PLAY);
     }
 
     @When("player chooses build option {int}")

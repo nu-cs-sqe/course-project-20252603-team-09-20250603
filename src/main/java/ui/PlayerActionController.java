@@ -14,6 +14,7 @@ public class PlayerActionController {
     // so we track which phase the current player is in right now.
     private boolean isPlacingSettlement = true;
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public PlayerActionController(java.util.List<Player> players, Game game, TurnManager turnManager) {
         this.players = players;
         this.game = game;
