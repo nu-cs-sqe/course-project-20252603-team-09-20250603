@@ -72,12 +72,12 @@ public class Game {
         return true;
     }
 
-    public void build(Player currentPlayer, BuildType buildType, int locationId) {
-        if (buildType == null){
+    public void build(Player currentPlayer, InfraType infraType, int locationId) {
+        if (infraType == null){
             throw new IllegalArgumentException("Build type cannot be null");
         }
-        String inventoryKey = getInventoryKey(buildType);
-        Map<ResourceType, Integer> cost = getBuildCost(buildType);
+        String inventoryKey = getInventoryKey(infraType);
+        Map<ResourceType, Integer> cost = getBuildCost(infraType);
 
         if(currentPlayer.getInventory().get(inventoryKey) <= 0){
             throw new IllegalStateException("Player does not have enough inventory");
@@ -87,7 +87,7 @@ public class Game {
             throw new IllegalStateException("Player does not have enough resources");
         }
 
-        if(buildType == BuildType.ROAD){
+        if(infraType == InfraType.ROAD){
             try {
                 Edge edge = board.getEdge(locationId);
                 if (currPhase == GamePhase.SETUP) {
@@ -107,7 +107,7 @@ public class Game {
            }catch (IllegalPlacementException exception) {
                 throw new IllegalStateException(exception.getMessage(), exception);
             }
-        } else if (buildType == BuildType.SETTLEMENT){
+        } else if (infraType == InfraType.SETTLEMENT){
             Node node = board.getNode(locationId);
 
             try {
@@ -119,7 +119,7 @@ public class Game {
             if (currPhase == GamePhase.SETUP) {
                 setupSettlements.put(currentPlayer.getId(), node);
             }
-        } else if(buildType == BuildType.CITY){
+        } else if(infraType == InfraType.CITY){
             try {
                 Node node = board.getNode(locationId);
                 node.buildCity(currentPlayer);
@@ -137,8 +137,29 @@ public class Game {
         }
     }
 
-    private String getInventoryKey(BuildType buildType) {
-        switch (buildType) {
+    public void handleMoveRobber(int roll, int newHexId) {
+        if (roll != 7){
+            return;
+        }
+
+        Hex newHex = board.getHex(newHexId);
+
+        if (newHex == null){
+            throw new IllegalArgumentException("Selected hex does not exist.");
+        }
+
+        if (newHex.getHasRobber()) {
+            throw new IllegalStateException("Selected hex already has the robber.");
+        }
+
+        for (Hex hex : board.getHexes()) {
+            hex.setHasRobber(false);
+        }
+
+        newHex.setHasRobber(true);
+    }
+    private String getInventoryKey(InfraType infraType) {
+        switch (infraType) {
             case ROAD:
                 return "roads";
             case SETTLEMENT:
@@ -150,10 +171,10 @@ public class Game {
         }
     }
 
-    private Map<ResourceType, Integer> getBuildCost(BuildType buildType) {
+    private Map<ResourceType, Integer> getBuildCost(InfraType infraType) {
         Map<ResourceType, Integer> cost = new HashMap<>();
 
-        switch (buildType) {
+        switch (infraType) {
             case ROAD:
                 cost.put(ResourceType.BRICK, 1);
                 cost.put(ResourceType.WOOD, 1);

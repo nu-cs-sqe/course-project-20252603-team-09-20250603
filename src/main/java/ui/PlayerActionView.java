@@ -7,8 +7,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 public class PlayerActionView extends VBox {
-    private PlayerActionController controller;
+    private final PlayerActionController controller;
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public PlayerActionView(PlayerActionController controller) {
         this.controller = controller;
         setPadding(new Insets(15));

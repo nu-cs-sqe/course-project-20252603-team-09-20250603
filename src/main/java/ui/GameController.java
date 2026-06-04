@@ -1,6 +1,6 @@
 package ui;
 
-import domain.BuildType;
+import domain.InfraType;
 import domain.Game;
 import domain.Player;
 
@@ -17,13 +17,13 @@ public class GameController {
     }
 
     public void handleBuild(Player currentPlayer) {
-        BuildType buildType = getBuildTypeFromPlayer();
-        int locationId = getBuildLocationFromPlayer(buildType);
+        InfraType infraType = getInfraTypeFromPlayer();
+        int locationId = getBuildLocationFromPlayer(infraType);
 
-        game.build(currentPlayer, buildType, locationId);
+        game.build(currentPlayer, infraType, locationId);
     }
 
-    private BuildType getBuildTypeFromPlayer() {
+    private InfraType getInfraTypeFromPlayer() {
         System.out.println("What would you like to build?");
         System.out.println("1. Road");
         System.out.println("2. Settlement");
@@ -33,18 +33,18 @@ public class GameController {
 
         switch (choice) {
             case 1:
-                return BuildType.ROAD;
+                return InfraType.ROAD;
             case 2:
-                return BuildType.SETTLEMENT;
+                return InfraType.SETTLEMENT;
             case 3:
-                return BuildType.CITY;
+                return InfraType.CITY;
             default:
                 throw new IllegalArgumentException("Invalid build type selection.");
         }
     }
 
-    private int getBuildLocationFromPlayer(BuildType buildType) {
-        if (buildType == BuildType.ROAD) {
+    private int getBuildLocationFromPlayer(InfraType infraType) {
+        if (infraType == InfraType.ROAD) {
             System.out.println("Which edge would you like to build on?");
         } else {
             System.out.println("Which node would you like to build on?");

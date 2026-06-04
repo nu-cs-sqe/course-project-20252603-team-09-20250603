@@ -57,9 +57,9 @@ public class HandleBuildStepDefinitions {
     }
 
     @When("the game validates that player has the resources needed to build {word}")
-    public void the_game_validates_that_player_has_the_resources_needed_to_build(String buildTypeText) {
-        BuildType buildType = toBuildType(buildTypeText);
-        Map<ResourceType, Integer> cost = getBuildCost(buildType);
+    public void the_game_validates_that_player_has_the_resources_needed_to_build(String infraTypeText) {
+        InfraType infraType = toInfraType(infraTypeText);
+        Map<ResourceType, Integer> cost = getBuildCost(infraType);
 
         currentPlayer.addResources(cost);
         startingResources = currentPlayer.getResources();
@@ -69,9 +69,9 @@ public class HandleBuildStepDefinitions {
     }
 
     @When("the game validates that player has at least one {word} in their inventory")
-    public void the_game_validates_that_player_has_enough_in_their_inventory(String buildTypeText) {
-        BuildType buildType = toBuildType(buildTypeText);
-        String inventoryKey = getInventoryKey(buildType);
+    public void the_game_validates_that_player_has_enough_in_their_inventory(String infraTypeText) {
+        InfraType infraType = toInfraType(infraTypeText);
+        String inventoryKey = getInventoryKey(infraType);
 
         startingInventoryAmount = currentPlayer.getInventory().get(inventoryKey);
 
@@ -79,14 +79,14 @@ public class HandleBuildStepDefinitions {
     }
 
     @When("the game validates that {word} {int} is available for building {word}")
-    public void the_game_validates_that_location_is_available_for_building(String locationType, Integer locationId, String buildTypeText) {
-        BuildType buildType = toBuildType(buildTypeText);
+    public void the_game_validates_that_location_is_available_for_building(String locationType, Integer locationId, String infraTypeText) {
+        InfraType infraType = toInfraType(infraTypeText);
 
-        if (buildType == BuildType.ROAD){
+        if (infraType == InfraType.ROAD){
             Edge edge = board.getEdge(locationId);
             assertNotNull(edge);
             assertNull(edge.getEdgeOccupant());
-        }else if(buildType == BuildType.SETTLEMENT) {
+        }else if(infraType == InfraType.SETTLEMENT) {
             Node node = board.getNode(locationId);
             assertNotNull(node);
 
@@ -115,17 +115,17 @@ public class HandleBuildStepDefinitions {
     }
 
     @Then("the {word} {int} should be occupied by the player's {word}")
-    public void the_node_should_be_occupied_by_the_player_s_infrastructure(String locationType, Integer locationId, String buildTypeText) {
-        BuildType buildType = toBuildType(buildTypeText);
+    public void the_node_should_be_occupied_by_the_player_s_infrastructure(String locationType, Integer locationId, String infraTypeText) {
+        InfraType infraType = toInfraType(infraTypeText);
 
-        if (buildType == BuildType.ROAD){
+        if (infraType == InfraType.ROAD){
             Edge edge = board.getEdge(locationId);
             assertEquals(currentPlayer, edge.getEdgeOccupant());
-        }else if(buildType == BuildType.SETTLEMENT) {
+        }else if(infraType == InfraType.SETTLEMENT) {
             Node node = board.getNode(locationId);
             assertEquals(currentPlayer, node.getNodeOccupant());
             assertEquals(InfraType.SETTLEMENT, node.getInfraType());
-        }else if(buildType == BuildType.CITY){
+        }else if(infraType == InfraType.CITY){
             Node node = board.getNode(locationId);
             assertEquals(currentPlayer, node.getNodeOccupant());
             assertEquals(InfraType.CITY, node.getInfraType());
@@ -133,9 +133,9 @@ public class HandleBuildStepDefinitions {
     }
 
     @Then("the player's inventory should decrease by one {word}")
-    public void the_player_s_inventory_should_decrease_by_one(String buildTypeText) {
-        BuildType buildType = toBuildType(buildTypeText);
-        String inventoryKey = getInventoryKey(buildType);
+    public void the_player_s_inventory_should_decrease_by_one(String infraTypeText) {
+        InfraType infraType = toInfraType(infraTypeText);
+        String inventoryKey = getInventoryKey(infraType);
 
         int expectedInventoryAmount = startingInventoryAmount - 1;
         int actualInventoryAmount = currentPlayer.getInventory().get(inventoryKey);
@@ -144,9 +144,9 @@ public class HandleBuildStepDefinitions {
     }
 
     @Then("the player's resources should decrease by the cost of building {word}")
-    public void the_player_s_resources_should_decrease_by_the_cost_of_building(String buildTypeText) {
-        BuildType buildType = toBuildType(buildTypeText);
-        Map<ResourceType, Integer> cost = getBuildCost(buildType);
+    public void the_player_s_resources_should_decrease_by_the_cost_of_building(String infraTypeText) {
+        InfraType infraType = toInfraType(infraTypeText);
+        Map<ResourceType, Integer> cost = getBuildCost(infraType);
         Map<ResourceType, Integer> actualResources = currentPlayer.getResources();
 
         for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
@@ -183,9 +183,9 @@ public class HandleBuildStepDefinitions {
     }
 
     @When("the game validates that player does not have any {word} in their inventory")
-    public void the_game_validates_that_player_does_not_have_any_in_their_inventory(String buildTypeText) {
-        BuildType buildType = toBuildType(buildTypeText);
-        String inventoryKey = getInventoryKey(buildType);
+    public void the_game_validates_that_player_does_not_have_any_in_their_inventory(String infraTypeText) {
+        InfraType infraType = toInfraType(infraTypeText);
+        String inventoryKey = getInventoryKey(infraType);
 
         while (currentPlayer.getInventory().get(inventoryKey) > 0) {
             currentPlayer.useInventoryItem(inventoryKey);
@@ -269,11 +269,11 @@ public class HandleBuildStepDefinitions {
     public void the_location_should_not_be_occupied_by_the_players_build_type(
             String locationType,
             Integer locationId,
-            String buildTypeText
+            String infraTypeText
     ) {
-        BuildType buildType = toBuildType(buildTypeText);
+        InfraType infraType = toInfraType(infraTypeText);
 
-        if (buildType == BuildType.ROAD) {
+        if (infraType == InfraType.ROAD) {
             Edge edge = board.getEdge(locationId);
             assertNotEquals(currentPlayer, edge.getEdgeOccupant());
         } else {
@@ -320,9 +320,9 @@ public class HandleBuildStepDefinitions {
     }
 
     @When("the game validates that player does not have the resources needed to build {word}")
-    public void the_game_validates_that_player_does_not_have_the_resources_needed_to_build(String buildTypeText) {
-        BuildType buildType = toBuildType(buildTypeText);
-        Map<ResourceType, Integer> cost = getBuildCost(buildType);
+    public void the_game_validates_that_player_does_not_have_the_resources_needed_to_build(String infraTypeText) {
+        InfraType infraType = toInfraType(infraTypeText);
+        Map<ResourceType, Integer> cost = getBuildCost(infraType);
 
         startingResources = currentPlayer.getResources();
 
@@ -345,39 +345,39 @@ public class HandleBuildStepDefinitions {
     }
 
     private int getCurrentInventoryAmount() {
-        BuildType buildType = toBuildType(selectedOptionNumber);
-        String inventoryKey = getInventoryKey(buildType);
+        InfraType infraType = toInfraType(selectedOptionNumber);
+        String inventoryKey = getInventoryKey(infraType);
 
         return currentPlayer.getInventory().get(inventoryKey);
     }
 
-    private BuildType toBuildType(String buildTypeText) {
-        if (buildTypeText.equalsIgnoreCase("road")) {
-            return BuildType.ROAD;
-        } else if (buildTypeText.equalsIgnoreCase("settlement")) {
-            return BuildType.SETTLEMENT;
-        } else if (buildTypeText.equalsIgnoreCase("city")) {
-            return BuildType.CITY;
+    private InfraType toInfraType(String infraTypeText) {
+        if (infraTypeText.equalsIgnoreCase("road")) {
+            return InfraType.ROAD;
+        } else if (infraTypeText.equalsIgnoreCase("settlement")) {
+            return InfraType.SETTLEMENT;
+        } else if (infraTypeText.equalsIgnoreCase("city")) {
+            return InfraType.CITY;
         }
 
-        throw new IllegalArgumentException("Invalid build type: " + buildTypeText);
+        throw new IllegalArgumentException("Invalid build type: " + infraTypeText);
     }
 
-    private BuildType toBuildType(int optionNumber) {
+    private InfraType toInfraType(int optionNumber) {
         switch (optionNumber) {
             case 1:
-                return BuildType.ROAD;
+                return InfraType.ROAD;
             case 2:
-                return BuildType.SETTLEMENT;
+                return InfraType.SETTLEMENT;
             case 3:
-                return BuildType.CITY;
+                return InfraType.CITY;
             default:
                 throw new IllegalArgumentException("Invalid build option.");
         }
     }
 
-    private String getInventoryKey(BuildType buildType) {
-        switch (buildType) {
+    private String getInventoryKey(InfraType infraType) {
+        switch (infraType) {
             case ROAD:
                 return "roads";
             case SETTLEMENT:
@@ -389,10 +389,10 @@ public class HandleBuildStepDefinitions {
         }
     }
 
-    private Map<ResourceType, Integer> getBuildCost(BuildType buildType) {
+    private Map<ResourceType, Integer> getBuildCost(InfraType infraType) {
         Map<ResourceType, Integer> cost = new HashMap<>();
 
-        switch (buildType) {
+        switch (infraType) {
             case ROAD:
                 cost.put(ResourceType.BRICK, 1);
                 cost.put(ResourceType.WOOD, 1);

@@ -3,6 +3,7 @@ package ui;
 import domain.Game;
 import domain.Player;
 import domain.TurnManager;
+import java.util.ArrayList;
 
 public class PlayerActionController {
     private PlayerActionView view;
@@ -16,11 +17,12 @@ public class PlayerActionController {
 
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public PlayerActionController(java.util.List<Player> players, Game game, TurnManager turnManager) {
-        this.players = players;
+        this.players = new ArrayList<>(players);
         this.game = game;
         this.turnManager = turnManager;
     }
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setView(PlayerActionView view) {
         this.view = view;
         updateView();

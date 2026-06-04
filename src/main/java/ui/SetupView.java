@@ -15,6 +15,7 @@ public class SetupView extends VBox {
     private final List<TextField> nameFields;
     private final Label statusLabel;
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public SetupView(SetupController controller) {
         this.controller = controller;
         controller.setView(this);
