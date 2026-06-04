@@ -60,3 +60,13 @@
 | Test    | System under test                                    | Expected output             | Implemented? |
 |---------|------------------------------------------------------|-----------------------------|--------------|
 | Test 1  | Initialize board and nodes, there should be 72 edges | Length of board.edges == 72 | :x:          |
+
+
+### Method under test: `getEdgesConnectedToNode(Node node)`
+
+|              | State of the System                         | Expected output / behavior                    | Implemented? |
+|--------------|---------------------------------------------|------------------------------------------------|--------------|
+| Test Case 1  | Node is null                                | Throws `IllegalArgumentException`              | :x: |
+| Test Case 2  | Node is not part of the board               | Throws `IllegalStateException`                 | :x: |
+| Test Case 3  | Valid node has connected edges              | Returns all edges connected to that node       | :x: |
+| Test Case 4  | Valid edge node on board boundary           | Returns only the connected boundary edges      | :x: |
