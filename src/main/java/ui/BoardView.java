@@ -17,6 +17,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,7 +48,10 @@ public class BoardView extends BorderPane {
         this.statusLabel = new Label("Board ready. Select a node or edge.");
 
         getStyleClass().add("board-view");
-        getStylesheets().add(getClass().getResource(STYLESHEET).toExternalForm());
+        URL stylesheetUrl = getClass().getResource(STYLESHEET);
+        if (stylesheetUrl != null) {
+            getStylesheets().add(stylesheetUrl.toExternalForm());
+        }
         setPadding(new Insets(12.0));
 
         Label titleLabel = new Label("Catan Board");
@@ -76,7 +80,11 @@ public class BoardView extends BorderPane {
         boardPane.setPrefSize(BOARD_WIDTH, BOARD_HEIGHT);
         boardPane.setMaxSize(BOARD_WIDTH, BOARD_HEIGHT);
 
-        Image boardImage = new Image(getClass().getResource(BOARD_IMAGE).toExternalForm());
+        URL boardImageUrl = getClass().getResource(BOARD_IMAGE);
+        if (boardImageUrl == null) {
+            throw new IllegalStateException("Missing board image resource: " + BOARD_IMAGE);
+        }
+        Image boardImage = new Image(boardImageUrl.toExternalForm());
         ImageView imageView = new ImageView(boardImage);
         imageView.setFitWidth(BOARD_WIDTH);
         imageView.setFitHeight(BOARD_HEIGHT);
@@ -228,6 +236,10 @@ public class BoardView extends BorderPane {
         if (selectedNode != null) {
             selectedNode.getStyleClass().remove("selected-node");
         }
+        if (selectedEdge != null) {
+            selectedEdge.getStyleClass().remove("selected-edge");
+            selectedEdge = null;
+        }
 
         selectedNode = circle;
         selectedNode.getStyleClass().add("selected-node");
@@ -236,6 +248,10 @@ public class BoardView extends BorderPane {
     private void selectEdge(Line line) {
         if (selectedEdge != null) {
             selectedEdge.getStyleClass().remove("selected-edge");
+        }
+        if (selectedNode != null) {
+            selectedNode.getStyleClass().remove("selected-node");
+            selectedNode = null;
         }
 
         selectedEdge = line;

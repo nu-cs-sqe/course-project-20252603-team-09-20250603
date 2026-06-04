@@ -14,6 +14,7 @@ public class BoardController {
     private final Board board;
     private final List<Player> players;
     private BoardView view;
+    private PlayerActionController actionController;
 
     public BoardController(List<Player> players) {
         this.board = new Board();
@@ -33,10 +34,18 @@ public class BoardController {
         return players.size();
     }
 
+    public void setActionController(PlayerActionController actionController) {
+        this.actionController = actionController;
+    }
+
     public void handleNodeSelected(int nodeId) {
         Node node = board.getNode(nodeId);
         Map<ResourceType, Integer> resources = board.getAdjacentResources(node);
         view.setStatusMessage("Selected node " + node.getId() + " | adjacent resources: " + resources);
+
+        if (actionController != null) {
+            actionController.onLocationSelected(nodeId, PlayerActionController.LocationType.NODE);
+        }
     }
 
     public void handleEdgeSelected(int edgeId) {
@@ -46,6 +55,10 @@ public class BoardController {
                         + " | nodes " + edge.getNodeA().getId()
                         + " and " + edge.getNodeB().getId()
         );
+
+        if (actionController != null) {
+            actionController.onLocationSelected(edgeId, PlayerActionController.LocationType.EDGE);
+        }
     }
 
     public void handleHexSelected(int hexId) {

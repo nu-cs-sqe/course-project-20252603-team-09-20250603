@@ -1,45 +1,60 @@
 package ui;
 
+import domain.InfraType;
 import domain.Player;
 import domain.PlayerAction;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerActionView extends VBox {
     private final List<Player> players;
-    private int currentPlayerIndex;
+    private PlayerActionController controller;
+    private Button selectedInfraButton = null;
 
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public PlayerActionView(List<Player> players) {
         this.players = new ArrayList<>(players);
-        this.currentPlayerIndex = 0;
 
         setPadding(new Insets(15));
         setSpacing(12);
         setAlignment(Pos.CENTER_LEFT);
         getStyleClass().add("player-action-view");
-        getStylesheets().add(getClass().getResource("/ui/player-action.css").toExternalForm());
 
+        URL stylesheetUrl = getClass().getResource("/ui/player-action.css");
+        if (stylesheetUrl != null) {
+            getStylesheets().add(stylesheetUrl.toExternalForm());
+        }
+    }
+
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
+    public void setController(PlayerActionController controller) {
+        this.controller = controller;
         renderActionMenu();
     }
 
     private Player getCurrentPlayer() {
-        if (players.isEmpty()) {
+        if (players.isEmpty() || controller == null) {
             return null;
         }
 
-        return players.get(currentPlayerIndex);
+        Player currentPlayer = controller.getCurrentPlayer();
+        return currentPlayer != null ? currentPlayer : players.get(0);
     }
 
-    private void renderActionMenu() {
+    public void renderActionMenu() {
         getChildren().clear();
+        selectedInfraButton = null;
 
         Player currentPlayer = getCurrentPlayer();
         if (currentPlayer == null) {
@@ -55,19 +70,30 @@ public class PlayerActionView extends VBox {
         buttonRow.getStyleClass().add("action-button-row");
         buttonRow.setAlignment(Pos.CENTER_LEFT);
 
-        Button buildButton = createActionButton(PlayerAction.BUILD, e -> renderBuildMenu());
+        Button buildButton = createActionButton(PlayerAction.BUILD, e -> {
+            if (controller != null) {
+                controller.onActionClicked(PlayerAction.BUILD);
+            }
+        });
         Button buyDevCardButton = createActionButton(PlayerAction.BUY_DEV_CARD, e -> {
-            // Placeholder for later controller/backend hookup.
+            if (controller != null) {
+                controller.onActionClicked(PlayerAction.BUY_DEV_CARD);
+            }
         });
         Button useDevCardButton = createActionButton(PlayerAction.USE_DEV_CARD, e -> {
-            // Placeholder for later controller/backend hookup.
+            if (controller != null) {
+                controller.onActionClicked(PlayerAction.USE_DEV_CARD);
+            }
         });
         Button tradeButton = createActionButton(PlayerAction.TRADE, e -> {
-            // Placeholder for later controller/backend hookup.
+            if (controller != null) {
+                controller.onActionClicked(PlayerAction.TRADE);
+            }
         });
         Button endTurnButton = createActionButton(PlayerAction.END_TURN, e -> {
-            advanceTurn();
-            renderActionMenu();
+            if (controller != null) {
+                controller.onActionClicked(PlayerAction.END_TURN);
+            }
         });
 
         buttonRow.getChildren().addAll(
@@ -81,8 +107,9 @@ public class PlayerActionView extends VBox {
         getChildren().addAll(header, buttonRow);
     }
 
-    private void renderBuildMenu() {
+    public void renderBuildMenu() {
         getChildren().clear();
+        selectedInfraButton = null;
 
         Player currentPlayer = getCurrentPlayer();
         if (currentPlayer == null) {
@@ -92,22 +119,98 @@ public class PlayerActionView extends VBox {
             return;
         }
 
-        VBox header = createTurnHeader(currentPlayer, "Choose a building type:");
+        VBox header = createTurnHeader(currentPlayer, "Choose an infrastructure type:");
 
         HBox buttonRow = new HBox(8);
         buttonRow.getStyleClass().add("action-button-row");
         buttonRow.setAlignment(Pos.CENTER_LEFT);
 
-        Button roadButton = createActionButton(null, e -> renderActionMenu());
-        roadButton.setText("Road");
-        Button settlementButton = createActionButton(null, e -> renderActionMenu());
-        settlementButton.setText("Settlement");
-        Button cityButton = createActionButton(null, e -> renderActionMenu());
-        cityButton.setText("City");
+        Button roadButton = new Button("Road");
+        roadButton.getStyleClass().add("action-bar-button");
+        roadButton.setMinWidth(110.0);
+        roadButton.setOnAction(e -> {
+            if (controller != null) {
+                selectInfraButton(roadButton);
+                controller.onBuildTypeSelected(InfraType.ROAD);
+            }
+        });
 
-        buttonRow.getChildren().addAll(roadButton, settlementButton, cityButton);
+        Button settlementButton = new Button("Settlement");
+        settlementButton.getStyleClass().add("action-bar-button");
+        settlementButton.setMinWidth(110.0);
+        settlementButton.setOnAction(e -> {
+            if (controller != null) {
+                selectInfraButton(settlementButton);
+                controller.onBuildTypeSelected(InfraType.SETTLEMENT);
+            }
+        });
+
+        Button cityButton = new Button("City");
+        cityButton.getStyleClass().add("action-bar-button");
+        cityButton.setMinWidth(110.0);
+        cityButton.setOnAction(e -> {
+            if (controller != null) {
+                selectInfraButton(cityButton);
+                controller.onBuildTypeSelected(InfraType.CITY);
+            }
+        });
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        Button confirmButton = new Button("Confirm");
+        confirmButton.getStyleClass().addAll("action-bar-button", "confirm-button");
+        confirmButton.setMinWidth(110.0);
+        confirmButton.setOnAction(e -> {
+            if (controller != null) {
+                controller.onBuildConfirmed();
+            }
+        });
+
+        Button cancelButton = new Button("Cancel");
+        cancelButton.getStyleClass().add("action-bar-button");
+        cancelButton.setMinWidth(110.0);
+        cancelButton.setOnAction(e -> {
+            if (controller != null) {
+                controller.onBuildCanceled();
+            }
+        });
+
+        buttonRow.getChildren().addAll(roadButton, settlementButton, cityButton, spacer, confirmButton, cancelButton);
 
         getChildren().addAll(header, buttonRow);
+    }
+
+    public void onBuildTypeSelected(InfraType infraType) {
+        if (infraType == null) {
+            return;
+        }
+    }
+
+    public void showError(String message) {
+        showPopup("Error", message, Alert.AlertType.ERROR);
+    }
+
+    public void showSuccess(String message) {
+        showPopup("Success", message, Alert.AlertType.INFORMATION);
+    }
+
+    private void showPopup(String title, String message, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private void selectInfraButton(Button button) {
+        if (selectedInfraButton != null) {
+            selectedInfraButton.getStyleClass().remove("selected-infra-button");
+        }
+        selectedInfraButton = button;
+        if (!selectedInfraButton.getStyleClass().contains("selected-infra-button")) {
+            selectedInfraButton.getStyleClass().add("selected-infra-button");
+        }
     }
 
     private VBox createTurnHeader(Player player, String promptText) {
@@ -148,14 +251,6 @@ public class PlayerActionView extends VBox {
         }
     }
 
-    private void advanceTurn() {
-        if (players.isEmpty()) {
-            return;
-        }
-
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-    }
-
     private String mapColorToHex(String color) {
         switch (color) {
             case "RED":
@@ -170,20 +265,4 @@ public class PlayerActionView extends VBox {
                 return "#2c3e50";
         }
     }
-
-    public void renderCurrentPlayer(Player player, boolean isPlacingSettlement) {
-        if (player != null) {
-            int playerIndex = players.indexOf(player);
-            if (playerIndex >= 0) {
-                currentPlayerIndex = playerIndex;
-            }
-        }
-
-        renderActionMenu();
-    }
-
-    public void renderSetupComplete() {
-        renderActionMenu();
-    }
 }
-

@@ -1,6 +1,8 @@
 package ui;
 
+import domain.Game;
 import domain.Player;
+import domain.TurnManager;
 
 import javafx.scene.layout.BorderPane;
 
@@ -32,7 +34,7 @@ public class MainView extends BorderPane {
         setCenter(setupView);
     }
 
-    public void showBoardView(List<Player> players) {
+    public void showBoardView(List<Player> players, Game game, TurnManager turnManager) {
         BoardController boardController = new BoardController(players);
         BoardView boardView = new BoardView(boardController);
         setCenter(boardView);
@@ -43,6 +45,10 @@ public class MainView extends BorderPane {
         setLeft(statsView);
 
         PlayerActionView actionView = new PlayerActionView(players);
+        PlayerActionController actionController = new PlayerActionController(players, game, turnManager);
+        actionController.setView(actionView);
+        actionView.setController(actionController);
+        boardController.setActionController(actionController);
         setBottom(actionView);
     }
 }
