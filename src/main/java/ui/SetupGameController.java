@@ -16,6 +16,8 @@ public class SetupGameController {
 
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Shares mutable board UI view")
     private BoardView boardView;
+    private PlayerActionController playerActionController;
+    private Runnable onSetupComplete;
 
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public SetupGameController(Game game, TurnManager turnManager) {
@@ -26,8 +28,24 @@ public class SetupGameController {
 
     public void setBoardView(BoardView boardView) {
         this.boardView = boardView;
-        Player first = game.getPlayer(turnManager.getCurrentPlayerIndex());
+        Player first = game.getPlayer(turnManager.getCurrentPlayerIndex() - 1);
         boardView.setStatusMessage(first.getName() + " - Place your first settlement.");
+        refreshSidePanel();
+    }
+
+    public void setPlayerActionController(PlayerActionController playerActionController) {
+        this.playerActionController = playerActionController;
+        refreshSidePanel();
+    }
+
+    public void setOnSetupComplete(Runnable onSetupComplete) {
+        this.onSetupComplete = onSetupComplete;
+    }
+
+    private void refreshSidePanel() {
+        if (playerActionController != null) {
+            playerActionController.refreshSetupTurn(waitingForRoad);
+        }
     }
 
     public void handleInitialPlacement(int locationId, InfraType buildType) {
@@ -61,7 +79,9 @@ public class SetupGameController {
         if (boardView != null) {
             boardView.setStatusMessage(currentPlayer.getName()
                     + " placed settlement. Now place a road.");
+            boardView.refreshBoard();
         }
+        refreshSidePanel();
     }
 
     private void handleInitialRoad(int locationId, InfraType buildType) {
@@ -76,14 +96,24 @@ public class SetupGameController {
 
         turnManager.nextPlayer();
 
+        if (boardView != null) {
+            boardView.refreshBoard();
+        }
+
         if (turnManager.setupStatus()) {
             game.advancePhase();
-            if (boardView != null) {boardView.setStatusMessage("Setup complete! Starting normal play.");}
+            if (onSetupComplete != null) {
+                onSetupComplete.run();
+            }
+            if (boardView != null) {
+                boardView.setStatusMessage("Setup complete! Starting normal play.");
+            }
         } else {
             Player nextPlayer = game.getPlayer(turnManager.getCurrentPlayerIndex() - 1);
             if (boardView != null) {
                 boardView.setStatusMessage("Next up: " + nextPlayer.getName() + " - Place a settlement.");
             }
+            refreshSidePanel();
         }
     }
 }

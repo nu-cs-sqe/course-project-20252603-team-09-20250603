@@ -3,6 +3,7 @@ package ui;
 import domain.Game;
 import domain.Player;
 import domain.TurnManager;
+
 import java.util.ArrayList;
 
 public class PlayerActionController {
@@ -10,10 +11,6 @@ public class PlayerActionController {
     private final Game game;
     private final TurnManager turnManager;
     private final java.util.List<Player> players;
-
-    // We expect the setup sequence is: Settlement -> Road,
-    // so we track which phase the current player is in right now.
-    private boolean isPlacingSettlement = true;
 
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public PlayerActionController(java.util.List<Player> players, Game game, TurnManager turnManager) {
@@ -25,34 +22,34 @@ public class PlayerActionController {
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setView(PlayerActionView view) {
         this.view = view;
-        updateView();
     }
 
-    public void updateView() {
+    public void refreshSetupTurn(boolean waitingForRoad) {
+        if (view == null || !game.phaseSetupCheck()) {
+            return;
+        }
+
+        Player currentPlayer = getCurrentPlayer();
+        view.renderSetupTurn(currentPlayer, waitingForRoad);
+    }
+
+    public void onSetupFinished() {
+        refreshNormalPlayView();
+    }
+
+    private void refreshNormalPlayView() {
+        if (view == null) {
+            return;
+        }
+
+        view.renderNormalPlay(getCurrentPlayer());
+    }
+
+    private Player getCurrentPlayer() {
         int index = turnManager.getCurrentPlayerIndex();
-
-        // TurnManager index is 1-based (e.g. 1, 2, 3...) from your array list setup
-        // But java array lists are 0-based, so if index = 1, it's players.get(0).
-        // Let's do a safe fallback in case index goes out of bounds.
         if (index > 0 && index <= players.size()) {
-            Player currentPlayer = players.get(index - 1);
-            view.renderCurrentPlayer(currentPlayer, isPlacingSettlement);
-        } else {
-             // Sequence empty -> setup is done!
-            view.renderSetupComplete();
+            return players.get(index - 1);
         }
-    }
-
-    public void handleNextActionDone() {
-        if (isPlacingSettlement) {
-            // They placed a settlement. Now they must place a road.
-            isPlacingSettlement = false;
-        } else {
-            // They placed a road. Turn is over, next player!
-            turnManager.nextPlayer();
-            isPlacingSettlement = true; // reset for the next player
-        }
-        updateView();
+        return players.get(0);
     }
 }
-

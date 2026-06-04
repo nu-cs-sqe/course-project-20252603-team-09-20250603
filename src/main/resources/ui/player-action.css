@@ -17,3 +17,21 @@
     -fx-padding: 10px 0;
 }
 
+.resources-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.resources-label {
+    -fx-font-size: 13px;
+}
+
+.setup-instruction {
+    -fx-font-size: 13px;
+    -fx-text-fill: #34495e;
+}
+
+.action-button {
+    -fx-max-width: Infinity;
+}
+
