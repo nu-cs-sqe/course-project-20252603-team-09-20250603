@@ -28,8 +28,8 @@ public class Game {
         return true;
     }
 
-    public DevCardDeck getDevCardDeck() {
-        return this.devCardDeck;
+    public void setNextDevCardType(DevCardType type) {
+        this.devCardDeck.setNextCardType(type);
     }
 
     public void build(Player currentPlayer, InfraType infraType, int locationId) {
@@ -194,7 +194,7 @@ public class Game {
                 throw new UnsupportedOperationException("This development card type cannot be manually played.");
         }
 
-        player.getDevCardHand().remove(cardToPlay);
+        player.removeDevCard(cardToPlay);
     }
 
     public void updateLargestArmyPlayer() {

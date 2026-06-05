@@ -10,6 +10,9 @@ public class GameController {
     private final Game game;
     private final Scanner scanner;
 
+    // The controller must drive the same live Game instance, so sharing the
+    // reference is intentional rather than a leak of internal state.
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public GameController(Game game, Readable input) {
         this.game = game;
         this.scanner = new Scanner(input);

@@ -202,7 +202,7 @@ public class DevCardTests {
         player.addResources(devCardCost());
 
         Game game = newGameWith(player);
-        game.getDevCardDeck().setNextCardType(DevCardType.KNIGHT);
+        game.setNextDevCardType(DevCardType.KNIGHT);
 
         assertEquals(0, player.getDevCardHand().size());
 
@@ -226,7 +226,7 @@ public class DevCardTests {
         player.addResources(resources);
 
         Game game = newGameWith(player);
-        game.getDevCardDeck().setNextCardType(DevCardType.MONOPOLY);
+        game.setNextDevCardType(DevCardType.MONOPOLY);
 
         game.drawDevCard(0);
 
@@ -242,7 +242,7 @@ public class DevCardTests {
         Player player = new Player(0, "John", PlayerColor.RED);
 
         Game game = newGameWith(player);
-        game.getDevCardDeck().setNextCardType(DevCardType.KNIGHT);
+        game.setNextDevCardType(DevCardType.KNIGHT);
 
         assertThrows(IllegalStateException.class, () -> game.drawDevCard(0));
 
@@ -258,7 +258,7 @@ public class DevCardTests {
         player.addResources(resources);
 
         Game game = newGameWith(player);
-        game.getDevCardDeck().setNextCardType(DevCardType.KNIGHT);
+        game.setNextDevCardType(DevCardType.KNIGHT);
 
         assertThrows(IllegalStateException.class, () -> game.drawDevCard(0));
 

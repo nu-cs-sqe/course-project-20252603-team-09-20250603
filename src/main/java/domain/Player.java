@@ -10,7 +10,6 @@ public class Player {
     private final Map<ResourceType, Integer> resourceHand;
     private int victoryPoints;
     private final List<DevCard> devHand;
-    private boolean hasLongestRoad;
     private boolean hasLargestArmy;
     private int playedKnightCount = 0;
 
@@ -143,7 +142,11 @@ public class Player {
         return true;
     }
 
-    public List<DevCard> getDevCardHand() { return this.devHand; }
+    public List<DevCard> getDevCardHand() { return Collections.unmodifiableList(new ArrayList<>(this.devHand)); }
+
+    public void removeDevCard(DevCard devCard) {
+        this.devHand.remove(devCard);
+    }
 
     public void setDevCardHand(DevCard devCard) {
         this.devHand.add(devCard);

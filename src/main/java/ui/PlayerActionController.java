@@ -15,6 +15,9 @@ public class PlayerActionController {
     // so we track which phase the current player is in right now.
     private boolean isPlacingSettlement = true;
 
+    // The controller must drive the same live Game/TurnManager instances, so
+    // sharing those references is intentional rather than a leak of internal state.
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public PlayerActionController(java.util.List<Player> players, Game game, TurnManager turnManager) {
         this.players = new ArrayList<>(players);
         this.game = game;

@@ -194,7 +194,7 @@ public class DevCardStepDefinitions {
     @Given("the development card deck is rigged to next return a {string}")
     public void the_development_card_deck_is_rigged(String cardTypeStr) {
         DevCardType expectedType = DevCardType.valueOf(cardTypeStr);
-        game.getDevCardDeck().setNextCardType(expectedType);
+        game.setNextDevCardType(expectedType);
     }
 
     @When("{string} draws a development card")
