@@ -4,6 +4,7 @@ import domain.Board;
 import domain.Edge;
 import domain.Hex;
 import domain.Node;
+import domain.InfraType;
 import domain.Player;
 import domain.ResourceType;
 
@@ -17,7 +18,11 @@ public class BoardController {
     private PlayerActionController actionController;
 
     public BoardController(List<Player> players) {
-        this.board = new Board();
+        this(new Board(), players);
+    }
+
+    public BoardController(Board board, List<Player> players) {
+        this.board = board;
         this.players = List.copyOf(players);
     }
 
@@ -30,8 +35,11 @@ public class BoardController {
         return board;
     }
 
-    public int getPlayerCount() {
-        return players.size();
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
+    private SetupGameController setupGameController;
+
+    public void setSetupGameController(SetupGameController setupGameController) {
+        this.setupGameController = setupGameController;
     }
 
     public void setActionController(PlayerActionController actionController) {
@@ -40,6 +48,13 @@ public class BoardController {
 
     public void handleNodeSelected(int nodeId) {
         Node node = board.getNode(nodeId);
+
+        if (setupGameController != null && setupGameController.isInSetupPhase()) {
+            setupGameController.handleInitialPlacement(nodeId, InfraType.SETTLEMENT);
+            view.refreshBoard();
+            return;
+        }
+
         Map<ResourceType, Integer> resources = board.getAdjacentResources(node);
         view.setStatusMessage("Selected node " + node.getId() + " | adjacent resources: " + resources);
 
@@ -50,6 +65,13 @@ public class BoardController {
 
     public void handleEdgeSelected(int edgeId) {
         Edge edge = board.getEdge(edgeId);
+
+        if (setupGameController != null && setupGameController.isInSetupPhase()) {
+            setupGameController.handleInitialPlacement(edgeId, InfraType.ROAD);
+            view.refreshBoard();
+            return;
+        }
+
         view.setStatusMessage(
                 "Selected edge " + edge.getId()
                         + " | nodes " + edge.getNodeA().getId()

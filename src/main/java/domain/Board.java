@@ -48,11 +48,43 @@ public class Board {
                 ResourceType.ORE
         };
 
+        // Number tokens hardcoded to match the physical board, indexed by hex id.
+        // The desert (hex 9) has no token, represented by 0.
+        int[] hexTokens = {
+                9,  // hex 0
+                11, // hex 1
+                6,  // hex 2
+                4,  // hex 3
+                3,  // hex 4
+                2,  // hex 5
+                5,  // hex 6
+                11, // hex 7
+                8,  // hex 8
+                0,  // hex 9 (desert, robber)
+                10, // hex 10
+                9,  // hex 11
+                10, // hex 12
+                5,  // hex 13
+                12, // hex 14
+                4,  // hex 15
+                6,  // hex 16
+                3,  // hex 17
+                8   // hex 18
+        };
+
+
+
+        // The robber starts on the desert (hex 9), matching standard Catan.
+        int robberHexId = 9;
+
         for (int id = 0; id < NUM_HEXES; id++) {
             Hex hex = new Hex(id);
             hex.setResourceType(hexResources[id]);
+            hex.setTokenNumber(hexTokens[id]);
+            hex.setHasRobber(id == robberHexId);
             hexes.add(hex);
         }
+
         for (int id = 0; id < NUM_NODES; id++) {
             Node node = new Node(id);
             nodes.add(node);
@@ -200,7 +232,7 @@ public class Board {
     }
 
     public Hex getHex(int hexId) {
-        if (hexId < 0 || hexId > hexes.size()) {
+        if (hexId < 0 || hexId >= hexes.size()) {
             throw new IllegalArgumentException("Invalid Hex Id");
         }
 
@@ -235,5 +267,25 @@ public class Board {
 
     public List<Edge> getEdges() {
         return List.copyOf(edges);
+    }
+
+    public List<Edge> getEdgesConnectedToNode(Node node) {
+        if (node == null) {
+            throw new IllegalArgumentException("The node object is null");
+        }
+
+        if (!nodes.contains(node)) {
+            throw new IllegalStateException("The node object is not valid");
+        }
+
+        List<Edge> connectedEdges = new ArrayList<>();
+
+        for (Edge edge : edges) {
+            if (edge.getNodeA().equals(node) || edge.getNodeB().equals(node)) {
+                connectedEdges.add(edge);
+            }
+        }
+
+        return connectedEdges;
     }
 }

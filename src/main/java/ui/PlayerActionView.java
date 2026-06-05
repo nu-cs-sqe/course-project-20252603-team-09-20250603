@@ -3,19 +3,17 @@ package ui;
 import domain.InfraType;
 import domain.Player;
 import domain.PlayerAction;
+import domain.ResourceType;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class PlayerActionView extends VBox {
     private final List<Player> players;
@@ -27,8 +25,7 @@ public class PlayerActionView extends VBox {
         this.players = new ArrayList<>(players);
 
         setPadding(new Insets(15));
-        setSpacing(12);
-        setAlignment(Pos.CENTER_LEFT);
+        setSpacing(10);
         getStyleClass().add("player-action-view");
 
         URL stylesheetUrl = getClass().getResource("/ui/player-action.css");
@@ -40,16 +37,31 @@ public class PlayerActionView extends VBox {
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setController(PlayerActionController controller) {
         this.controller = controller;
-        renderActionMenu();
     }
 
-    private Player getCurrentPlayer() {
-        if (players.isEmpty() || controller == null) {
-            return null;
-        }
+    public void renderSetupTurn(Player player, boolean waitingForRoad) {
+        getChildren().clear();
+        selectedInfraButton = null;
 
-        Player currentPlayer = controller.getCurrentPlayer();
-        return currentPlayer != null ? currentPlayer : players.get(0);
+        Label title = new Label("Setup Phase");
+        title.getStyleClass().add("action-title");
+
+        Label playerTurn = new Label(player.getName() + "'s Turn");
+        playerTurn.getStyleClass().add("player-turn-label");
+        playerTurn.setStyle("-fx-text-fill: " + mapColorToHex(player.getColor().name()) + ";");
+
+        String instruction = waitingForRoad
+                ? "Click an edge on the board to place a road."
+                : "Click a node on the board to place a settlement.";
+        Label instructionLabel = new Label(instruction);
+        instructionLabel.getStyleClass().add("setup-instruction");
+        instructionLabel.setWrapText(true);
+
+        Label invLabel = new Label("Settlements left: " + player.getInventory().get("settlements")
+                + "\nRoads left: " + player.getInventory().get("roads"));
+        invLabel.getStyleClass().add("resources-label");
+
+        getChildren().addAll(title, playerTurn, instructionLabel, invLabel);
     }
 
     public void renderActionMenu() {
@@ -64,47 +76,32 @@ public class PlayerActionView extends VBox {
             return;
         }
 
-        VBox header = createTurnHeader(currentPlayer, "Choose an action:");
+        Label title = new Label("Normal Play");
+        title.getStyleClass().add("action-title");
 
-        HBox buttonRow = new HBox(8);
-        buttonRow.getStyleClass().add("action-button-row");
-        buttonRow.setAlignment(Pos.CENTER_LEFT);
+        Label playerTurn = new Label(currentPlayer.getName() + "'s Turn");
+        playerTurn.getStyleClass().add("player-turn-label");
+        playerTurn.setStyle("-fx-text-fill: " + mapColorToHex(currentPlayer.getColor().name()) + ";");
 
-        Button buildButton = createActionButton(PlayerAction.BUILD, e -> {
-            if (controller != null) {
-                controller.onActionClicked(PlayerAction.BUILD);
-            }
-        });
-        Button buyDevCardButton = createActionButton(PlayerAction.BUY_DEV_CARD, e -> {
-            if (controller != null) {
-                controller.onActionClicked(PlayerAction.BUY_DEV_CARD);
-            }
-        });
-        Button useDevCardButton = createActionButton(PlayerAction.USE_DEV_CARD, e -> {
-            if (controller != null) {
-                controller.onActionClicked(PlayerAction.USE_DEV_CARD);
-            }
-        });
-        Button tradeButton = createActionButton(PlayerAction.TRADE, e -> {
-            if (controller != null) {
-                controller.onActionClicked(PlayerAction.TRADE);
-            }
-        });
-        Button endTurnButton = createActionButton(PlayerAction.END_TURN, e -> {
-            if (controller != null) {
-                controller.onActionClicked(PlayerAction.END_TURN);
-            }
-        });
+        Label resourcesTitle = new Label("Resources:");
+        resourcesTitle.getStyleClass().add("resources-title");
+        Label resources = new Label(formatResources(currentPlayer));
+        resources.getStyleClass().add("resources-label");
+        resources.setWrapText(true);
 
-        buttonRow.getChildren().addAll(
-                buildButton,
-                buyDevCardButton,
-                useDevCardButton,
-                tradeButton,
-                endTurnButton
+        Label actionsTitle = new Label("Actions:");
+        actionsTitle.getStyleClass().add("resources-title");
+
+        VBox actions = new VBox(6);
+        actions.getChildren().addAll(
+                createActionButton(PlayerAction.BUILD),
+                createActionButton(PlayerAction.BUY_DEV_CARD),
+                createActionButton(PlayerAction.USE_DEV_CARD),
+                createActionButton(PlayerAction.TRADE),
+                createActionButton(PlayerAction.END_TURN)
         );
 
-        getChildren().addAll(header, buttonRow);
+        getChildren().addAll(title, playerTurn, resourcesTitle, resources, actionsTitle, actions);
     }
 
     public void renderBuildMenu() {
@@ -119,48 +116,24 @@ public class PlayerActionView extends VBox {
             return;
         }
 
-        VBox header = createTurnHeader(currentPlayer, "Choose an infrastructure type:");
+        Label title = new Label("Build");
+        title.getStyleClass().add("action-title");
 
-        HBox buttonRow = new HBox(8);
-        buttonRow.getStyleClass().add("action-button-row");
-        buttonRow.setAlignment(Pos.CENTER_LEFT);
+        Label playerTurn = new Label(currentPlayer.getName() + "'s Turn");
+        playerTurn.getStyleClass().add("player-turn-label");
+        playerTurn.setStyle("-fx-text-fill: " + mapColorToHex(currentPlayer.getColor().name()) + ";");
 
-        Button roadButton = new Button("Road");
-        roadButton.getStyleClass().add("action-bar-button");
-        roadButton.setMinWidth(110.0);
-        roadButton.setOnAction(e -> {
-            if (controller != null) {
-                selectInfraButton(roadButton);
-                controller.onBuildTypeSelected(InfraType.ROAD);
-            }
-        });
+        Label prompt = new Label("Choose an infrastructure type, click the board, then confirm.");
+        prompt.getStyleClass().add("build-prompt-label");
+        prompt.setWrapText(true);
 
-        Button settlementButton = new Button("Settlement");
-        settlementButton.getStyleClass().add("action-bar-button");
-        settlementButton.setMinWidth(110.0);
-        settlementButton.setOnAction(e -> {
-            if (controller != null) {
-                selectInfraButton(settlementButton);
-                controller.onBuildTypeSelected(InfraType.SETTLEMENT);
-            }
-        });
-
-        Button cityButton = new Button("City");
-        cityButton.getStyleClass().add("action-bar-button");
-        cityButton.setMinWidth(110.0);
-        cityButton.setOnAction(e -> {
-            if (controller != null) {
-                selectInfraButton(cityButton);
-                controller.onBuildTypeSelected(InfraType.CITY);
-            }
-        });
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
+        Button roadButton = createInfraButton("Road", InfraType.ROAD);
+        Button settlementButton = createInfraButton("Settlement", InfraType.SETTLEMENT);
+        Button cityButton = createInfraButton("City", InfraType.CITY);
 
         Button confirmButton = new Button("Confirm");
-        confirmButton.getStyleClass().addAll("action-bar-button", "confirm-button");
-        confirmButton.setMinWidth(110.0);
+        confirmButton.getStyleClass().addAll("action-button", "confirm-button");
+        confirmButton.setMaxWidth(Double.MAX_VALUE);
         confirmButton.setOnAction(e -> {
             if (controller != null) {
                 controller.onBuildConfirmed();
@@ -168,17 +141,24 @@ public class PlayerActionView extends VBox {
         });
 
         Button cancelButton = new Button("Cancel");
-        cancelButton.getStyleClass().add("action-bar-button");
-        cancelButton.setMinWidth(110.0);
+        cancelButton.getStyleClass().add("action-button");
+        cancelButton.setMaxWidth(Double.MAX_VALUE);
         cancelButton.setOnAction(e -> {
             if (controller != null) {
                 controller.onBuildCanceled();
             }
         });
 
-        buttonRow.getChildren().addAll(roadButton, settlementButton, cityButton, spacer, confirmButton, cancelButton);
-
-        getChildren().addAll(header, buttonRow);
+        getChildren().addAll(
+                title,
+                playerTurn,
+                prompt,
+                roadButton,
+                settlementButton,
+                cityButton,
+                confirmButton,
+                cancelButton
+        );
     }
 
     public void onBuildTypeSelected(InfraType infraType) {
@@ -193,6 +173,40 @@ public class PlayerActionView extends VBox {
 
     public void showSuccess(String message) {
         showPopup("Success", message, Alert.AlertType.INFORMATION);
+    }
+
+    private Player getCurrentPlayer() {
+        if (players.isEmpty() || controller == null) {
+            return null;
+        }
+
+        Player currentPlayer = controller.getCurrentPlayer();
+        return currentPlayer != null ? currentPlayer : players.get(0);
+    }
+
+    private Button createActionButton(PlayerAction action) {
+        Button button = new Button(formatActionLabel(action));
+        button.getStyleClass().add("action-button");
+        button.setMaxWidth(Double.MAX_VALUE);
+        button.setOnAction(e -> {
+            if (controller != null) {
+                controller.onActionClicked(action);
+            }
+        });
+        return button;
+    }
+
+    private Button createInfraButton(String label, InfraType infraType) {
+        Button button = new Button(label);
+        button.getStyleClass().add("action-button");
+        button.setMaxWidth(Double.MAX_VALUE);
+        button.setOnAction(e -> {
+            if (controller != null) {
+                selectInfraButton(button);
+                controller.onBuildTypeSelected(infraType);
+            }
+        });
+        return button;
     }
 
     private void showPopup(String title, String message, Alert.AlertType alertType) {
@@ -213,35 +227,14 @@ public class PlayerActionView extends VBox {
         }
     }
 
-    private VBox createTurnHeader(Player player, String promptText) {
-        Label playerTurn = new Label(player.getName() + "'s Turn");
-        playerTurn.getStyleClass().add("player-turn-label");
-        playerTurn.setStyle("-fx-text-fill: " + mapColorToHex(player.getColor().name()) + ";");
-
-        Label turnPrompt = new Label(promptText);
-        turnPrompt.getStyleClass().add("action-prompt-label");
-
-        VBox header = new VBox(2, playerTurn, turnPrompt);
-        header.getStyleClass().add("action-header");
-        return header;
-    }
-
-    private Button createActionButton(PlayerAction action, javafx.event.EventHandler<javafx.event.ActionEvent> handler) {
-        Button button = new Button(action == null ? "" : formatActionLabel(action));
-        button.getStyleClass().add("action-bar-button");
-        button.setMinWidth(110.0);
-        button.setOnAction(handler);
-        return button;
-    }
-
     private String formatActionLabel(PlayerAction action) {
         switch (action) {
             case BUILD:
                 return "Build";
             case BUY_DEV_CARD:
-                return "Buy Dev Card";
+                return "Buy Development Card";
             case USE_DEV_CARD:
-                return "Use Dev Card";
+                return "Use Development Card";
             case TRADE:
                 return "Trade";
             case END_TURN:
@@ -249,6 +242,27 @@ public class PlayerActionView extends VBox {
             default:
                 return action.name();
         }
+    }
+
+    private String formatResources(Player player) {
+        Map<ResourceType, Integer> resources = player.getResources();
+        if (resources.isEmpty()) {
+            return "none";
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
+            if (entry.getValue() <= 0) {
+                continue;
+            }
+            if (builder.length() > 0) {
+                builder.append(", ");
+            }
+            builder.append(entry.getKey().name().toLowerCase())
+                    .append(" x")
+                    .append(entry.getValue());
+        }
+        return builder.length() == 0 ? "none" : builder.toString();
     }
 
     private String mapColorToHex(String color) {

@@ -1,16 +1,26 @@
 package domain;
 
+import java.util.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class Game {
     private final Board board;
     private final List<Player> players;
     private final Dice dice;
+    @SuppressFBWarnings(
+            value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"},
+            justification = "Game has to share/mutate the same TurnManager instance used by the controller."
+    )
     private final TurnManager turnManager;
     private final PlacementValidator placementValidator;
+    private Player longestRoadPlayer;
+    private GamePhase currPhase;
+    private final Map<Integer, Node> setupSettlements;
+    private final Map<Integer, Node> secondSetupSettlements;
     // TODO: add devCardDeck to constructor
 
     public Game(Board board, List<Player> players, Dice dice, TurnManager turnManager) {
@@ -19,10 +29,13 @@ public class Game {
         this.dice = dice;
         this.turnManager = turnManager;
         this.placementValidator = new PlacementValidator(board);
+        this.currPhase = GamePhase.SETUP;
+        this.setupSettlements = new HashMap<>();
+        this.secondSetupSettlements = new HashMap<>();
     }
 
-    public boolean start(){
-        return true;
+    public Board getBoard() {
+        return board;
     }
 
     public List<Player> getPlayers() {
@@ -31,6 +44,46 @@ public class Game {
 
     public TurnManager getTurnManager() {
         return turnManager;
+    }
+
+    public void setCurrPhase(GamePhase phase){
+        this.currPhase = phase;
+    }
+
+    public Player getPlayer(int id) {
+        for (Player p : players) {
+            if (p.getId() == id) {
+                return p;
+            }
+        }
+        throw new IllegalArgumentException("Player not found");
+    }
+
+    public boolean phaseSetupCheck(){
+        return this.currPhase == GamePhase.SETUP;
+    }
+
+    public void advancePhase() {
+        if (this.currPhase == GamePhase.SETUP) {
+            distributeSetupResources();
+            this.currPhase = GamePhase.NORMAL_PLAY;
+        }
+        else if (this.currPhase == GamePhase.NORMAL_PLAY){
+            this.currPhase = GamePhase.GAME_OVER;
+        }
+    }
+
+    public void distributeSetupResources() {
+        for (Player player : players) {
+            Node settlement = secondSetupSettlements.get(player.getId());
+            if (settlement != null) {
+                player.addResources(board.getAdjacentResources(settlement));
+            }
+        }
+    }
+
+    public boolean start(){
+        return true;
     }
 
     public void build(Player currentPlayer, InfraType infraType, int locationId) {
@@ -44,15 +97,28 @@ public class Game {
             throw new IllegalStateException("Player does not have enough inventory");
         }
 
-        if(!currentPlayer.hasResources(cost)){
+        if(currPhase != GamePhase.SETUP && !currentPlayer.hasResources(cost)){
             throw new IllegalStateException("Player does not have enough resources");
         }
 
         if(infraType == InfraType.ROAD){
             try {
                 Edge edge = board.getEdge(locationId);
-                edge.buildRoad(currentPlayer);
-            }catch (IllegalPlacementException exception) {
+                if (currPhase == GamePhase.SETUP) {
+                    Node recentSettlement = setupSettlements.get(currentPlayer.getId());
+                    if (recentSettlement == null) {
+                        throw new IllegalStateException("You must build a settlement before building a road during setup.");
+                    }
+
+                    placementValidator.validateInitialRoad(locationId, recentSettlement);
+                } else {
+                    // TODO placement validator for a regular raod
+                    }
+                    edge.buildRoad(currentPlayer);
+                    if (currPhase == GamePhase.SETUP) {
+                        setupSettlements.remove(currentPlayer.getId());
+                    }
+           }catch (IllegalPlacementException exception) {
                 throw new IllegalStateException(exception.getMessage(), exception);
             }
         } else if (infraType == InfraType.SETTLEMENT){
@@ -63,7 +129,15 @@ public class Game {
             }catch (IllegalPlacementException exception) {
                 throw new IllegalStateException(exception.getMessage(), exception);
             }
+            boolean isSecondSetupSettlement = currPhase == GamePhase.SETUP
+                    && countPlayerSettlements(currentPlayer) == 1;
             node.buildSettlement(currentPlayer);
+            if (currPhase == GamePhase.SETUP) {
+                setupSettlements.put(currentPlayer.getId(), node);
+                if (isSecondSetupSettlement) {
+                    secondSetupSettlements.put(currentPlayer.getId(), node);
+                }
+            }
         } else if(infraType == InfraType.CITY){
             try {
                 Node node = board.getNode(locationId);
@@ -76,7 +150,14 @@ public class Game {
         }
 
         currentPlayer.useInventoryItem(inventoryKey);
-        currentPlayer.useResources(cost);
+
+        if(infraType == InfraType.SETTLEMENT || infraType == InfraType.CITY){
+            currentPlayer.addVictoryPoints(1);
+        }
+
+        if(currPhase != GamePhase.SETUP) {
+            currentPlayer.useResources(cost);
+        }
     }
 
     public void handleMoveRobber(int roll, int newHexId) {
@@ -100,6 +181,16 @@ public class Game {
 
         newHex.setHasRobber(true);
     }
+    private int countPlayerSettlements(Player player) {
+        int count = 0;
+        for (Node node : board.getNodes()) {
+            if (player.equals(node.getNodeOccupant()) && node.getInfraType() == InfraType.SETTLEMENT) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     private String getInventoryKey(InfraType infraType) {
         switch (infraType) {
             case ROAD:
@@ -136,5 +227,82 @@ public class Game {
         }
 
         return cost;
+    }
+
+    public int calculateLongestRoad(Player player) {
+        int longestRoad = 0;
+
+        for (Node node : board.getNodes()) {
+            int roadLength = calculateLongestRoadFromNode(player, node, new HashSet<>());
+            longestRoad = Math.max(longestRoad, roadLength);
+        }
+
+        return longestRoad;
+    }
+
+    private int calculateLongestRoadFromNode(
+            Player player,
+            Node currentNode,
+            Set<Edge> usedEdges
+    ) {
+        if (isBlockedByOtherPlayer(player, currentNode)) {
+            return 0;
+        }
+
+        int longest = 0;
+
+        for (Edge edge : board.getEdgesConnectedToNode(currentNode)) {
+            if (edge.getEdgeOccupant() != player || usedEdges.contains(edge)) {
+                continue;
+            }
+
+            usedEdges.add(edge);
+
+            Node nextNode = getOtherNode(edge, currentNode);
+            int pathLength = 1 + calculateLongestRoadFromNode(player, nextNode, usedEdges);
+
+            longest = Math.max(longest, pathLength);
+
+            usedEdges.remove(edge);
+        }
+
+        return longest;
+    }
+
+    private Node getOtherNode(Edge edge, Node currentNode) {
+        if (edge.getNodeA().equals(currentNode)) {
+            return edge.getNodeB();
+        }
+
+        return edge.getNodeA();
+    }
+
+    private boolean isBlockedByOtherPlayer(Player player, Node node) {
+        return node.getNodeOccupant() != null && node.getNodeOccupant() != player;
+    }
+
+    public void updateLongestRoadBonus() {
+        Player candidate = null;
+        int candidateLength = 0;
+
+        for (Player player : players) {
+            int roadLength = calculateLongestRoad(player);
+
+            if (roadLength >= 5 && roadLength > candidateLength) {
+                candidate = player;
+                candidateLength = roadLength;
+            }
+        }
+
+        if (candidate == null || candidate == longestRoadPlayer) {
+            return;
+        }
+
+        if (longestRoadPlayer != null) {
+            longestRoadPlayer.removeVictoryPoints(2);
+        }
+
+        candidate.addVictoryPoints(2);
+        longestRoadPlayer = candidate;
     }
 }

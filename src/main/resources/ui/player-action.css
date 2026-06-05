@@ -1,9 +1,9 @@
 .player-action-view {
     -fx-background-color: #e8e4d9;
     -fx-border-color: #d1ccb8;
-    -fx-border-width: 2 0 0 0;
-    -fx-background-insets: 0;
-    -fx-padding: 14 16;
+    -fx-border-width: 0 0 0 2;
+    -fx-min-width: 220;
+    -fx-padding: 15;
 }
 
 .action-title {
@@ -11,25 +11,28 @@
     -fx-font-weight: bold;
 }
 
-.action-header {
-    -fx-spacing: 2;
-}
-
 .player-turn-label {
     -fx-font-size: 16;
     -fx-font-weight: bold;
+    -fx-padding: 10 0;
 }
 
-.action-prompt-label {
+.setup-instruction {
+    -fx-font-size: 13;
+    -fx-text-fill: #34495e;
+}
+
+.resources-title {
     -fx-font-size: 14;
-    -fx-text-fill: #2c3e50;
+    -fx-font-weight: bold;
 }
 
-.action-button-row {
-    -fx-padding: 8 0 0 0;
+.resources-label {
+    -fx-font-size: 13;
 }
 
-.action-bar-button {
+.action-button {
+    -fx-max-width: Infinity;
     -fx-background-color: #f7f4ec;
     -fx-border-color: #c6c0ad;
     -fx-border-radius: 6;
@@ -38,11 +41,11 @@
     -fx-padding: 8 12;
 }
 
-.action-bar-button:hover {
+.action-button:hover {
     -fx-background-color: #ffffff;
 }
 
-.action-bar-button:armed {
+.action-button:armed {
     -fx-background-color: #ded8c7;
 }
 
@@ -62,4 +65,9 @@
 
 .confirm-button:armed {
     -fx-background-color: #244137;
+}
+
+.build-prompt-label {
+    -fx-font-size: 13;
+    -fx-text-fill: #2c3e50;
 }

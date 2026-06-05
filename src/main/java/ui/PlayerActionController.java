@@ -5,6 +5,7 @@ import domain.InfraType;
 import domain.Player;
 import domain.PlayerAction;
 import domain.TurnManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class PlayerActionController {
     private LocationType selectedLocationType = null;
     private InfraType selectedBuildType = null;
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public PlayerActionController(List<Player> players, Game game, TurnManager turnManager) {
         this.players = new ArrayList<>(players);
         this.game = game;
@@ -31,13 +33,25 @@ public class PlayerActionController {
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setView(PlayerActionView view) {
         this.view = view;
-        update();
     }
 
     public void update() {
         if (view != null) {
             view.renderActionMenu();
         }
+    }
+
+    public void refreshSetupTurn(boolean waitingForRoad) {
+        if (view == null || !game.phaseSetupCheck()) {
+            return;
+        }
+
+        Player currentPlayer = getCurrentPlayer();
+        view.renderSetupTurn(currentPlayer, waitingForRoad);
+    }
+
+    public void onSetupFinished() {
+        update();
     }
 
     public void onActionClicked(PlayerAction action) {
@@ -136,7 +150,10 @@ public class PlayerActionController {
 
     public Player getCurrentPlayer() {
         int index = turnManager.getCurrentPlayerIndex();
-        return players.get(index);
+        if (index > 0 && index <= players.size()) {
+            return players.get(index - 1);
+        }
+        return players.get(0);
     }
 
     private boolean isLocationTypeValidForInfra(LocationType locationType) {
