@@ -71,16 +71,18 @@
 
 # Week 10 (06/02/2026-06/08/2026)
 1. [Done] All: weekly meeting:
-     - Distributed/refreshed tasks for week 9
-     - ALL DUE 6/3:
-          - Aria review Ben's UI PR to merge into Main 
-          - Aria review Ben's handleInitialPlacement PR to merge into GameCreation
-          - Chloe, Alicia review GameCreation to merge into Main (after Ben is done)
-          - Crystal review Chloe's PR
-          - Ben review Crystal's PR
-2. [10%] Aria: getPlayerAction, Game.play
-   - End of week: finish i18n once UI finalized
-3. [90%] Crystal: updatePlayerPoints for longestRoad and then UI after 
-4. [20%] Alicia: stealing and cutting resources in half, handleDistributeResources on roll
-5. [90%] Ben: handleInitialPlacement, fix PlacementValidator 67, verify TurnManager accuracy
-7. [70%] Chloe: points for largestArmy (# knights)
+2. [20%] Alicia: handleDistributeResources on roll - by Saturday
+3. [0%] Ben: integration testing for handleInitialPlacement - by Saturday
+4. [0%] Crystal: review handleInitialPlacement PR and merge to main - by Saturday
+5. [80%] Ben/Aria: UI v2 PR merged into get-player-action, then merge get-player-action to main - by Saturday
+6. [0%] Ben: merge devCard PR - by Saturday
+7. [0%] Aria: game.play
+8. [0%] Aria: end of week - finish i18n once UI finalized
+13. [0%] Ben: update build integration testing to be GUI instead of scanner
+14. [0%] Chloe/Crystal: mutation testing and code coverage
+17. [30%] Alicia: finish all robber logic - stealing random card, cutting resources in half when >=7, updating Crystal moveRobber function
+18. [100%] Ben: fix PlacementValidator, verify TurnManager accuracy
+15. [100%] Ben: handleInitialPlacement written
+16. [100%] Aria: getPlayerAction
+17. [100%] Chloe: points for largestArmy (# knights)
+18. [100%] Crystal: updatePlayerPoints for longestRoad
