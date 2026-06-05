@@ -150,9 +150,8 @@ public class Game {
         }
 
         currentPlayer.useInventoryItem(inventoryKey);
-        currentPlayer.useResources(cost);
 
-        if(infraType == InfraType.SETTLEMENT || infraType == infraType.CITY){
+        if(infraType == InfraType.SETTLEMENT || infraType == InfraType.CITY){
             currentPlayer.addVictoryPoints(1);
         }
 
