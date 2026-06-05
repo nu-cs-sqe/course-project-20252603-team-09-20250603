@@ -23,9 +23,9 @@ import java.util.Map;
 
 public class BoardView extends BorderPane {
     private static final String STYLESHEET = "/ui/board-view.css";
-    private static final String BOARD_IMAGE = "/ui/CATAN-BOARD.png";
-    private static final double IMAGE_WIDTH = 1254.0;
-    private static final double IMAGE_HEIGHT = 1254.0;
+    private static final String BOARD_IMAGE = "/ui/CATAN-BOARD.PNG";
+    private static final double IMAGE_WIDTH = 1392.0;
+    private static final double IMAGE_HEIGHT = 1130.0;
     /** Shown size in the UI (image + overlays are scaled down together). */
     private static final double BOARD_WIDTH = 880.0;
     private static final double BOARD_HEIGHT = IMAGE_HEIGHT * (BOARD_WIDTH / IMAGE_WIDTH);
@@ -33,13 +33,19 @@ public class BoardView extends BorderPane {
 
     // --- Hex grid geometry in SOURCE-IMAGE pixels. Tune these three to align the overlay. ---
     /** Center of the board = the desert (hex 9), in source-image pixels. */
-    private static final double HEX_CENTER_X = 627.0;
-    private static final double HEX_CENTER_Y = 634.5;
+    private static final double HEX_CENTER_X = 700.0;
+    private static final double HEX_CENTER_Y = 528.0;
     /** Horizontal spacing between adjacent hex centers in the same row. */
-    private static final double HEX_DX = 226.2;
+    private static final double HEX_DX = 224.0;
     /** Derived: vertical row spacing and hex radius for a regular pointy-top hex. */
-    private static final double HEX_DY = HEX_DX * 0.866;
+    private static final double HEX_DY = HEX_DX * 0.755;
     private static final double HEX_SIZE = HEX_DX / Math.sqrt(3.0);
+    /** Extra vertical offset per row (top→bottom), in source-image px. Negative = up, positive = down.
+     *  Lets each row be fine-tuned independently on top of the uniform spacing. */
+    private static final double[] ROW_NUDGE_Y = {4.0, -6.0, 0.0, 14.0, 28.0};
+    /** Targeted fine-tune for the node band between the top two hex rows (nodes 7-15). */
+    private static final double BAND2_NODE_UP = 14.0;       // source-image px to move up
+    private static final double BAND2_NODE_INWARD = 0.95;   // scale toward center (<1 = inward)
 
     private static final double HEX_RADIUS_X = HEX_SIZE * DISPLAY_SCALE;
     private static final double HEX_RADIUS_Y = HEX_SIZE * DISPLAY_SCALE;
@@ -228,7 +234,7 @@ public class BoardView extends BorderPane {
 
         for (int row = 0; row < rowCounts.length; row++) {
             int count = rowCounts[row];
-            double rowY = HEX_CENTER_Y + (row - 2) * HEX_DY;
+            double rowY = HEX_CENTER_Y + (row - 2) * HEX_DY + ROW_NUDGE_Y[row];
             double rowStartX = HEX_CENTER_X - (count - 1) * HEX_DX / 2.0;
 
             for (int col = 0; col < count; col++) {
@@ -243,6 +249,30 @@ public class BoardView extends BorderPane {
 
     private BoardPoint toDisplayPoint(double layoutX, double layoutY) {
         return new BoardPoint(layoutX * DISPLAY_SCALE, layoutY * DISPLAY_SCALE);
+    }
+
+    /** Shifts the given nodes up and horizontally inward toward the board center (display space). */
+    private void nudgeNodesUpAndInward(Map<Integer, BoardPoint> positions, int... nodeIds) {
+        double centerX = HEX_CENTER_X * DISPLAY_SCALE;
+        double up = BAND2_NODE_UP * DISPLAY_SCALE;
+
+        for (int nodeId : nodeIds) {
+            BoardPoint p = positions.get(nodeId);
+            if (p == null) {
+                continue;
+            }
+            double newX = centerX + (p.x - centerX) * BAND2_NODE_INWARD;
+            positions.put(nodeId, new BoardPoint(newX, p.y - up));
+        }
+    }
+
+    /** Shifts a single node by (dx, dy) in display space. +x = right, +y = down. */
+    private void offsetNode(Map<Integer, BoardPoint> positions, int nodeId, double dx, double dy) {
+        BoardPoint p = positions.get(nodeId);
+        if (p == null) {
+            return;
+        }
+        positions.put(nodeId, new BoardPoint(p.x + dx, p.y + dy));
     }
 
     private Map<Integer, BoardPoint> buildNodePositions() {
@@ -267,6 +297,14 @@ public class BoardView extends BorderPane {
         putHexNodes(positions, 16, 39, 40, 41, 49, 48, 47);
         putHexNodes(positions, 17, 41, 42, 43, 51, 50, 49);
         putHexNodes(positions, 18, 43, 44, 45, 53, 52, 51);
+
+        nudgeNodesUpAndInward(positions, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+
+        // Per-node fine-tuning (display px): +x = right, +y = down.
+        offsetNode(positions, 7, 0.0, 15.0);    // down
+        offsetNode(positions, 15, 0.0, 15.0);   // down
+        offsetNode(positions, 0, 15.0, 0.0);    // inward (right)
+        offsetNode(positions, 6, -15.0, 0.0);   // inward (left)
 
         return positions;
     }
