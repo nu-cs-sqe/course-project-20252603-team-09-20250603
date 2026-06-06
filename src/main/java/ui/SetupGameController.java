@@ -18,6 +18,8 @@ public class SetupGameController {
     private BoardView boardView;
     @SuppressFBWarnings( value = "EI_EXPOSE_REP2", justification = "Shares mutable UI controller collaborator")
     private PlayerActionController playerActionController;
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Shares mutable stats UI controller collaborator")
+    private GameStatsController statsController;
     private Runnable onSetupComplete;
 
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
@@ -37,6 +39,10 @@ public class SetupGameController {
     public void setPlayerActionController(PlayerActionController playerActionController) {
         this.playerActionController = playerActionController;
         refreshSidePanel();
+    }
+
+    public void setStatsController(GameStatsController statsController) {
+        this.statsController = statsController;
     }
 
     public void setOnSetupComplete(Runnable onSetupComplete) {
@@ -86,6 +92,9 @@ public class SetupGameController {
                     + " placed settlement at node id = " + locationId  + ". Now place a road.");
             boardView.refreshBoard();
         }
+        if (statsController != null) {
+            statsController.updateStats();
+        }
         refreshSidePanel();
     }
 
@@ -104,9 +113,15 @@ public class SetupGameController {
         if (boardView != null) {
             boardView.refreshBoard();
         }
+        if (statsController != null) {
+            statsController.updateStats();
+        }
 
         if (turnManager.setupStatus()) {
             game.advancePhase();
+            if (statsController != null) {
+                statsController.updateStats();
+            }
             if (onSetupComplete != null) {
                 onSetupComplete.run();
             }

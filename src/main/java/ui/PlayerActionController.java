@@ -16,6 +16,7 @@ public class PlayerActionController {
 
     private PlayerActionView view;
     private BoardController boardController;
+    private GameStatsController statsController;
     private final Game game;
     private final TurnManager turnManager;
     private final List<Player> players;
@@ -40,6 +41,11 @@ public class PlayerActionController {
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setBoardController(BoardController boardController) {
         this.boardController = boardController;
+    }
+
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
+    public void setStatsController(GameStatsController statsController) {
+        this.statsController = statsController;
     }
 
     public void update() {
@@ -145,6 +151,9 @@ public class PlayerActionController {
             game.build(currentPlayer, selectedBuildType, selectedLocationId);
             if (view != null) {
                 view.showSuccess("Successful build");
+            }
+            if (statsController != null) {
+                statsController.updateStats();
             }
             clearBuildState();
             update();

@@ -3,7 +3,6 @@ package ui;
 import domain.InfraType;
 import domain.Player;
 import domain.PlayerAction;
-import domain.ResourceType;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -12,8 +11,6 @@ import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
 public class PlayerActionView extends VBox {
     private final List<Player> players;
     private PlayerActionController controller;
@@ -82,12 +79,6 @@ public class PlayerActionView extends VBox {
         playerTurn.getStyleClass().add("player-turn-label");
         playerTurn.setStyle("-fx-text-fill: " + mapColorToHex(currentPlayer.getColor().name()) + ";");
 
-        Label resourcesTitle = new Label("Resources:");
-        resourcesTitle.getStyleClass().add("resources-title");
-        Label resources = new Label(formatResources(currentPlayer));
-        resources.getStyleClass().add("resources-label");
-        resources.setWrapText(true);
-
         Label actionsTitle = new Label("Actions:");
         actionsTitle.getStyleClass().add("resources-title");
 
@@ -100,7 +91,7 @@ public class PlayerActionView extends VBox {
                 createActionButton(PlayerAction.END_TURN)
         );
 
-        getChildren().addAll(title, playerTurn, resourcesTitle, resources, actionsTitle, actions);
+        getChildren().addAll(title, playerTurn, actionsTitle, actions);
     }
 
     public void renderBuildMenu() {
@@ -236,27 +227,6 @@ public class PlayerActionView extends VBox {
             default:
                 return action.name();
         }
-    }
-
-    private String formatResources(Player player) {
-        Map<ResourceType, Integer> resources = player.getResources();
-        if (resources.isEmpty()) {
-            return "none";
-        }
-
-        StringBuilder builder = new StringBuilder();
-        for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
-            if (entry.getValue() <= 0) {
-                continue;
-            }
-            if (builder.length() > 0) {
-                builder.append(", ");
-            }
-            builder.append(entry.getKey().name().toLowerCase())
-                    .append(" x")
-                    .append(entry.getValue());
-        }
-        return builder.length() == 0 ? "none" : builder.toString();
     }
 
     private String mapColorToHex(String color) {

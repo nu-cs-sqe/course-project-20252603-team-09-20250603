@@ -7,7 +7,7 @@ import java.util.ArrayList;
 @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
 public class GameStatsController {
     private GameStatsView view;
-    private List<Player> players;
+    private final List<Player> players;
 
     public GameStatsController(List<Player> players) {
         this.players = new ArrayList<>(players);
@@ -24,4 +24,3 @@ public class GameStatsController {
         }
     }
 }
-

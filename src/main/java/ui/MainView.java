@@ -43,6 +43,10 @@ public class MainView extends BorderPane {
         SetupGameController setupGameController = new SetupGameController(game, game.getTurnManager());
         boardController.setSetupGameController(setupGameController);
 
+        GameStatsController statsController = new GameStatsController(players);
+        GameStatsView statsView = new GameStatsView(statsController);
+        statsController.setView(statsView);
+
         BoardView boardView = new BoardView(boardController);
         setupGameController.setBoardView(boardView);
         boardView.setStatusMessage("Setup Phase: Waiting for Player 1 to place a Settlement.");
@@ -53,17 +57,15 @@ public class MainView extends BorderPane {
         playerActionController.setView(playerActionView);
         playerActionView.setController(playerActionController);
         setupGameController.setPlayerActionController(playerActionController);
+        setupGameController.setStatsController(statsController);
         setupGameController.setOnSetupComplete(playerActionController::onSetupFinished);
         boardController.setActionController(playerActionController);
         playerActionController.setBoardController(boardController);
+        playerActionController.setStatsController(statsController);
 
         setBottom(null);
         setCenter(boardView);
         setRight(playerActionView);
-
-        GameStatsController statsController = new GameStatsController(players);
-        GameStatsView statsView = new GameStatsView(statsController);
-        statsController.setView(statsView);
         setLeft(statsView);
     }
 }
