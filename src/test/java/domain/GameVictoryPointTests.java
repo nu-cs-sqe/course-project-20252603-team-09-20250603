@@ -90,7 +90,11 @@ public class GameVictoryPointTests {
         Dice dice = new Dice(new Random());
         TurnManager turnManager = new TurnManager(1);
 
-        return new Game(board, List.of(player), dice, turnManager);
+        Game game = new Game(board, List.of(player), dice, turnManager);
+        // These cases exercise normal-play building (resource checks + VP changes),
+        // so move past the free SETUP phase.
+        game.setCurrPhase(GamePhase.NORMAL_PLAY);
+        return game;
     }
 
     private Map<ResourceType, Integer> roadCost() {
