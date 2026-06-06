@@ -266,6 +266,10 @@ public class Board {
                 continue;
             }
 
+            if (hex.getHasRobber()) {
+                continue;
+            }
+
             ResourceType resourceType = hex.getResourceType();
 
             for (Node node : hexToNodes.get(hex)) {

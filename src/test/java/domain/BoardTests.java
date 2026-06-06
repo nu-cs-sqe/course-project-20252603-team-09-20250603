@@ -521,4 +521,30 @@ public class BoardTests {
         assertEquals(expectedTwo, playerTwo.getResources());
     }
 
+    @Test
+    public void distributeResourcesOnRoll_matchingHexHasRobber_doesNotProduceFromRobberHex() {
+        Board board = new Board();
+        Player playerOne = new Player(1, "Alice", PlayerColor.RED);
+        Player playerTwo = new Player(2, "Bob", PlayerColor.BLUE);
+
+        board.getHex(9).setHasRobber(false);
+        board.getHex(8).setHasRobber(true);
+
+        board.getNode(29).buildSettlement(playerOne);
+        board.getNode(29).buildCity(playerOne);
+
+        board.getNode(52).buildSettlement(playerTwo);
+        board.getNode(52).buildCity(playerTwo);
+
+        board.distributeResourcesOnRoll(8);
+
+        Map<ResourceType, Integer> expectedOne = new HashMap<>();
+
+        Map<ResourceType, Integer> expectedTwo = new HashMap<>();
+        expectedTwo.put(ResourceType.ORE, 2);
+
+        assertEquals(expectedOne, playerOne.getResources());
+        assertEquals(expectedTwo, playerTwo.getResources());
+    }
+
 }
