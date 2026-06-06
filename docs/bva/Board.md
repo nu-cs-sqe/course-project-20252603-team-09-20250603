@@ -119,6 +119,6 @@
 | Test Case 5  | Dice roll matches no hex token numbers                                 | No resources distributed                        | :white_check_mark: |
 | Test Case 6  | Dice roll matches a hex with no occupied adjacent nodes                | No resources distributed                        | :white_check_mark: |
 | Test Case 7  | Dice roll matches multiple producing hexes                             | Resources distributed from all matching hexes   | :white_check_mark: |
-| Test Case 8  | Dice roll matches a hex adjacent to multiple occupied nodes            | All eligible players receive resources          | :x:                |
+| Test Case 8  | Dice roll matches a hex adjacent to multiple occupied nodes            | All eligible players receive resources          | :white_check_mark: |
 | Test Case 9  | Dice roll matches a hex containing the robber                          | No resources distributed from that hex          | :x:                |
 | Test Case 10 | Dice roll matches a multiple hexes with multiple occupied nodes each   | All eligible players receive resources          | :x:                |

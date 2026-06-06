@@ -500,4 +500,25 @@ public class BoardTests {
         assertEquals(expectedTwo, playerTwo.getResources());
     }
 
+    @Test
+    public void distributeResourcesOnRoll_multipleOccupiedNodes_allEligiblePlayersReceiveResources() {
+        Board board = new Board();
+        Player playerOne = new Player(1, "Alice", PlayerColor.RED);
+        Player playerTwo = new Player(2, "Bob", PlayerColor.BLUE);
+
+        board.getNode(51).buildSettlement(playerOne);
+        board.getNode(44).buildSettlement(playerTwo);
+
+        board.distributeResourcesOnRoll(8);
+
+        Map<ResourceType, Integer> expectedOne = new HashMap<>();
+        expectedOne.put(ResourceType.ORE, 1);
+
+        Map<ResourceType, Integer> expectedTwo = new HashMap<>();
+        expectedTwo.put(ResourceType.ORE, 1);
+
+        assertEquals(expectedOne, playerOne.getResources());
+        assertEquals(expectedTwo, playerTwo.getResources());
+    }
+
 }
