@@ -12,10 +12,15 @@ import java.util.List;
 import java.util.Map;
 
 public class BoardController {
+    @FunctionalInterface
+    private interface LocationSelectionHandler {
+        void onLocationSelected(int locationId, PlayerActionController.LocationType locationType);
+    }
+
     private final Board board;
     private final List<Player> players;
     private BoardView view;
-    private PlayerActionController actionController;
+    private LocationSelectionHandler actionSelectionHandler;
 
     public BoardController(List<Player> players) {
         this(new Board(), players);
@@ -43,7 +48,7 @@ public class BoardController {
     }
 
     public void setActionController(PlayerActionController actionController) {
-        this.actionController = actionController;
+        this.actionSelectionHandler = actionController == null ? null : actionController::onLocationSelected;
     }
 
     public void handleNodeSelected(int nodeId) {
@@ -58,8 +63,8 @@ public class BoardController {
         Map<ResourceType, Integer> resources = board.getAdjacentResources(node);
         view.setStatusMessage("Selected node " + node.getId() + " | adjacent resources: " + resources);
 
-        if (actionController != null) {
-            actionController.onLocationSelected(nodeId, PlayerActionController.LocationType.NODE);
+        if (actionSelectionHandler != null) {
+            actionSelectionHandler.onLocationSelected(nodeId, PlayerActionController.LocationType.NODE);
         }
     }
 
@@ -78,8 +83,8 @@ public class BoardController {
                         + " and " + edge.getNodeB().getId()
         );
 
-        if (actionController != null) {
-            actionController.onLocationSelected(edgeId, PlayerActionController.LocationType.EDGE);
+        if (actionSelectionHandler != null) {
+            actionSelectionHandler.onLocationSelected(edgeId, PlayerActionController.LocationType.EDGE);
         }
     }
 

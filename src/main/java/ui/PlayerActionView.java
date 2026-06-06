@@ -186,6 +186,9 @@ public class PlayerActionView extends VBox {
     private Button createActionButton(PlayerAction action) {
         Button button = new Button(formatActionLabel(action));
         button.getStyleClass().add("action-button");
+        if (action == PlayerAction.END_TURN) {
+            button.getStyleClass().add("confirm-button");
+        }
         button.setMaxWidth(Double.MAX_VALUE);
         button.setOnAction(e -> {
             if (controller != null) {

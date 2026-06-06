@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BoardView extends BorderPane {
+public final class BoardView extends BorderPane {
     private static final String STYLESHEET = "/ui/board-view.css";
     private static final String BOARD_IMAGE = "/ui/CATAN-BOARD.PNG";
     private static final double IMAGE_WIDTH = 1392.0;
@@ -41,7 +41,7 @@ public class BoardView extends BorderPane {
     /** Derived: vertical row spacing and hex radius for a regular pointy-top hex. */
     private static final double HEX_DY = HEX_DX * 0.755;
     private static final double HEX_SIZE = HEX_DX / Math.sqrt(3.0);
-    /** Extra vertical offset per row (top→bottom), in source-image px. Negative = up, positive = down.
+    /** Extra vertical offset per row (top-to-bottom), in source-image px. Negative = up, positive = down.
      *  Lets each row be fine-tuned independently on top of the uniform spacing. */
     private static final double[] ROW_NUDGE_Y = {4.0, -6.0, 0.0, 14.0, 28.0};
     /** Targeted fine-tune for the node band between the top two hex rows (nodes 7-15). */

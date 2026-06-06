@@ -19,6 +19,7 @@ public class PlayerActionController {
     private final Game game;
     private final TurnManager turnManager;
     private final List<Player> players;
+    private int normalPlayPlayerIndex = 1;
 
     private int selectedLocationId = -1;
     private LocationType selectedLocationType = null;
@@ -57,6 +58,12 @@ public class PlayerActionController {
     }
 
     public void onSetupFinished() {
+        int setupEndingPlayer = turnManager.getCurrentPlayerIndex();
+        if (setupEndingPlayer > 0 && setupEndingPlayer <= players.size()) {
+            normalPlayPlayerIndex = setupEndingPlayer;
+        } else {
+            normalPlayPlayerIndex = 1;
+        }
         update();
     }
 
@@ -78,7 +85,7 @@ public class PlayerActionController {
                 // TODO: implement later
                 break;
             case END_TURN:
-                turnManager.nextPlayer();
+                advanceNormalPlayTurn();
                 clearBuildState();
                 update();
                 break;
@@ -156,11 +163,19 @@ public class PlayerActionController {
     }
 
     public Player getCurrentPlayer() {
-        int index = turnManager.getCurrentPlayerIndex();
+        int index = game.phaseSetupCheck() ? turnManager.getCurrentPlayerIndex() : normalPlayPlayerIndex;
         if (index > 0 && index <= players.size()) {
             return players.get(index - 1);
         }
         return players.get(0);
+    }
+
+    private void advanceNormalPlayTurn() {
+        if (game.phaseSetupCheck() || players.isEmpty()) {
+            return;
+        }
+
+        normalPlayPlayerIndex = (normalPlayPlayerIndex % players.size()) + 1;
     }
 
     private boolean isLocationTypeValidForInfra(LocationType locationType) {
