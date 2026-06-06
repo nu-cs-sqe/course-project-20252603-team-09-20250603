@@ -116,7 +116,7 @@
 | Test Case 2  | Dice roll is 12 (maximum valid value) and matching hex has a city      | City owner receives 2 resources                 | :white_check_mark: |
 | Test Case 3  | Dice roll is 1                                                         | Throws `IllegalArgumentException`               | :white_check_mark: |
 | Test Case 4  | Dice roll is 13                                                        | Throws `IllegalArgumentException`               | :white_check_mark: |
-| Test Case 5  | Dice roll matches no hex token numbers                                 | No resources distributed                        | :x:                |
+| Test Case 5  | Dice roll matches no hex token numbers                                 | No resources distributed                        | :white_check_mar:  |
 | Test Case 6  | Dice roll matches a hex with no occupied adjacent nodes                | No resources distributed                        | :x:                |
 | Test Case 7  | Dice roll matches multiple producing hexes                             | Resources distributed from all matching hexes   | :x:                |
 | Test Case 8  | Dice roll matches a hex adjacent to multiple occupied nodes            | All eligible players receive resources          | :x:                |

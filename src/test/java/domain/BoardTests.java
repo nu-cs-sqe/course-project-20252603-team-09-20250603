@@ -451,4 +451,18 @@ public class BoardTests {
         });
     }
 
+    @Test
+    public void distributeResourcesOnRoll_rollSeven_distributesNoResources() {
+        Board board = new Board();
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        board.getNode(23).buildSettlement(player);
+
+        board.distributeResourcesOnRoll(7);
+
+        Map<ResourceType, Integer> expected = new HashMap<>();
+
+        assertEquals(expected, player.getResources());
+    }
+
 }
