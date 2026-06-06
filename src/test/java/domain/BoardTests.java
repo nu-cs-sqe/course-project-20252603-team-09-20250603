@@ -477,4 +477,27 @@ public class BoardTests {
         assertEquals(expected, player.getResources());
     }
 
+    @Test
+    public void distributeResourcesOnRoll_multipleProducingHexes_distributesFromAllMatchingHexes() {
+        Board board = new Board();
+        Player playerOne = new Player(1, "Alice", PlayerColor.RED);
+        Player playerTwo = new Player(2, "Bob", PlayerColor.BLUE);
+
+        board.getNode(5).buildSettlement(playerOne);
+
+        board.getNode(48).buildSettlement(playerTwo);
+        board.getNode(48).buildCity(playerTwo);
+
+        board.distributeResourcesOnRoll(6);
+
+        Map<ResourceType, Integer> expectedOne = new HashMap<>();
+        expectedOne.put(ResourceType.SHEEP, 1);
+
+        Map<ResourceType, Integer> expectedTwo = new HashMap<>();
+        expectedTwo.put(ResourceType.WOOD, 2);
+
+        assertEquals(expectedOne, playerOne.getResources());
+        assertEquals(expectedTwo, playerTwo.getResources());
+    }
+
 }
