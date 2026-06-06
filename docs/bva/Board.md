@@ -113,7 +113,7 @@
 |              | State of the System                                                    | Expected output / behavior                      | Implemented?       |
 |--------------|------------------------------------------------------------------------|-------------------------------------------------|--------------------|
 | Test Case 1  | Dice roll is 2 (minimum valid value) and matching hex has a settlement | Settlement owner receives 1 resource            | :white_check_mark: |
-| Test Case 2  | Dice roll is 12 (maximum valid value) and matching hex has a city      | City owner receives 2 resources                 | :x:                |
+| Test Case 2  | Dice roll is 12 (maximum valid value) and matching hex has a city      | City owner receives 2 resources                 | :white_check_mark: |
 | Test Case 3  | Dice roll is 1                                                         | Throws `IllegalArgumentException`               | :x:                |
 | Test Case 4  | Dice roll is 13                                                        | Throws `IllegalArgumentException`               | :x:                |
 | Test Case 5  | Dice roll matches no hex token numbers                                 | No resources distributed                        | :x:                |

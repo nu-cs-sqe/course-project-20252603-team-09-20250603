@@ -416,4 +416,20 @@ public class BoardTests {
 
         assertEquals(expected, player.getResources());
     }
+
+    @Test
+    public void distributeResourcesOnRoll_maxRollCity_receivesTwoBrick() {
+        Board board = new Board();
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        board.getNode(42).buildSettlement(player);
+        board.getNode(42).buildCity(player);
+
+        board.distributeResourcesOnRoll(12);
+
+        Map<ResourceType, Integer> expected = new HashMap<>();
+        expected.put(ResourceType.BRICK, 2);
+
+        assertEquals(expected, player.getResources());
+    }
 }

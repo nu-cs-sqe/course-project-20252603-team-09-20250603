@@ -273,6 +273,8 @@ public class Board {
 
                     if (node.getInfraType() == InfraType.SETTLEMENT) {
                         amount = 1;
+                    } else if (node.getInfraType() == InfraType.CITY) {
+                        amount = 2;
                     }
 
                     if (amount > 0) {
