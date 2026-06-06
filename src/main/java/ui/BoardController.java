@@ -88,6 +88,12 @@ public class BoardController {
         view.setStatusMessage("Selected hex " + hex.getId() + " | resource: " + hex.getResourceType());
     }
 
+    public void clearSelection() {
+        if (view != null) {
+            view.clearSelection();
+        }
+    }
+
     private Hex getHexById(int hexId) {
         for (Hex hex : board.getHexes()) {
             if (hex.getId() == hexId) {

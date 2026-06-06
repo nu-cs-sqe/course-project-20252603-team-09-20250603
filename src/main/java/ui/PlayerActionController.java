@@ -15,6 +15,7 @@ public class PlayerActionController {
     }
 
     private PlayerActionView view;
+    private BoardController boardController;
     private final Game game;
     private final TurnManager turnManager;
     private final List<Player> players;
@@ -33,6 +34,11 @@ public class PlayerActionController {
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setView(PlayerActionView view) {
         this.view = view;
+    }
+
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
+    public void setBoardController(BoardController boardController) {
+        this.boardController = boardController;
     }
 
     public void update() {
@@ -88,6 +94,7 @@ public class PlayerActionController {
         selectedBuildType = infraType;
         selectedLocationId = -1;
         selectedLocationType = null;
+        clearBoardSelection();
         if (view != null) {
             view.onBuildTypeSelected(infraType);
         }
@@ -168,5 +175,12 @@ public class PlayerActionController {
         selectedBuildType = null;
         selectedLocationId = -1;
         selectedLocationType = null;
+        clearBoardSelection();
+    }
+
+    private void clearBoardSelection() {
+        if (boardController != null) {
+            boardController.clearSelection();
+        }
     }
 }

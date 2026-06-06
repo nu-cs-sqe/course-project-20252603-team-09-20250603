@@ -101,6 +101,21 @@ public class BoardView extends BorderPane {
         statusLabel.setText(message);
     }
 
+    public void clearSelection() {
+        if (selectedNode != null) {
+            selectedNode.getStyleClass().remove("selected-node");
+            selectedNode = null;
+        }
+        if (selectedEdge != null) {
+            selectedEdge.getStyleClass().remove("selected-edge");
+            selectedEdge = null;
+        }
+        if (selectedHex != null) {
+            selectedHex.getStyleClass().remove("selected-hex");
+            selectedHex = null;
+        }
+    }
+
     public void refreshBoard() {
         Board board = controller.getBoard();
 

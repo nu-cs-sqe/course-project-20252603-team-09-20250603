@@ -65,15 +65,15 @@ public class SetupGameController {
                 handleInitialRoad(locationId, buildType);
             }
         } catch (IllegalStateException e) {
-            if (boardView != null) {boardView.setStatusMessage("Error: " + e.getMessage());}
+            showError(e.getMessage());
         } catch (Exception e) {
-            if (boardView != null) {boardView.setStatusMessage("Invalid placement.");}
+            showError("Invalid placement.");
         }
     }
 
     private void handleInitialSettlement(int locationId, InfraType buildType) {
         if (buildType != InfraType.SETTLEMENT) {
-            if (boardView != null) {boardView.setStatusMessage("Please click a node to place a Settlement.");}
+            showError("Please click a node to place a Settlement.");
             return;
         }
 
@@ -91,7 +91,7 @@ public class SetupGameController {
 
     private void handleInitialRoad(int locationId, InfraType buildType) {
         if (buildType != InfraType.ROAD) {
-            if (boardView != null) {boardView.setStatusMessage("Please click an edge to place a Road.");}
+            showError("Please click an edge to place a Road.");
             return;
         }
 
@@ -119,6 +119,12 @@ public class SetupGameController {
                 boardView.setStatusMessage("Road placed at edge id = " + locationId + ". Next up: " + nextPlayer.getName() + " - Place a settlement.");
             }
             refreshSidePanel();
+        }
+    }
+
+    private void showError(String message) {
+        if (boardView != null) {
+            MessageDialog.showError(boardView, message);
         }
     }
 }

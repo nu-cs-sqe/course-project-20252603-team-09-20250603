@@ -55,6 +55,7 @@ public class MainView extends BorderPane {
         setupGameController.setPlayerActionController(playerActionController);
         setupGameController.setOnSetupComplete(playerActionController::onSetupFinished);
         boardController.setActionController(playerActionController);
+        playerActionController.setBoardController(boardController);
 
         setBottom(null);
         setCenter(boardView);

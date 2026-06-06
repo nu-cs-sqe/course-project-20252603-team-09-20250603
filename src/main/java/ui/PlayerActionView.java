@@ -5,7 +5,6 @@ import domain.Player;
 import domain.PlayerAction;
 import domain.ResourceType;
 import javafx.geometry.Insets;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -141,7 +140,7 @@ public class PlayerActionView extends VBox {
         });
 
         Button cancelButton = new Button("Cancel");
-        cancelButton.getStyleClass().add("action-button");
+        cancelButton.getStyleClass().addAll("action-button", "cancel-button");
         cancelButton.setMaxWidth(Double.MAX_VALUE);
         cancelButton.setOnAction(e -> {
             if (controller != null) {
@@ -168,11 +167,11 @@ public class PlayerActionView extends VBox {
     }
 
     public void showError(String message) {
-        showPopup("Error", message, Alert.AlertType.ERROR);
+        MessageDialog.showError(this, message);
     }
 
     public void showSuccess(String message) {
-        showPopup("Success", message, Alert.AlertType.INFORMATION);
+        MessageDialog.showInfo(this, message);
     }
 
     private Player getCurrentPlayer() {
@@ -207,14 +206,6 @@ public class PlayerActionView extends VBox {
             }
         });
         return button;
-    }
-
-    private void showPopup(String title, String message, Alert.AlertType alertType) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
     private void selectInfraButton(Button button) {
