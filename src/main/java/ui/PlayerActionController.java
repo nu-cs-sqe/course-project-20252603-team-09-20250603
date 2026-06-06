@@ -149,6 +149,18 @@ public class PlayerActionController {
 
         try {
             game.build(currentPlayer, selectedBuildType, selectedLocationId);
+            if (boardController != null) {
+                boardController.refreshBoard();
+                boardController.setStatusMessage(
+                        currentPlayer.getName()
+                                + " built a "
+                                + selectedBuildType.name().toLowerCase()
+                                + " at "
+                                + selectedLocationType.name().toLowerCase()
+                                + " "
+                                + selectedLocationId + "."
+                );
+            }
             if (view != null) {
                 view.showSuccess("Successful build");
             }

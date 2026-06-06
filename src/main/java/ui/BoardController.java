@@ -99,6 +99,18 @@ public class BoardController {
         }
     }
 
+    public void refreshBoard() {
+        if (view != null) {
+            view.refreshBoard();
+        }
+    }
+
+    public void setStatusMessage(String message) {
+        if (view != null) {
+            view.setStatusMessage(message);
+        }
+    }
+
     private Hex getHexById(int hexId) {
         for (Hex hex : board.getHexes()) {
             if (hex.getId() == hexId) {
