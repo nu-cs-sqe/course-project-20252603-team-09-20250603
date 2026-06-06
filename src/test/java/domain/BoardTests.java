@@ -465,4 +465,16 @@ public class BoardTests {
         assertEquals(expected, player.getResources());
     }
 
+    @Test
+    public void distributeResourcesOnRoll_matchingHexNoOccupiedNodes_distributesNoResources() {
+        Board board = new Board();
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        board.distributeResourcesOnRoll(2);
+
+        Map<ResourceType, Integer> expected = new HashMap<>();
+
+        assertEquals(expected, player.getResources());
+    }
+
 }
