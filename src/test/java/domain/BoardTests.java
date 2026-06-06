@@ -442,4 +442,13 @@ public class BoardTests {
         });
     }
 
+    @Test
+    public void distributeResourcesOnRoll_rollThirteen_throwsIllegalArgumentException() {
+        Board board = new Board();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            board.distributeResourcesOnRoll(13);
+        });
+    }
+
 }
