@@ -61,11 +61,7 @@ public class Player {
         if (points < 0) {
             throw new IllegalArgumentException("Points to remove cannot be negative.");
         }
-        if (this.victoryPoints - points < 0) {
-            this.victoryPoints = 0;
-        } else {
-            this.victoryPoints -= points;
-        }
+        this.victoryPoints = Math.max(0, this.victoryPoints - points);
     }
 
     public void addResources(Map<ResourceType, Integer> resources) {
