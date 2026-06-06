@@ -4,6 +4,7 @@ import domain.Board;
 import domain.Edge;
 import domain.Hex;
 import domain.Node;
+import domain.Player;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -17,21 +18,47 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BoardView extends BorderPane {
+public final class BoardView extends BorderPane {
     private static final String STYLESHEET = "/ui/board-view.css";
-    private static final String BOARD_IMAGE = "/ui/catan-board.png";
-    private static final double BOARD_WIDTH = 900.0;
-    private static final double BOARD_HEIGHT = 733.0;
-    private static final double HEX_RADIUS = 78.0;
+    private static final String BOARD_IMAGE = "/ui/CATAN-BOARD.PNG";
+    private static final double IMAGE_WIDTH = 1392.0;
+    private static final double IMAGE_HEIGHT = 1130.0;
+    /** Shown size in the UI (image + overlays are scaled down together). */
+    private static final double BOARD_WIDTH = 880.0;
+    private static final double BOARD_HEIGHT = IMAGE_HEIGHT * (BOARD_WIDTH / IMAGE_WIDTH);
+    private static final double DISPLAY_SCALE = BOARD_WIDTH / IMAGE_WIDTH;
+
+    // --- Hex grid geometry in SOURCE-IMAGE pixels. Tune these three to align the overlay. ---
+    /** Center of the board = the desert (hex 9), in source-image pixels. */
+    private static final double HEX_CENTER_X = 700.0;
+    private static final double HEX_CENTER_Y = 528.0;
+    /** Horizontal spacing between adjacent hex centers in the same row. */
+    private static final double HEX_DX = 224.0;
+    /** Derived: vertical row spacing and hex radius for a regular pointy-top hex. */
+    private static final double HEX_DY = HEX_DX * 0.755;
+    private static final double HEX_SIZE = HEX_DX / Math.sqrt(3.0);
+    /** Extra vertical offset per row (top-to-bottom), in source-image px. Negative = up, positive = down.
+     *  Lets each row be fine-tuned independently on top of the uniform spacing. */
+    private static final double[] ROW_NUDGE_Y = {4.0, -6.0, 0.0, 14.0, 28.0};
+    /** Targeted fine-tune for the node band between the top two hex rows (nodes 7-15). */
+    private static final double BAND2_NODE_UP = 14.0;       // source-image px to move up
+    private static final double BAND2_NODE_INWARD = 0.95;   // scale toward center (<1 = inward)
+
+    private static final double HEX_RADIUS_X = HEX_SIZE * DISPLAY_SCALE;
+    private static final double HEX_RADIUS_Y = HEX_SIZE * DISPLAY_SCALE;
+    private static final double NODE_RADIUS = 6.0;
     private static final double[] HEX_VERTEX_ANGLES = {-150.0, -90.0, -30.0, 30.0, 90.0, 150.0};
 
     private final BoardController controller;
     private final Label statusLabel;
     private final Map<Integer, BoardPoint> hexCenters;
     private final Map<Integer, BoardPoint> nodePositions;
+    private final Map<Integer, Line> edgeShapes;
+    private final Map<Integer, Polygon> settlementShapes;
 
     private Circle selectedNode;
     private Line selectedEdge;
@@ -44,10 +71,15 @@ public class BoardView extends BorderPane {
 
         this.hexCenters = buildHexCenters();
         this.nodePositions = buildNodePositions();
+        this.edgeShapes = new HashMap<>();
+        this.settlementShapes = new HashMap<>();
         this.statusLabel = new Label("Board ready. Select a node or edge.");
 
         getStyleClass().add("board-view");
-        getStylesheets().add(getClass().getResource(STYLESHEET).toExternalForm());
+        URL stylesheetUrl = getClass().getResource(STYLESHEET);
+        if (stylesheetUrl != null) {
+            getStylesheets().add(stylesheetUrl.toExternalForm());
+        }
         setPadding(new Insets(12.0));
 
         Label titleLabel = new Label("Catan Board");
@@ -69,6 +101,41 @@ public class BoardView extends BorderPane {
         statusLabel.setText(message);
     }
 
+    public void clearSelection() {
+        if (selectedNode != null) {
+            selectedNode.getStyleClass().remove("selected-node");
+            selectedNode = null;
+        }
+        if (selectedEdge != null) {
+            selectedEdge.getStyleClass().remove("selected-edge");
+            selectedEdge = null;
+        }
+        if (selectedHex != null) {
+            selectedHex.getStyleClass().remove("selected-hex");
+            selectedHex = null;
+        }
+    }
+
+    public void refreshBoard() {
+        Board board = controller.getBoard();
+
+        for (Edge edge : board.getEdges()) {
+            Line line = edgeShapes.get(edge.getId());
+
+            if (line != null) {
+                updateRoadStyle(line, edge.getEdgeOccupant());
+            }
+        }
+
+        for (Node node : board.getNodes()) {
+            Polygon settlement = settlementShapes.get(node.getId());
+
+            if (settlement != null) {
+                updateSettlementStyle(settlement, node.getNodeOccupant());
+            }
+        }
+    }
+
     private Pane buildBoardPane(Board board) {
         Pane boardPane = new Pane();
         boardPane.getStyleClass().add("board-pane");
@@ -76,11 +143,16 @@ public class BoardView extends BorderPane {
         boardPane.setPrefSize(BOARD_WIDTH, BOARD_HEIGHT);
         boardPane.setMaxSize(BOARD_WIDTH, BOARD_HEIGHT);
 
-        Image boardImage = new Image(getClass().getResource(BOARD_IMAGE).toExternalForm());
+        URL boardImageUrl = getClass().getResource(BOARD_IMAGE);
+        if (boardImageUrl == null) {
+            throw new IllegalStateException("Missing board image resource: " + BOARD_IMAGE);
+        }
+        Image boardImage = new Image(boardImageUrl.toExternalForm());
         ImageView imageView = new ImageView(boardImage);
         imageView.setFitWidth(BOARD_WIDTH);
         imageView.setFitHeight(BOARD_HEIGHT);
         imageView.setPreserveRatio(false);
+        imageView.setSmooth(true);
         boardPane.getChildren().add(imageView);
 
         drawHexes(boardPane, board);
@@ -116,6 +188,7 @@ public class BoardView extends BorderPane {
                             + " (" + edge.getNodeA().getId()
                             + "-" + edge.getNodeB().getId() + ")"
             ));
+            edgeShapes.put(edge.getId(), line);
             line.setOnMouseClicked(event -> {
                 selectEdge(line);
                 controller.handleEdgeSelected(edge.getId());
@@ -128,7 +201,7 @@ public class BoardView extends BorderPane {
     private void drawNodes(Pane boardPane, Board board) {
         for (Node node : board.getNodes()) {
             BoardPoint point = nodePositions.get(node.getId());
-            Circle circle = new Circle(point.x, point.y, 8.0);
+            Circle circle = new Circle(point.x, point.y, NODE_RADIUS);
             circle.getStyleClass().add("node-overlay");
             Tooltip.install(circle, new Tooltip("Node " + node.getId()));
             circle.setOnMouseClicked(event -> {
@@ -137,7 +210,28 @@ public class BoardView extends BorderPane {
                 event.consume();
             });
             boardPane.getChildren().add(circle);
+
+            Polygon settlement = createSettlementShape(point);
+            settlement.setVisible(false);
+            settlement.setMouseTransparent(true);
+            settlementShapes.put(node.getId(), settlement);
+            boardPane.getChildren().add(settlement);
         }
+    }
+
+    private Polygon createSettlementShape(BoardPoint point) {
+        Polygon settlement = new Polygon();
+        double s = DISPLAY_SCALE;
+        settlement.getPoints().addAll(
+                point.x, point.y - 16.0 * s,
+                point.x + 12.0 * s, point.y - 5.0 * s,
+                point.x + 9.0 * s, point.y + 11.0 * s,
+                point.x - 9.0 * s, point.y + 11.0 * s,
+                point.x - 12.0 * s, point.y - 5.0 * s
+        );
+
+        settlement.setStyle("-fx-fill: transparent; -fx-stroke: transparent;");
+        return settlement;
     }
 
     private Polygon createHexShape(int hexId) {
@@ -146,8 +240,8 @@ public class BoardView extends BorderPane {
 
         for (double angle : HEX_VERTEX_ANGLES) {
             double radians = Math.toRadians(angle);
-            polygon.getPoints().add(center.x + HEX_RADIUS * Math.cos(radians));
-            polygon.getPoints().add(center.y + HEX_RADIUS * Math.sin(radians));
+            polygon.getPoints().add(center.x + HEX_RADIUS_X * Math.cos(radians));
+            polygon.getPoints().add(center.y + HEX_RADIUS_Y * Math.sin(radians));
         }
 
         return polygon;
@@ -156,27 +250,52 @@ public class BoardView extends BorderPane {
     private Map<Integer, BoardPoint> buildHexCenters() {
         Map<Integer, BoardPoint> centers = new HashMap<>();
 
-        centers.put(0, new BoardPoint(315.0, 112.0));
-        centers.put(1, new BoardPoint(451.0, 112.0));
-        centers.put(2, new BoardPoint(587.0, 112.0));
-        centers.put(3, new BoardPoint(247.0, 229.0));
-        centers.put(4, new BoardPoint(383.0, 229.0));
-        centers.put(5, new BoardPoint(519.0, 229.0));
-        centers.put(6, new BoardPoint(655.0, 229.0));
-        centers.put(7, new BoardPoint(179.0, 346.0));
-        centers.put(8, new BoardPoint(315.0, 346.0));
-        centers.put(9, new BoardPoint(451.0, 346.0));
-        centers.put(10, new BoardPoint(587.0, 346.0));
-        centers.put(11, new BoardPoint(723.0, 346.0));
-        centers.put(12, new BoardPoint(247.0, 463.0));
-        centers.put(13, new BoardPoint(383.0, 463.0));
-        centers.put(14, new BoardPoint(519.0, 463.0));
-        centers.put(15, new BoardPoint(655.0, 463.0));
-        centers.put(16, new BoardPoint(315.0, 580.0));
-        centers.put(17, new BoardPoint(451.0, 580.0));
-        centers.put(18, new BoardPoint(587.0, 580.0));
+        // Rows of 3,4,5,4,3 pointy-top hexes, centered on (HEX_CENTER_X, HEX_CENTER_Y).
+        // Hex ids are assigned row by row (0..18), identical to the original ordering.
+        int[] rowCounts = {3, 4, 5, 4, 3};
+        int hexId = 0;
+
+        for (int row = 0; row < rowCounts.length; row++) {
+            int count = rowCounts[row];
+            double rowY = HEX_CENTER_Y + (row - 2) * HEX_DY + ROW_NUDGE_Y[row];
+            double rowStartX = HEX_CENTER_X - (count - 1) * HEX_DX / 2.0;
+
+            for (int col = 0; col < count; col++) {
+                double x = rowStartX + col * HEX_DX;
+                centers.put(hexId, toDisplayPoint(x, rowY));
+                hexId++;
+            }
+        }
 
         return centers;
+    }
+
+    private BoardPoint toDisplayPoint(double layoutX, double layoutY) {
+        return new BoardPoint(layoutX * DISPLAY_SCALE, layoutY * DISPLAY_SCALE);
+    }
+
+    /** Shifts the given nodes up and horizontally inward toward the board center (display space). */
+    private void nudgeNodesUpAndInward(Map<Integer, BoardPoint> positions, int... nodeIds) {
+        double centerX = HEX_CENTER_X * DISPLAY_SCALE;
+        double up = BAND2_NODE_UP * DISPLAY_SCALE;
+
+        for (int nodeId : nodeIds) {
+            BoardPoint p = positions.get(nodeId);
+            if (p == null) {
+                continue;
+            }
+            double newX = centerX + (p.x - centerX) * BAND2_NODE_INWARD;
+            positions.put(nodeId, new BoardPoint(newX, p.y - up));
+        }
+    }
+
+    /** Shifts a single node by (dx, dy) in display space. +x = right, +y = down. */
+    private void offsetNode(Map<Integer, BoardPoint> positions, int nodeId, double dx, double dy) {
+        BoardPoint p = positions.get(nodeId);
+        if (p == null) {
+            return;
+        }
+        positions.put(nodeId, new BoardPoint(p.x + dx, p.y + dy));
     }
 
     private Map<Integer, BoardPoint> buildNodePositions() {
@@ -202,6 +321,14 @@ public class BoardView extends BorderPane {
         putHexNodes(positions, 17, 41, 42, 43, 51, 50, 49);
         putHexNodes(positions, 18, 43, 44, 45, 53, 52, 51);
 
+        nudgeNodesUpAndInward(positions, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+
+        // Per-node fine-tuning (display px): +x = right, +y = down.
+        offsetNode(positions, 7, 0.0, 15.0);    // down
+        offsetNode(positions, 15, 0.0, 15.0);   // down
+        offsetNode(positions, 0, 15.0, 0.0);    // inward (right)
+        offsetNode(positions, 6, -15.0, 0.0);   // inward (left)
+
         return positions;
     }
 
@@ -219,14 +346,55 @@ public class BoardView extends BorderPane {
         double radians = Math.toRadians(HEX_VERTEX_ANGLES[vertexIndex]);
 
         return new BoardPoint(
-                center.x + HEX_RADIUS * Math.cos(radians),
-                center.y + HEX_RADIUS * Math.sin(radians)
+                center.x + HEX_RADIUS_X * Math.cos(radians),
+                center.y + HEX_RADIUS_Y * Math.sin(radians)
         );
+    }
+
+    private void updateRoadStyle(Line line, Player occupant) {
+        if (occupant == null) {
+            line.setStyle("");
+            return;
+        }
+
+        line.setStyle("-fx-stroke: " + getPlayerColor(occupant)
+                + "; -fx-stroke-width: " + (10 * DISPLAY_SCALE) + "; -fx-stroke-line-cap: round;");
+    }
+
+    private void updateSettlementStyle(Polygon settlement, Player occupant) {
+        if (occupant == null) {
+            settlement.setVisible(false);
+            settlement.setStyle("-fx-fill: transparent; -fx-stroke: transparent;");
+            return;
+        }
+//board.getadjacentresources, player.addresources
+        settlement.setVisible(true);
+        settlement.setStyle("-fx-fill: " + getPlayerColor(occupant)
+                + "; -fx-stroke: #1f1a13; -fx-stroke-width: 2;");
+    }
+
+    private String getPlayerColor(Player player) {
+        switch (player.getColor()) {
+            case RED:
+                return "#d62828";
+            case BLUE:
+                return "#1d4ed8";
+            case ORANGE:
+                return "#f97316";
+            case WHITE:
+                return "#f8fafc";
+            default:
+                return "#6b7280";
+        }
     }
 
     private void selectNode(Circle circle) {
         if (selectedNode != null) {
             selectedNode.getStyleClass().remove("selected-node");
+        }
+        if (selectedEdge != null) {
+            selectedEdge.getStyleClass().remove("selected-edge");
+            selectedEdge = null;
         }
 
         selectedNode = circle;
@@ -236,6 +404,10 @@ public class BoardView extends BorderPane {
     private void selectEdge(Line line) {
         if (selectedEdge != null) {
             selectedEdge.getStyleClass().remove("selected-edge");
+        }
+        if (selectedNode != null) {
+            selectedNode.getStyleClass().remove("selected-node");
+            selectedNode = null;
         }
 
         selectedEdge = line;

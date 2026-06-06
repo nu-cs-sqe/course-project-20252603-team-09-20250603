@@ -3,13 +3,16 @@ package ui;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class Main extends Application {
     @Override
     public void start(Stage stage) {
+        StackPane rootPane = new StackPane();
         MainView mainView = new MainView();
-        Scene scene = new Scene(mainView, 1000, 700);
+        rootPane.getChildren().add(mainView);
+        Scene scene = new Scene(rootPane, 1000, 700);
 
         stage.setTitle("Catan");
         stage.setMinWidth(800);

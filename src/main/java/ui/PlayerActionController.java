@@ -1,21 +1,33 @@
 package ui;
 
 import domain.Game;
+import domain.InfraType;
 import domain.Player;
+import domain.PlayerAction;
 import domain.TurnManager;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class PlayerActionController {
+    public enum LocationType {
+        NODE, EDGE
+    }
+
     private PlayerActionView view;
+    private BoardController boardController;
+    private GameStatsController statsController;
     private final Game game;
     private final TurnManager turnManager;
-    private final java.util.List<Player> players;
+    private final List<Player> players;
+    private int normalPlayPlayerIndex = 1;
 
-    // We expect the setup sequence is: Settlement -> Road,
-    // so we track which phase the current player is in right now.
-    private boolean isPlacingSettlement = true;
+    private int selectedLocationId = -1;
+    private LocationType selectedLocationType = null;
+    private InfraType selectedBuildType = null;
 
-    public PlayerActionController(java.util.List<Player> players, Game game, TurnManager turnManager) {
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
+    public PlayerActionController(List<Player> players, Game game, TurnManager turnManager) {
         this.players = new ArrayList<>(players);
         this.game = game;
         this.turnManager = turnManager;
@@ -24,34 +36,187 @@ public class PlayerActionController {
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setView(PlayerActionView view) {
         this.view = view;
-        updateView();
     }
 
-    public void updateView() {
-        int index = turnManager.getCurrentPlayerIndex();
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
+    public void setBoardController(BoardController boardController) {
+        this.boardController = boardController;
+    }
 
-        // TurnManager index is 1-based (e.g. 1, 2, 3...) from your array list setup
-        // But java array lists are 0-based, so if index = 1, it's players.get(0).
-        // Let's do a safe fallback in case index goes out of bounds.
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
+    public void setStatsController(GameStatsController statsController) {
+        this.statsController = statsController;
+    }
+
+    public void update() {
+        if (view != null) {
+            view.renderActionMenu();
+        }
+    }
+
+    public void refreshSetupTurn(boolean waitingForRoad) {
+        if (view == null || !game.phaseSetupCheck()) {
+            return;
+        }
+
+        Player currentPlayer = getCurrentPlayer();
+        view.renderSetupTurn(currentPlayer, waitingForRoad);
+    }
+
+    public void onSetupFinished() {
+        int setupEndingPlayer = turnManager.getCurrentPlayerIndex();
+        if (setupEndingPlayer > 0 && setupEndingPlayer <= players.size()) {
+            normalPlayPlayerIndex = setupEndingPlayer;
+        } else {
+            normalPlayPlayerIndex = 1;
+        }
+        update();
+    }
+
+    public void onActionClicked(PlayerAction action) {
+        switch (action) {
+            case BUILD:
+                clearBuildState();
+                if (view != null) {
+                    view.renderBuildMenu();
+                }
+                break;
+            case BUY_DEV_CARD:
+                // TODO: implement later
+                break;
+            case USE_DEV_CARD:
+                // TODO: implement later
+                break;
+            case TRADE:
+                // TODO: implement later
+                break;
+            case END_TURN:
+                advanceNormalPlayTurn();
+                clearBuildState();
+                update();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void onBuildTypeSelected(InfraType infraType) {
+        if (infraType == null) {
+            return;
+        }
+        selectedBuildType = infraType;
+        selectedLocationId = -1;
+        selectedLocationType = null;
+        clearBoardSelection();
+        if (view != null) {
+            view.onBuildTypeSelected(infraType);
+        }
+    }
+
+    public void onLocationSelected(int locationId, LocationType locationType) {
+        if (selectedBuildType == null) {
+            if (view != null) {
+                view.showError("Select infrastructure type to build first!");
+            }
+            return;
+        }
+
+        if (!isLocationTypeValidForInfra(locationType)) {
+            String infraName = selectedBuildType.name().toLowerCase();
+            String allowed = (selectedBuildType == InfraType.ROAD) ? "edges" : "nodes";
+            if (view != null) {
+                view.showError(infraName + " must be placed on " + allowed + "!");
+            }
+            return;
+        }
+
+        selectedLocationId = locationId;
+        selectedLocationType = locationType;
+    }
+
+    public void onBuildConfirmed() {
+        if (selectedBuildType == null || selectedLocationId < 0 || selectedLocationType == null) {
+            if (view != null) {
+                view.showError("must select both infrastructure type and location in order to build");
+            }
+            return;
+        }
+
+        Player currentPlayer = getCurrentPlayer();
+        if (currentPlayer == null) {
+            return;
+        }
+
+        try {
+            game.build(currentPlayer, selectedBuildType, selectedLocationId);
+            if (boardController != null) {
+                boardController.refreshBoard();
+                boardController.setStatusMessage(
+                        currentPlayer.getName()
+                                + " built a "
+                                + selectedBuildType.name().toLowerCase()
+                                + " at "
+                                + selectedLocationType.name().toLowerCase()
+                                + " "
+                                + selectedLocationId + "."
+                );
+            }
+            if (view != null) {
+                view.showSuccess("Successful build");
+            }
+            if (statsController != null) {
+                statsController.updateStats();
+            }
+            clearBuildState();
+            update();
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            if (view != null) {
+                view.showError(e.getMessage());
+            }
+            clearBuildState();
+            update();
+        }
+    }
+
+    public void onBuildCanceled() {
+        clearBuildState();
+        update();
+    }
+
+    public Player getCurrentPlayer() {
+        int index = game.phaseSetupCheck() ? turnManager.getCurrentPlayerIndex() : normalPlayPlayerIndex;
         if (index > 0 && index <= players.size()) {
-            Player currentPlayer = players.get(index - 1);
-            view.renderCurrentPlayer(currentPlayer, isPlacingSettlement);
+            return players.get(index - 1);
+        }
+        return players.get(0);
+    }
+
+    private void advanceNormalPlayTurn() {
+        if (game.phaseSetupCheck() || players.isEmpty()) {
+            return;
+        }
+
+        normalPlayPlayerIndex = (normalPlayPlayerIndex % players.size()) + 1;
+    }
+
+    private boolean isLocationTypeValidForInfra(LocationType locationType) {
+        if (selectedBuildType == InfraType.ROAD) {
+            return locationType == LocationType.EDGE;
         } else {
-             // Sequence empty -> setup is done!
-            view.renderSetupComplete();
+            return locationType == LocationType.NODE;
         }
     }
 
-    public void handleNextActionDone() {
-        if (isPlacingSettlement) {
-            // They placed a settlement. Now they must place a road.
-            isPlacingSettlement = false;
-        } else {
-            // They placed a road. Turn is over, next player!
-            turnManager.nextPlayer();
-            isPlacingSettlement = true; // reset for the next player
+    private void clearBuildState() {
+        selectedBuildType = null;
+        selectedLocationId = -1;
+        selectedLocationType = null;
+        clearBoardSelection();
+    }
+
+    private void clearBoardSelection() {
+        if (boardController != null) {
+            boardController.clearSelection();
         }
-        updateView();
     }
 }
-
