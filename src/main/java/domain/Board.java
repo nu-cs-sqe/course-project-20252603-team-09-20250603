@@ -258,6 +258,9 @@ public class Board {
     }
 
     public void distributeResourcesOnRoll(int diceRoll) {
+        if (diceRoll < 2 || diceRoll > 12) {
+            throw new IllegalArgumentException("Dice roll must be between 2 and 12.");
+        }
         for (Hex hex : hexes) {
             if (hex.getTokenNumber() != diceRoll) {
                 continue;

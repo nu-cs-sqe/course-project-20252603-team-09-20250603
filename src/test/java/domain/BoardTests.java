@@ -432,4 +432,14 @@ public class BoardTests {
 
         assertEquals(expected, player.getResources());
     }
+
+    @Test
+    public void distributeResourcesOnRoll_rollOne_throwsIllegalArgumentException() {
+        Board board = new Board();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            board.distributeResourcesOnRoll(1);
+        });
+    }
+
 }
