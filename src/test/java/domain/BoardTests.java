@@ -3,6 +3,8 @@ package domain;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -398,5 +400,20 @@ public class BoardTests {
         assertThrows(IllegalArgumentException.class, () -> {
             board.getNode(invalidNodeId);
         });
+    }
+
+    @Test
+    public void distributeResourcesOnRoll_minRollSettlement_receivesOneWheat() {
+        Board board = new Board();
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        board.getNode(23).buildSettlement(player);
+
+        board.distributeResourcesOnRoll(2);
+
+        Map<ResourceType, Integer> expected = new HashMap<>();
+        expected.put(ResourceType.WHEAT, 1);
+
+        assertEquals(expected, player.getResources());
     }
 }

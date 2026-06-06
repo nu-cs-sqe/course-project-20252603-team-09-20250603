@@ -257,6 +257,34 @@ public class Board {
         return resources;
     }
 
+    public void distributeResourcesOnRoll(int diceRoll) {
+        for (Hex hex : hexes) {
+            if (hex.getTokenNumber() != diceRoll) {
+                continue;
+            }
+
+            ResourceType resourceType = hex.getResourceType();
+
+            for (Node node : hexToNodes.get(hex)) {
+                Player occupant = node.getNodeOccupant();
+
+                if (occupant != null) {
+                    int amount = 0;
+
+                    if (node.getInfraType() == InfraType.SETTLEMENT) {
+                        amount = 1;
+                    }
+
+                    if (amount > 0) {
+                        Map<ResourceType, Integer> resources = new HashMap<>();
+                        resources.put(resourceType, amount);
+                        occupant.addResources(resources);
+                    }
+                }
+            }
+        }
+    }
+
     public List<Hex> getHexes() {
         return List.copyOf(hexes);
     }
