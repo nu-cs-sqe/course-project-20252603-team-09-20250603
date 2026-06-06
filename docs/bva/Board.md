@@ -122,4 +122,4 @@
 | Test Case 8  | Dice roll matches a hex adjacent to multiple occupied nodes                  | All eligible players receive resources                                    | :white_check_mark: |
 | Test Case 9  | Dice roll matches a hex containing the robber                                | No resources distributed from that hex                                    | :white_check_mark: |
 | Test Case 10 | Dice roll matches a hex containing the robber and other hex with settlements | No resources distributed from robber hex, other hex distributes as normal | :white_check_mark: |
-| Test Case 11 | Dice roll matches a multiple hexes with multiple occupied nodes each         | All eligible players receive resources                                    | :x:                |
+| Test Case 11 | Dice roll matches a multiple hexes with multiple occupied nodes each         | All eligible players receive resources                                    | :white_check_mark: |
