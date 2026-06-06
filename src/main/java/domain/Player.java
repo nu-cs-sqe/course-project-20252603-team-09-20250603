@@ -31,6 +31,10 @@ public class Player {
         return color;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public Map<String, Integer> getInventory() {
         return new HashMap<>(inventory);
     }

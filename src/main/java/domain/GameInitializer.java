@@ -15,7 +15,9 @@ public class GameInitializer {
         Board board = new Board();
         Dice dice = new Dice(new Random());
         TurnManager turnManager = new TurnManager(players.size());
-        return new Game(board, players, dice, turnManager);
+        Game game = new Game(board, players, dice, turnManager);
+        game.setCurrPhase(GamePhase.SETUP);
+        return game;
     }
 
     public List<Player> setupPlayers(List<String> names){
