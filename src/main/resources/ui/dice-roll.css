@@ -1,0 +1,65 @@
+.dice-roll-view {
+    -fx-background-color: rgba(0, 0, 0, 0.45);
+}
+
+.dice-roll-card {
+    -fx-background-color: #f7f4ec;
+    -fx-border-color: #c6c0ad;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-pref-width: 360;
+    -fx-max-width: 360;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 12, 0.2, 0, 2);
+}
+
+.dice-header {
+    -fx-min-height: 24;
+    -fx-pref-height: 24;
+    -fx-max-height: 24;
+}
+
+.dice-turn-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2e5044;
+    -fx-alignment: center;
+}
+
+.dice-result-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #2c3e50;
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
+    -fx-max-width: 320px;
+    -fx-min-height: 38;
+    -fx-pref-height: 38;
+    -fx-alignment: center;
+}
+
+.die-face {
+    -fx-min-width: 72px;
+    -fx-min-height: 72px;
+    -fx-alignment: center;
+    -fx-font-size: 46px;
+    -fx-background-color: #fffaf0;
+    -fx-border-color: #8f846f;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+.dice-close-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #7f8c8d;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 2 6;
+}
+
+.dice-close-button:hover {
+    -fx-text-fill: #2c3e50;
+}
+
+.dice-close-button:armed {
+    -fx-text-fill: #1f2d3a;
+}

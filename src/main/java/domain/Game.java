@@ -86,6 +86,22 @@ public class Game {
         return true;
     }
 
+    public void rollDice() {
+        dice.roll();
+    }
+
+    public int getDie1() {
+        return dice.getDie1();
+    }
+
+    public int getDie2() {
+        return dice.getDie2();
+    }
+
+    public int getDieSum() {
+        return dice.getDieSum();
+    }
+
     public void build(Player currentPlayer, InfraType infraType, int locationId) {
         if (infraType == null){
             throw new IllegalArgumentException("Build type cannot be null");
