@@ -3,6 +3,8 @@
 Tracks a single player's identity, infrastructure inventory, and victory points.
 
 ---
+`getID`
+Getter to pass to controller - untested as simply acts as a simple getter
 
 ### Method under test: `getName()`
 

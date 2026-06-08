@@ -53,13 +53,12 @@ public class GameRobberTests {
         Player player1 = new Player(0, "Bob", PlayerColor.RED);
         Game game = new Game(board, List.of(player1), new Dice(new Random()), new TurnManager(1));
 
-        board.getHex(1).setHasRobber(true);
-
+        // The robber starts on the desert (hex 9); moving it onto its own hex is illegal.
          assertThrows(IllegalStateException.class, () -> {
-             game.handleMoveRobber(7, 1);
+             game.handleMoveRobber(7, 9);
          });
 
-        assertTrue(board.getHex(1).getHasRobber());
+        assertTrue(board.getHex(9).getHasRobber());
         assertEquals(1, countRobberHexes(board));
 
     }

@@ -48,11 +48,43 @@ public class Board {
                 ResourceType.ORE
         };
 
+        // Number tokens hardcoded to match the physical board, indexed by hex id.
+        // The desert (hex 9) has no token, represented by 0.
+        int[] hexTokens = {
+                9,  // hex 0
+                11, // hex 1
+                6,  // hex 2
+                4,  // hex 3
+                3,  // hex 4
+                2,  // hex 5
+                5,  // hex 6
+                11, // hex 7
+                8,  // hex 8
+                0,  // hex 9 (desert, robber)
+                10, // hex 10
+                9,  // hex 11
+                10, // hex 12
+                5,  // hex 13
+                12, // hex 14
+                4,  // hex 15
+                6,  // hex 16
+                3,  // hex 17
+                8   // hex 18
+        };
+
+
+
+        // The robber starts on the desert (hex 9), matching standard Catan.
+        int robberHexId = 9;
+
         for (int id = 0; id < NUM_HEXES; id++) {
             Hex hex = new Hex(id);
             hex.setResourceType(hexResources[id]);
+            hex.setTokenNumber(hexTokens[id]);
+            hex.setHasRobber(id == robberHexId);
             hexes.add(hex);
         }
+
         for (int id = 0; id < NUM_NODES; id++) {
             Node node = new Node(id);
             nodes.add(node);
@@ -225,6 +257,43 @@ public class Board {
         return resources;
     }
 
+    public void distributeResourcesOnRoll(int diceRoll) {
+        if (diceRoll < 2 || diceRoll > 12) {
+            throw new IllegalArgumentException("Dice roll must be between 2 and 12.");
+        }
+        for (Hex hex : hexes) {
+            if (hex.getTokenNumber() != diceRoll) {
+                continue;
+            }
+
+            if (hex.getHasRobber()) {
+                continue;
+            }
+
+            ResourceType resourceType = hex.getResourceType();
+
+            for (Node node : hexToNodes.get(hex)) {
+                Player occupant = node.getNodeOccupant();
+
+                if (occupant != null) {
+                    int amount = 0;
+
+                    if (node.getInfraType() == InfraType.SETTLEMENT) {
+                        amount = 1;
+                    } else if (node.getInfraType() == InfraType.CITY) {
+                        amount = 2;
+                    }
+
+                    if (amount > 0) {
+                        Map<ResourceType, Integer> resources = new HashMap<>();
+                        resources.put(resourceType, amount);
+                        occupant.addResources(resources);
+                    }
+                }
+            }
+        }
+    }
+
     public List<Hex> getHexes() {
         return List.copyOf(hexes);
     }
@@ -237,13 +306,27 @@ public class Board {
         return List.copyOf(edges);
     }
 
-    private int robberHexId = 0;
     public void moveRobber(Player player, int targetHexId) {
-        this.robberHexId = targetHexId;
+        Hex targetHex = getHex(targetHexId);
+
+        if (targetHex.getHasRobber()) {
+            throw new IllegalStateException("Selected hex already has the robber.");
+        }
+
+        for (Hex hex : hexes) {
+            hex.setHasRobber(false);
+        }
+
+        targetHex.setHasRobber(true);
     }
 
     public int getRobberHexId() {
-        return this.robberHexId;
+        for (Hex hex : hexes) {
+            if (hex.getHasRobber()) {
+                return hex.getId();
+            }
+        }
+        return -1;
     }
 
     public void freeRoads(Player player, int count) {}

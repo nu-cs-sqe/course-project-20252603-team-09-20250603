@@ -70,17 +70,21 @@
 6. [90%] Chloe: handleBuyDevCard, handleUseDevCard in game class
 
 # Week 10 (06/02/2026-06/08/2026)
-1. [Done] All: weekly meeting:
-     - Distributed/refreshed tasks for week 9
-     - ALL DUE 6/3:
-          - Aria review Ben's UI PR to merge into Main 
-          - Aria review Ben's handleInitialPlacement PR to merge into GameCreation
-          - Chloe, Alicia review GameCreation to merge into Main (after Ben is done)
-          - Crystal review Chloe's PR
-          - Ben review Crystal's PR
-2. [10%] Aria: getPlayerAction, Game.play
-   - End of week: finish i18n once UI finalized
-3. [90%] Crystal: updatePlayerPoints for longestRoad and then UI after 
-4. [20%] Alicia: stealing and cutting resources in half, handleDistributeResources on roll
-5. [90%] Ben: handleInitialPlacement, fix PlacementValidator 67, verify TurnManager accuracy
-7. [70%] Chloe: points for largestArmy (# knights)
+1. [Done] All: weekly meeting
+2. [0%] Aria: Review handleDistributeResources PR - by EOD Saturday
+3. [50%] Ben: merge devCard PR - by EOD Saturday
+4. [0%] Crystal: review handleInitialPlacement PR and merge to main - by EOD Saturday
+5. [0%] Aria: dice roll + distribute resources - Monday
+8. [0%] Chloe: game end condition - Monday
+9. [0%] Ben: finish i18n once UI finalized - Monday
+10. [50%] Alicia: finish all robber logic - stealing random card, cutting resources in half when >=7, updating Crystal moveRobber function - Monday
+11. [90%] Chloe/Crystal: mutation testing and code coverage - Wednesday
+12. [0%] Ben: update build integration testing to be linked to PlayerActionController GUI instead of GameController scanner - Wednesday
+13. [100%] Ben: fix PlacementValidator, verify TurnManager accuracy
+15. [100%] Ben: handleInitialPlacement written
+16. [100%] Aria: getPlayerAction
+17. [100%] Chloe: points for largestArmy (# knights)
+18. [100%] Crystal: updatePlayerPoints for longestRoad
+19. [100%] Alicia: handleDistributeResources on roll - by Saturday
+20. [100%] Ben: integration testing for handleInitialPlacement - by Saturday
+21. [100%] Ben/Aria: UI v2 PR merged into get-player-action, then merge get-player-action to main - by Saturday
