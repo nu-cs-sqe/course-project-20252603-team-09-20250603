@@ -3,6 +3,8 @@ package domain;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -241,4 +243,360 @@ public class BoardTests {
 
         assertEquals(72, edges.size());
     }
+
+    @Test
+    void getEdgesConnectedToNode_NullNode_ThrowsException() {
+        Board board = new Board();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            board.getEdgesConnectedToNode(null);
+        });
+    }
+
+    @Test
+    void getEdgesConnectedToNode_NodeNotOnBoard_ThrowsException() {
+        Board board = new Board();
+        Node invalidNode = new Node(999);
+
+        assertThrows(IllegalStateException.class, () -> {
+            board.getEdgesConnectedToNode(invalidNode);
+        });
+    }
+
+    @Test
+    void getEdgesConnectedToNode_ValidNode_ReturnsConnectedEdges() {
+        Board board = new Board();
+        Node node = board.getNode(0);
+
+        List<Edge> connectedEdges = board.getEdgesConnectedToNode(node);
+
+        for (Edge edge : connectedEdges) {
+            boolean edgeContainsNode =
+                    edge.getNodeA().equals(node) || edge.getNodeB().equals(node);
+
+            assertTrue(edgeContainsNode);
+        }
+    }
+
+    @Test
+    void getEdgesConnectedToNode_BoundaryNode_ReturnsExpectedNumberOfEdges() {
+        Board board = new Board();
+        Node node = board.getNode(0);
+
+        List<Edge> connectedEdges = board.getEdgesConnectedToNode(node);
+
+        assertEquals(2, connectedEdges.size());
+    }
+
+    @Test
+    void getEdge_FirstValidEdgeId_ReturnsEdge() {
+        Board board = new Board();
+
+        Edge edge = board.getEdge(0);
+
+        assertEquals(0, edge.getId());
+    }
+
+    @Test
+    void getEdge_LastValidEdgeId_ReturnsEdge() {
+        Board board = new Board();
+        int lastValidEdgeId = board.getEdges().size() - 1;
+
+        Edge edge = board.getEdge(lastValidEdgeId);
+
+        assertEquals(lastValidEdgeId, edge.getId());
+    }
+
+    @Test
+    void getEdge_NegativeEdgeId_ThrowsException() {
+        Board board = new Board();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            board.getEdge(-1);
+        });
+    }
+
+    @Test
+    void getEdge_EdgeIdEqualToNumberOfEdges_ThrowsException() {
+        Board board = new Board();
+        int invalidEdgeId = board.getEdges().size();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            board.getEdge(invalidEdgeId);
+        });
+    }
+
+    @Test
+    void getHex_FirstValidHexId_ReturnsHex() {
+        Board board = new Board();
+
+        Hex hex = board.getHex(0);
+
+        assertEquals(0, hex.getId());
+    }
+
+    @Test
+    void getHex_LastValidHexId_ReturnsHex() {
+        Board board = new Board();
+        int lastValidHexId = board.getHexes().size() - 1;
+
+        Hex hex = board.getHex(lastValidHexId);
+
+        assertEquals(lastValidHexId, hex.getId());
+    }
+
+    @Test
+    void getHex_NegativeHexId_ThrowsException() {
+        Board board = new Board();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            board.getHex(-1);
+        });
+    }
+
+    @Test
+    void getHex_HexIdEqualToNumberOfHexes_ThrowsException() {
+        Board board = new Board();
+        int invalidHexId = board.getHexes().size();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            board.getHex(invalidHexId);
+        });
+    }
+
+    @Test
+    void getNode_FirstValidNodeId_ReturnsNode() {
+        Board board = new Board();
+
+        Node node = board.getNode(0);
+
+        assertEquals(0, node.getId());
+    }
+
+    @Test
+    void getNode_LastValidNodeId_ReturnsNode() {
+        Board board = new Board();
+        int lastValidNodeId = board.getNodes().size() - 1;
+
+        Node node = board.getNode(lastValidNodeId);
+
+        assertEquals(lastValidNodeId, node.getId());
+    }
+
+    @Test
+    void getNode_NegativeNodeId_ThrowsException() {
+        Board board = new Board();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            board.getNode(-1);
+        });
+    }
+
+    @Test
+    void getNode_NodeIdEqualToNumberOfNodes_ThrowsException() {
+        Board board = new Board();
+        int invalidNodeId = board.getNodes().size();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            board.getNode(invalidNodeId);
+        });
+    }
+
+    @Test
+    public void distributeResourcesOnRoll_minRollSettlement_receivesOneWheat() {
+        Board board = new Board();
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        board.getNode(23).buildSettlement(player);
+
+        board.distributeResourcesOnRoll(2);
+
+        Map<ResourceType, Integer> expected = new HashMap<>();
+        expected.put(ResourceType.WHEAT, 1);
+
+        assertEquals(expected, player.getResources());
+    }
+
+    @Test
+    public void distributeResourcesOnRoll_maxRollCity_receivesTwoBrick() {
+        Board board = new Board();
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        board.getNode(42).buildSettlement(player);
+        board.getNode(42).buildCity(player);
+
+        board.distributeResourcesOnRoll(12);
+
+        Map<ResourceType, Integer> expected = new HashMap<>();
+        expected.put(ResourceType.BRICK, 2);
+
+        assertEquals(expected, player.getResources());
+    }
+
+    @Test
+    public void distributeResourcesOnRoll_rollOne_throwsIllegalArgumentException() {
+        Board board = new Board();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            board.distributeResourcesOnRoll(1);
+        });
+    }
+
+    @Test
+    public void distributeResourcesOnRoll_rollThirteen_throwsIllegalArgumentException() {
+        Board board = new Board();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            board.distributeResourcesOnRoll(13);
+        });
+    }
+
+    @Test
+    public void distributeResourcesOnRoll_rollSeven_distributesNoResources() {
+        Board board = new Board();
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        board.getNode(23).buildSettlement(player);
+
+        board.distributeResourcesOnRoll(7);
+
+        Map<ResourceType, Integer> expected = new HashMap<>();
+
+        assertEquals(expected, player.getResources());
+    }
+
+    @Test
+    public void distributeResourcesOnRoll_matchingHexNoOccupiedNodes_distributesNoResources() {
+        Board board = new Board();
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        board.distributeResourcesOnRoll(2);
+
+        Map<ResourceType, Integer> expected = new HashMap<>();
+
+        assertEquals(expected, player.getResources());
+    }
+
+    @Test
+    public void distributeResourcesOnRoll_multipleProducingHexes_distributesFromAllMatchingHexes() {
+        Board board = new Board();
+        Player playerOne = new Player(1, "Alice", PlayerColor.RED);
+        Player playerTwo = new Player(2, "Bob", PlayerColor.BLUE);
+
+        board.getNode(5).buildSettlement(playerOne);
+
+        board.getNode(48).buildSettlement(playerTwo);
+        board.getNode(48).buildCity(playerTwo);
+
+        board.distributeResourcesOnRoll(6);
+
+        Map<ResourceType, Integer> expectedOne = new HashMap<>();
+        expectedOne.put(ResourceType.SHEEP, 1);
+
+        Map<ResourceType, Integer> expectedTwo = new HashMap<>();
+        expectedTwo.put(ResourceType.WOOD, 2);
+
+        assertEquals(expectedOne, playerOne.getResources());
+        assertEquals(expectedTwo, playerTwo.getResources());
+    }
+
+    @Test
+    public void distributeResourcesOnRoll_multipleOccupiedNodes_allEligiblePlayersReceiveResources() {
+        Board board = new Board();
+        Player playerOne = new Player(1, "Alice", PlayerColor.RED);
+        Player playerTwo = new Player(2, "Bob", PlayerColor.BLUE);
+
+        board.getNode(51).buildSettlement(playerOne);
+        board.getNode(44).buildSettlement(playerTwo);
+
+        board.distributeResourcesOnRoll(8);
+
+        Map<ResourceType, Integer> expectedOne = new HashMap<>();
+        expectedOne.put(ResourceType.ORE, 1);
+
+        Map<ResourceType, Integer> expectedTwo = new HashMap<>();
+        expectedTwo.put(ResourceType.ORE, 1);
+
+        assertEquals(expectedOne, playerOne.getResources());
+        assertEquals(expectedTwo, playerTwo.getResources());
+    }
+
+    @Test
+    public void distributeResourcesOnRoll_matchingHexHasRobber_doesNotProduceFromRobberHex() {
+        Board board = new Board();
+        Player playerOne = new Player(1, "Alice", PlayerColor.RED);
+        Player playerTwo = new Player(2, "Bob", PlayerColor.BLUE);
+
+        board.getHex(9).setHasRobber(false);
+        board.getHex(8).setHasRobber(true);
+
+        board.getNode(29).buildSettlement(playerOne);
+        board.getNode(29).buildCity(playerOne);
+
+        board.getNode(52).buildSettlement(playerTwo);
+        board.getNode(52).buildCity(playerTwo);
+
+        board.distributeResourcesOnRoll(8);
+
+        Map<ResourceType, Integer> expectedOne = new HashMap<>();
+
+        Map<ResourceType, Integer> expectedTwo = new HashMap<>();
+        expectedTwo.put(ResourceType.ORE, 2);
+
+        assertEquals(expectedOne, playerOne.getResources());
+        assertEquals(expectedTwo, playerTwo.getResources());
+    }
+
+    @Test
+    public void distributeResourcesOnRoll_robberBlocksOneHex_otherHexDistributesNormally() {
+        Board board = new Board();
+
+        Player playerOne = new Player(1, "Alice", PlayerColor.RED);
+        Player playerTwo = new Player(2, "Bob", PlayerColor.BLUE);
+
+        board.getHex(9).setHasRobber(false);
+        board.getHex(8).setHasRobber(true);
+
+        board.getNode(29).buildSettlement(playerOne);
+        board.getNode(52).buildSettlement(playerTwo);
+
+        board.distributeResourcesOnRoll(8);
+
+        Map<ResourceType, Integer> expectedOne = new HashMap<>();
+
+        Map<ResourceType, Integer> expectedTwo = new HashMap<>();
+        expectedTwo.put(ResourceType.ORE, 1);
+
+        assertEquals(expectedOne, playerOne.getResources());
+        assertEquals(expectedTwo, playerTwo.getResources());
+    }
+
+    @Test
+    public void distributeResourcesOnRoll_multipleHexesWithMultipleOccupiedNodes_allEligiblePlayersReceiveResources() {
+        Board board = new Board();
+        Player playerOne = new Player(1, "Alice", PlayerColor.RED);
+        Player playerTwo = new Player(2, "Bob", PlayerColor.BLUE);
+        Player playerThree = new Player(3, "Charlie", PlayerColor.WHITE);
+
+        board.getNode(9).buildSettlement(playerOne);
+        board.getNode(10).buildSettlement(playerTwo);
+        board.getNode(41).buildSettlement(playerThree);
+        board.getNode(50).buildSettlement(playerOne);
+
+        board.distributeResourcesOnRoll(3);
+
+        Map<ResourceType, Integer> expectedOne = new HashMap<>();
+        expectedOne.put(ResourceType.WOOD, 2);
+
+        Map<ResourceType, Integer> expectedTwo = new HashMap<>();
+        expectedTwo.put(ResourceType.WOOD, 1);
+
+        Map<ResourceType, Integer> expectedThree = new HashMap<>();
+        expectedThree.put(ResourceType.WOOD, 1);
+
+        assertEquals(expectedOne, playerOne.getResources());
+        assertEquals(expectedTwo, playerTwo.getResources());
+        assertEquals(expectedThree, playerThree.getResources());
+    }
+
 }

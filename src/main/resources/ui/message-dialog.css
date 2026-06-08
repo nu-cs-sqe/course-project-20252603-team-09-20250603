@@ -1,0 +1,48 @@
+.message-overlay {
+    -fx-background-color: rgba(0, 0, 0, 0.45);
+}
+
+.message-dialog {
+    -fx-background-color: #f7f4ec;
+    -fx-background-radius: 8;
+    -fx-border-color: #c6c0ad;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-max-width: 360;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 12, 0.2, 0, 2);
+}
+
+.message-dialog-title {
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+}
+
+.error-dialog .message-dialog-title {
+    -fx-text-fill: #c0392b;
+}
+
+.info-dialog .message-dialog-title {
+    -fx-text-fill: #2e5044;
+}
+
+.message-dialog-text {
+    -fx-font-size: 13;
+    -fx-text-fill: #2c3e50;
+}
+
+.message-dialog-button {
+    -fx-background-color: #2e5044;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-font-weight: bold;
+    -fx-padding: 8 24;
+}
+
+.message-dialog-button:hover {
+    -fx-background-color: #386657;
+}
+
+.message-dialog-button:armed {
+    -fx-background-color: #244137;
+}
