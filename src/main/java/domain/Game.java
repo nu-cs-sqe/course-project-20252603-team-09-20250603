@@ -171,6 +171,10 @@ public class Game {
 
         Player player = findPlayerById(currentPlayerId);
 
+        if (player.getHasPlayedDevCardThisTurn()) {
+            throw new IllegalActionException("Player has already played a development card this turn.");
+        }
+
         DevCard cardToPlay = player.getDevCardHand().stream()
                 .filter(c -> c.getType() == cardType)
                 .findFirst()
@@ -195,6 +199,7 @@ public class Game {
         }
 
         player.removeDevCard(cardToPlay);
+        player.setHasPlayedDevCardThisTurn(true);
     }
 
     public void updateLargestArmyPlayer() {

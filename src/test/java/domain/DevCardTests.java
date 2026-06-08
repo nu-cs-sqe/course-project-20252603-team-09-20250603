@@ -266,4 +266,65 @@ public class DevCardTests {
         assertEquals(1, player.getResources().getOrDefault(ResourceType.ORE, 0));
         assertEquals(1, player.getResources().getOrDefault(ResourceType.SHEEP, 0));
     }
+
+    @Test // TC-DC-ONCE-FLAG
+    void test_PlayingDevCard_SetsHasPlayedFlag() {
+        int owningPlayerId = 0;
+        Player player = new Player(owningPlayerId, "John", PlayerColor.RED);
+        player.setDevCardHand(new DevCard(DevCardType.YEAR_OF_PLENTY));
+        player.manageDevCardActivation(owningPlayerId); // start of turn: activate cards, clear flag
+
+        Game game = newGameWith(player);
+
+        assertFalse(player.getHasPlayedDevCardThisTurn());
+
+        game.useDevCard(owningPlayerId, DevCardType.YEAR_OF_PLENTY, 0,
+                ResourceType.WOOD, ResourceType.WHEAT, null);
+
+        assertTrue(player.getHasPlayedDevCardThisTurn());
+    }
+
+    @Test // TC-DC-ONCE-SECOND
+    void test_PlayingSecondDevCard_SameTurn_ThrowsException() {
+        int owningPlayerId = 0;
+        Player player = new Player(owningPlayerId, "John", PlayerColor.RED);
+        player.setDevCardHand(new DevCard(DevCardType.YEAR_OF_PLENTY));
+        player.setDevCardHand(new DevCard(DevCardType.MONOPOLY));
+        player.manageDevCardActivation(owningPlayerId);
+
+        Game game = newGameWith(player);
+
+        game.useDevCard(owningPlayerId, DevCardType.YEAR_OF_PLENTY, 0,
+                ResourceType.WOOD, ResourceType.WHEAT, null);
+
+        assertThrows(IllegalActionException.class, () ->
+                game.useDevCard(owningPlayerId, DevCardType.MONOPOLY, 0,
+                        null, null, ResourceType.ORE));
+
+        assertEquals(1, player.getDevCardHand().size());
+        assertEquals(DevCardType.MONOPOLY, player.getDevCardHand().get(0).getType());
+    }
+
+    @Test // TC-DC-ONCE-RESET
+    void test_FlagResets_OnNextTurn_AllowsPlayingAnotherCard() {
+        int owningPlayerId = 0;
+        Player player = new Player(owningPlayerId, "John", PlayerColor.RED);
+        player.setDevCardHand(new DevCard(DevCardType.YEAR_OF_PLENTY));
+        player.setDevCardHand(new DevCard(DevCardType.MONOPOLY));
+        player.manageDevCardActivation(owningPlayerId);
+
+        Game game = newGameWith(player);
+
+        game.useDevCard(owningPlayerId, DevCardType.YEAR_OF_PLENTY, 0,
+                ResourceType.WOOD, ResourceType.WHEAT, null);
+        assertTrue(player.getHasPlayedDevCardThisTurn());
+
+        player.manageDevCardActivation(owningPlayerId);
+        assertFalse(player.getHasPlayedDevCardThisTurn());
+
+        assertDoesNotThrow(() ->
+                game.useDevCard(owningPlayerId, DevCardType.MONOPOLY, 0,
+                        null, null, ResourceType.ORE));
+        assertEquals(0, player.getDevCardHand().size());
+    }
 }

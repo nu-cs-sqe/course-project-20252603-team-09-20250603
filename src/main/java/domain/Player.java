@@ -12,6 +12,7 @@ public class Player {
     private final List<DevCard> devHand;
     private boolean hasLargestArmy;
     private int playedKnightCount = 0;
+    private boolean hasPlayedDevCardThisTurn = false;
 
     public Player(int id, String name, PlayerColor color){
         this.id = id;
@@ -159,10 +160,19 @@ public class Player {
 
     public void manageDevCardActivation(int activePlayerId) {
         if (this.id == activePlayerId) {
+            this.hasPlayedDevCardThisTurn = false;
             for (DevCard card : devHand) {
                 card.activateCard();
             }
         }
+    }
+
+    public boolean getHasPlayedDevCardThisTurn() {
+        return this.hasPlayedDevCardThisTurn;
+    }
+
+    public void setHasPlayedDevCardThisTurn(boolean hasPlayed) {
+        this.hasPlayedDevCardThisTurn = hasPlayed;
     }
 
     public void incrementPlayedKnightCount() {
