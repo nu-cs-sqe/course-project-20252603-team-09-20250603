@@ -2,34 +2,6 @@
 
 Handles the progression of game
 
-## Methods:
-`start()` - loops until game ends
-`handleInitialPlacementPhase()`
-    handles the starting settlement + road placements for each player
-    invokes PlacementValidator and TurnManager
-`handleMoveRobber(Player player)`
-    handles moving a robber when the roll is 7
-    block a hex by setting its hasRobber
-    removes the robber from wherever it was before
-`handleDistributeResources(int roll)`
-    distributes resources to all players based on a roll
-`getPlayerAction(Player currentPlayer)`
-    action selection mocked for testing for now
-`handleBuild(Player currentPlayer)`
-    handles building a road, settlement, or city
-    validates placement
-    handles decrementing resources
-`handleBuyDevCard(Player currentPlayer)`
-    handles player buying devCard
-    handles decrementing resources
-`handleUseDevCard(Player currentPlayer)`
-    handles player using devCard
-`handleTrade(Player currentPlayer)`
-    handles player trading
-    updates resources
-`updatePlayerPoints(Player currentPlayer)`
-    updates the player's victory points
-
 ### Method under test: `handleMoveRobber()`
 
 |             | State of the System                         | Expected output / behavior                                 | Implemented?       |
