@@ -68,8 +68,13 @@
     -fx-stroke-width: 2.5;
 }
 
+.building-overlay:hover {
+    -fx-stroke: #4da3ff;
+    -fx-stroke-width: 2.5;
+}
+
 .selected-node {
-    -fx-fill: #ffffff;
     -fx-stroke: #4da3ff;
     -fx-stroke-width: 3;
+    -fx-effect: dropshadow(gaussian, rgba(77, 163, 255, 0.7), 10, 0.2, 0, 0);
 }
