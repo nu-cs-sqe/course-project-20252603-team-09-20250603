@@ -139,7 +139,7 @@ public class SetupGameController {
 
     private void showError(String message) {
         if (boardView != null) {
-            MessageDialog.showError(boardView, message);
+            boardView.showError(message);
         }
     }
 }

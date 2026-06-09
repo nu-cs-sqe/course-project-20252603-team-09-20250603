@@ -1,10 +1,6 @@
 package domain;
 
 import java.util.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class Game {
@@ -17,11 +13,13 @@ public class Game {
     )
     private final TurnManager turnManager;
     private final PlacementValidator placementValidator;
+    private Player largestArmyPlayer = null;
+    private int largestArmySize = 2;
+    private final DevCardDeck devCardDeck;
     private Player longestRoadPlayer;
     private GamePhase currPhase;
     private final Map<Integer, Node> setupSettlements;
     private final Map<Integer, Node> secondSetupSettlements;
-    // TODO: add devCardDeck to constructor
 
     public Game(Board board, List<Player> players, Dice dice, TurnManager turnManager) {
         this.board = board;
@@ -29,6 +27,7 @@ public class Game {
         this.dice = dice;
         this.turnManager = turnManager;
         this.placementValidator = new PlacementValidator(board);
+        this.devCardDeck = new DevCardDeck();
         this.currPhase = GamePhase.SETUP;
         this.setupSettlements = new HashMap<>();
         this.secondSetupSettlements = new HashMap<>();
@@ -84,6 +83,26 @@ public class Game {
 
     public boolean start(){
         return true;
+    }
+
+    public void setNextDevCardType(DevCardType type) {
+        this.devCardDeck.setNextCardType(type);
+    }
+
+    public void rollDice() {
+        dice.roll();
+    }
+
+    public int getDie1() {
+        return dice.getDie1();
+    }
+
+    public int getDie2() {
+        return dice.getDie2();
+    }
+
+    public int getDieSum() {
+        return dice.getDieSum();
     }
 
     public void build(Player currentPlayer, InfraType infraType, int locationId) {
@@ -160,7 +179,7 @@ public class Game {
         }
     }
 
-    public void handleMoveRobber(int newHexId) {
+    public void handleMoveRobberLocation(int newHexId) {
 
         Hex newHex = board.getHex(newHexId);
 
@@ -177,6 +196,17 @@ public class Game {
         }
 
         newHex.setHasRobber(true);
+    }
+  
+    public void handleMoveRobber(int roll, int newHexId, int activePlayerId, int victimId) {
+        if (roll != 7){
+            return;
+        }
+
+        Player activePlayer = victimId < 0 ? null : findPlayerById(activePlayerId);
+        Player victim = victimId < 0 ? null : findPlayerById(victimId);
+
+        board.moveRobberAndSteal(activePlayer, newHexId, victim);
     }
     private int countPlayerSettlements(Player player) {
         int count = 0;
@@ -224,6 +254,105 @@ public class Game {
         }
 
         return cost;
+    }
+
+    public void drawDevCard(int currentPlayerId) {
+        Player player = findPlayerById(currentPlayerId);
+
+        // A dev card costs 1 Ore + 1 Wool (Sheep) + 1 Grain (Wheat).
+        Map<ResourceType, Integer> cost = getDevCardCost();
+        if (!player.hasResources(cost)) {
+            throw new IllegalStateException("Player does not have enough resources to draw a dev card.");
+        }
+
+        // Draw first so an empty deck throws before the player is charged.
+        DevCard randomCard = devCardDeck.drawCard();
+        player.setDevCardHand(randomCard);
+        player.useResources(cost);
+
+        System.out.println("Player " + currentPlayerId + " drew a " + randomCard.getType());
+    }
+
+    private Map<ResourceType, Integer> getDevCardCost() {
+        Map<ResourceType, Integer> cost = new HashMap<>();
+        cost.put(ResourceType.ORE, 1);
+        cost.put(ResourceType.SHEEP, 1);
+        cost.put(ResourceType.WHEAT, 1);
+        return cost;
+    }
+
+    public void useDevCard(int currentPlayerId, DevCardType cardType, int targetHexId, int victimPlayerId,
+                           ResourceType choice1, ResourceType choice2, ResourceType targetType) {
+
+        Player player = findPlayerById(currentPlayerId);
+
+        if (player.getHasPlayedDevCardThisTurn()) {
+            throw new IllegalActionException("Player has already played a development card this turn.");
+        }
+
+        DevCard cardToPlay = player.getDevCardHand().stream()
+                .filter(c -> c.getType() == cardType)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Player doesn't have this card type"));
+
+        switch (cardType) {
+            case KNIGHT:
+                Player victim = victimPlayerId < 0 ? null : findPlayerById(victimPlayerId);
+                cardToPlay.doKnightAction(player, this.board, targetHexId, victim);
+                this.updateLargestArmyPlayer();
+                break;
+            case ROAD_BUILDING:
+                cardToPlay.doRoadBuildingAction(player, this.board);
+                break;
+            case YEAR_OF_PLENTY:
+                cardToPlay.doYearOfPlentyAction(player, this.board, choice1, choice2);
+                break;
+            case MONOPOLY:
+                cardToPlay.doMonopolyAction(player, this.players, this.board, targetType);
+                break;
+            default:
+                throw new UnsupportedOperationException("This development card type cannot be manually played.");
+        }
+
+        player.removeDevCard(cardToPlay);
+        player.setHasPlayedDevCardThisTurn(true);
+    }
+
+    public void updateLargestArmyPlayer() {
+        Player currentContender = largestArmyPlayer;
+        int maxKnights = largestArmySize;
+
+        for (Player p : players) {
+            if (p.getPlayedKnightCount() > maxKnights) {
+                maxKnights = p.getPlayedKnightCount();
+                currentContender = p;
+            }
+        }
+
+        if (currentContender != largestArmyPlayer) {
+            if (largestArmyPlayer != null) {
+                largestArmyPlayer.setHasLargestArmy(false);
+            }
+
+            largestArmyPlayer = currentContender;
+            largestArmySize = maxKnights;
+
+            largestArmyPlayer.setHasLargestArmy(true);
+        }
+    }
+
+    private Player findPlayerById(int id) {
+        return this.players.stream()
+                .filter(p -> p.getId() == id)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Player not found with ID: " + id));
+    }
+
+    public Player findPlayerByName(String name) {
+        return this.players.stream()
+                .filter(p -> p.getName().equalsIgnoreCase(name))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Player not found with name: " + name));
     }
 
     public int calculateLongestRoad(Player player) {
