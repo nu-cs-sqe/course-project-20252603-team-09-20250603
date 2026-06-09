@@ -33,6 +33,10 @@ public class TradeManager {
             Map<ResourceType, Integer> offeredResources,
             Map<ResourceType, Integer> requestedResources
     ) {
+        if (offeringPlayer == receivingPlayer) {
+            throw new IllegalActionException("Cannot trade with yourself.");
+        }
+
         if (!offeringPlayer.hasResources(offeredResources)
                 || !receivingPlayer.hasResources(requestedResources)) {
             throw new IllegalActionException("One or both players do not have the required resources.");

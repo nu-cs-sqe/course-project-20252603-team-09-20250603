@@ -231,4 +231,29 @@ public class TradeManagerTests {
 
         EasyMock.verify(offeringPlayer, receivingPlayer);
     }
+
+
+    @Test
+    void tradeWithPlayer_SamePlayerForBothSides_ThrowsIllegalActionException() {
+        Player player = EasyMock.createMock(Player.class);
+        TradeManager tradeManager = new TradeManager();
+
+        Map<ResourceType, Integer> offeredResources = new HashMap<>();
+        offeredResources.put(ResourceType.WOOD, 1);
+
+        Map<ResourceType, Integer> requestedResources = new HashMap<>();
+        requestedResources.put(ResourceType.BRICK, 1);
+
+        EasyMock.replay(player);
+
+        assertThrows(IllegalActionException.class,
+                () -> tradeManager.tradeWithPlayer(
+                        player,
+                        player,
+                        offeredResources,
+                        requestedResources
+                ));
+
+        EasyMock.verify(player);
+    }
 }
