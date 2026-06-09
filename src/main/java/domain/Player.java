@@ -3,6 +3,10 @@ package domain;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class Player {
     private final int id;
     private final String name;
@@ -122,6 +126,38 @@ public class Player {
         }
 
         return true;
+    }
+
+    public ResourceType removeRandomCard() {
+        List<ResourceType> cards = new ArrayList<>();
+
+        for (Map.Entry<ResourceType, Integer> entry : resourceHand.entrySet()) {
+            ResourceType resource = entry.getKey();
+            int amount = entry.getValue();
+
+            if (resource != ResourceType.DESERT) {
+                for (int i = 0; i < amount; i++) {
+                    cards.add(resource);
+                }
+            }
+        }
+
+        if (cards.isEmpty()) {
+            throw new IllegalStateException("Player has no resource cards.");
+        }
+
+        Random random = new Random();
+        int randomIndex = random.nextInt(cards.size());
+
+        ResourceType removedResource = cards.get(randomIndex);
+
+        resourceHand.put(removedResource, resourceHand.get(removedResource) - 1);
+
+        if (resourceHand.get(removedResource) == 0) {
+            resourceHand.remove(removedResource);
+        }
+
+        return removedResource;
     }
 
 

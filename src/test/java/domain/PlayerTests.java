@@ -645,6 +645,15 @@ public class PlayerTests {
         assertEquals(0, player.getVictoryPoints());
     }
 
+    @Test
+    public void removeRandomCard_emptyHand_throwsIllegalStateException() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        assertThrows(IllegalStateException.class, player::removeRandomCard);
+    }
+
+
+
 
 
 }
