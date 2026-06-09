@@ -179,6 +179,25 @@ public class Game {
         }
     }
 
+    public void handleMoveRobberLocation(int newHexId) {
+
+        Hex newHex = board.getHex(newHexId);
+
+        if (newHex == null){
+            throw new IllegalArgumentException("Selected hex does not exist.");
+        }
+
+        if (newHex.getHasRobber()) {
+            throw new IllegalStateException("Selected hex already has the robber.");
+        }
+
+        for (Hex hex : board.getHexes()) {
+            hex.setHasRobber(false);
+        }
+
+        newHex.setHasRobber(true);
+    }
+  
     public void handleMoveRobber(int roll, int newHexId, int activePlayerId, int victimId) {
         if (roll != 7){
             return;

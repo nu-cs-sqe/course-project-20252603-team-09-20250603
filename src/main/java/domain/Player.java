@@ -2,6 +2,10 @@ package domain;
 
 import java.util.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class Player {
     private final int id;
     private final String name;
@@ -13,6 +17,7 @@ public class Player {
     private boolean hasLargestArmy;
     private int playedKnightCount = 0;
     private boolean hasPlayedDevCardThisTurn = false;
+    private final Random random;
 
     public Player(int id, String name, PlayerColor color){
         this.id = id;
@@ -25,6 +30,7 @@ public class Player {
         this.victoryPoints = 0;
         this.devHand = new ArrayList<>();
         this.resourceHand = new HashMap<>();
+        this.random = new Random();
     }
 
     public int getId() {
@@ -142,6 +148,46 @@ public class Player {
         return true;
     }
 
+    public ResourceType removeRandomCard() {
+        List<ResourceType> cards = new ArrayList<>();
+
+        for (Map.Entry<ResourceType, Integer> entry : resourceHand.entrySet()) {
+            ResourceType resource = entry.getKey();
+            int amount = entry.getValue();
+
+            if (resource != ResourceType.DESERT) {
+                for (int i = 0; i < amount; i++) {
+                    cards.add(resource);
+                }
+            }
+        }
+
+        if (cards.isEmpty()) {
+            throw new IllegalStateException("Player has no resource cards.");
+        }
+
+        int randomIndex = random.nextInt(cards.size());
+
+        ResourceType removedResource = cards.get(randomIndex);
+
+        resourceHand.put(removedResource, resourceHand.get(removedResource) - 1);
+
+        if (resourceHand.get(removedResource) == 0) {
+            resourceHand.remove(removedResource);
+        }
+
+        return removedResource;
+    }
+
+    public boolean hasMoreThanSevenResources() {
+        int totalResources = 0;
+
+        for (int amount : resourceHand.values()) {
+            totalResources += amount;
+        }
+
+        return totalResources > 7;
+    }
     public List<DevCard> getDevCardHand() { return Collections.unmodifiableList(new ArrayList<>(this.devHand)); }
 
     public void removeDevCard(DevCard devCard) {

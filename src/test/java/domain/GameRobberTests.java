@@ -135,6 +135,74 @@ public class GameRobberTests {
         assertTrue(board.getHex(9).getHasRobber());
         assertFalse(board.getHex(0).getHasRobber());
     }
+  
+    @Test
+    void handleMoveRobberLocation_RobberStillOnDesert_MovesRobber() {
+        Board board = new Board();
+        Player player1 = new Player(0, "Bob", PlayerColor.RED);
+        Game game = new Game(board, List.of(player1), new Dice(new Random()), new TurnManager(1));
+
+        game.handleMoveRobberLocation( 1);
+
+        assertTrue(board.getHex(1).getHasRobber());
+
+    }
+
+    @Test
+    void handleMoveRobberLocation_RobberStartsOnOneHex_MovesRobberToNewHex() {
+        Board board = new Board();
+        Player player1 = new Player(0, "Bob", PlayerColor.RED);
+        Game game = new Game(board, List.of(player1), new Dice(new Random()), new TurnManager(1));
+
+        board.getHex(1).setHasRobber(true);
+        game.handleMoveRobberLocation(2);
+
+        assertFalse(board.getHex(1).getHasRobber());
+        assertTrue(board.getHex(2).getHasRobber());
+
+    }
+
+    @Test
+    void handleMoveRobberLocation_SelectedHexAlreadyHasRobber_ThrowsException() {
+        Board board = new Board();
+        Player player1 = new Player(0, "Bob", PlayerColor.RED);
+        Game game = new Game(board, List.of(player1), new Dice(new Random()), new TurnManager(1));
+
+        // The robber starts on the desert (hex 9); moving it onto its own hex is illegal.
+         assertThrows(IllegalStateException.class, () -> {
+             game.handleMoveRobberLocation( 9);
+         });
+
+        assertTrue(board.getHex(9).getHasRobber());
+        assertEquals(1, countRobberHexes(board));
+
+    }
+
+    @Test
+    void handleMoveRobberLocation_RobberValidMove_EnsureOnlyOneHexHasRobberAfterMove() {
+        Board board = new Board();
+        Player player1 = new Player(0, "Bob", PlayerColor.RED);
+        Game game = new Game(board, List.of(player1), new Dice(new Random()), new TurnManager(1));
+
+        board.getHex(1).setHasRobber(true);
+
+        game.handleMoveRobberLocation(2);
+
+        assertEquals(1, countRobberHexes(board));
+
+    }
+
+    @Test
+    void handleMoveRobberLocation_RollIsSevenButInvalidHexId_ThrowsException() {
+        Board board = new Board();
+        Player player1 = new Player(0, "Bob", PlayerColor.RED);
+        Game game = new Game(board, List.of(player1), new Dice(new Random()), new TurnManager(1));
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            game.handleMoveRobberLocation(999);
+        });
+
+    }
 
     private int countRobberHexes(Board board) {
         int robberCount = 0;
