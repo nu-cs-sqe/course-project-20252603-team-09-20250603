@@ -33,6 +33,18 @@ public class TradeManager {
             Map<ResourceType, Integer> offeredResources,
             Map<ResourceType, Integer> requestedResources
     ) {
+        for (Integer amount : offeredResources.values()) {
+            if (amount <= 0) {
+                throw new IllegalArgumentException("Offered resource quantities must be positive.");
+            }
+        }
+
+        for (Integer amount : requestedResources.values()) {
+            if (amount <= 0) {
+                throw new IllegalArgumentException("Requested resource quantities must be positive.");
+            }
+        }
+
         if (offeringPlayer == receivingPlayer) {
             throw new IllegalActionException("Cannot trade with yourself.");
         }
