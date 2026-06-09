@@ -26,4 +26,21 @@ public class TradeManager {
         gain.put(receiveResource, 1);
         player.addResources(gain);
     }
+
+    public void tradeWithPlayer(
+            Player offeringPlayer,
+            Player receivingPlayer,
+            Map<ResourceType, Integer> offeredResources,
+            Map<ResourceType, Integer> requestedResources
+    ) {
+        if (!offeringPlayer.hasResources(offeredResources)
+                || !receivingPlayer.hasResources(requestedResources)) {
+            throw new IllegalActionException("One or both players do not have the required resources.");
+        }
+
+        offeringPlayer.useResources(offeredResources);
+        receivingPlayer.useResources(requestedResources);
+        offeringPlayer.addResources(requestedResources);
+        receivingPlayer.addResources(offeredResources);
+    }
 }

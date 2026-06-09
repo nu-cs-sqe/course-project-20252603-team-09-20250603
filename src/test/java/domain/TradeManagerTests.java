@@ -102,4 +102,40 @@ public class TradeManagerTests {
 
         EasyMock.verify(mockPlayer);
     }
+
+    @Test
+    void tradeWithPlayer_TwoPlayersTradeOneForOne_WithExactResources() {
+        Player offeringPlayer = EasyMock.createMock(Player.class);
+        Player receivingPlayer = EasyMock.createMock(Player.class);
+        TradeManager tradeManager = new TradeManager();
+
+        Map<ResourceType, Integer> offeredResources = new HashMap<>();
+        offeredResources.put(ResourceType.WOOD, 1);
+
+        Map<ResourceType, Integer> requestedResources = new HashMap<>();
+        requestedResources.put(ResourceType.BRICK, 1);
+
+        EasyMock.expect(offeringPlayer.hasResources(offeredResources)).andReturn(true);
+        EasyMock.expect(receivingPlayer.hasResources(requestedResources)).andReturn(true);
+
+        offeringPlayer.useResources(offeredResources);
+        EasyMock.expectLastCall().once();
+        receivingPlayer.useResources(requestedResources);
+        EasyMock.expectLastCall().once();
+        offeringPlayer.addResources(requestedResources);
+        EasyMock.expectLastCall().once();
+        receivingPlayer.addResources(offeredResources);
+        EasyMock.expectLastCall().once();
+
+        EasyMock.replay(offeringPlayer, receivingPlayer);
+
+        tradeManager.tradeWithPlayer(
+                offeringPlayer,
+                receivingPlayer,
+                offeredResources,
+                requestedResources
+        );
+
+        EasyMock.verify(offeringPlayer, receivingPlayer);
+    }
 }
