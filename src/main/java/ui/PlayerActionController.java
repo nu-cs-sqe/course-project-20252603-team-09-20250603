@@ -1,5 +1,7 @@
 package ui;
 
+import domain.DevCard;
+import domain.DevCardType;
 import domain.Game;
 import domain.InfraType;
 import domain.Player;
@@ -82,7 +84,7 @@ public class PlayerActionController {
                 }
                 break;
             case BUY_DEV_CARD:
-                // TODO: implement later
+                buyDevCard();
                 break;
             case USE_DEV_CARD:
                 // TODO: implement later
@@ -97,6 +99,53 @@ public class PlayerActionController {
                 break;
             default:
                 break;
+        }
+    }
+
+    private void buyDevCard() {
+        Player currentPlayer = getCurrentPlayer();
+        if (currentPlayer == null) {
+            return;
+        }
+
+        try {
+            game.drawDevCard(currentPlayer.getId());
+
+            List<DevCard> hand = currentPlayer.getDevCardHand();
+            DevCard drawn = hand.get(hand.size() - 1);
+
+            if (boardController != null) {
+                boardController.setStatusMessage(
+                        currentPlayer.getName() + " bought a development card.");
+            }
+            if (view != null) {
+                view.showSuccess("You drew a " + formatDevCardType(drawn.getType()) + " card!");
+            }
+            if (statsController != null) {
+                statsController.updateStats();
+            }
+            update();
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            if (view != null) {
+                view.showError(e.getMessage());
+            }
+        }
+    }
+
+    private String formatDevCardType(DevCardType type) {
+        switch (type) {
+            case KNIGHT:
+                return "Knight";
+            case ROAD_BUILDING:
+                return "Road Building";
+            case YEAR_OF_PLENTY:
+                return "Year of Plenty";
+            case MONOPOLY:
+                return "Monopoly";
+            case VICTORY_POINT:
+                return "Victory Point";
+            default:
+                return type.name();
         }
     }
 
