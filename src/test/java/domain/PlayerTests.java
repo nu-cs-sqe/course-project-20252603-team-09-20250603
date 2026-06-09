@@ -753,6 +753,17 @@ public class PlayerTests {
         assertEquals(2, totalCards);
     }
 
+    @Test
+    public void removeRandomCard_desertOnly_throwsIllegalStateException() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.DESERT, 1);
+        player.addResources(resources);
+
+        assertThrows(IllegalStateException.class, player::removeRandomCard);
+    }
+
 
 
 
