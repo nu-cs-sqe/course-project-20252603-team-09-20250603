@@ -735,6 +735,23 @@ public class PlayerTests {
         assertTrue(resources.containsKey(removed));
     }
 
+    @Test
+    public void removeRandomCard_multipleCards_decreasesTotalCardCountByOne() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WOOD, 2);
+        resources.put(ResourceType.BRICK, 1);
+        player.addResources(resources);
+
+        player.removeRandomCard();
+
+        int totalCards =
+                player.getResources().getOrDefault(ResourceType.WOOD, 0)
+                        + player.getResources().getOrDefault(ResourceType.BRICK, 0);
+
+        assertEquals(2, totalCards);
+    }
 
 
 
