@@ -71,20 +71,25 @@
 
 # Week 10 (06/02/2026-06/08/2026)
 1. [Done] All: weekly meeting
-2. [0%] Aria: Review handleDistributeResources PR - by EOD Saturday
-3. [50%] Ben: merge devCard PR - by EOD Saturday
-4. [0%] Crystal: review handleInitialPlacement PR and merge to main - by EOD Saturday
-5. [0%] Aria: dice roll + distribute resources - Monday
-8. [0%] Chloe: game end condition - Monday
-9. [0%] Ben: finish i18n once UI finalized - Monday
-10. [50%] Alicia: finish all robber logic - stealing random card, cutting resources in half when >=7, updating Crystal moveRobber function - Monday
-11. [90%] Chloe/Crystal: mutation testing and code coverage - Wednesday
-12. [0%] Ben: update build integration testing to be linked to PlayerActionController GUI instead of GameController scanner - Wednesday
+3. [90%] Alicia: finish all robber logic - stealing random card, cutting resources in half when >=7, updating Crystal moveRobber function - EOD Monday
+4. [90%] Crystal: review handleInitialPlacement PR and merge to main - by EOD Monday
+6. [0%] Chloe: game end condition + integrate longest road to UI (add badge to player state card for the person w/ the longest road) - Tuesday
+7. [80%] Ben: finalize PlacementValidator - Tuesday
+8. [0%] Aria: finish i18n once UI finalized - Tuesday
+9. [0%] Alicia: clean up the codebase - delete extraneous comments if any - Tuesday
+10. [90%] Ben: update build integration testing to be linked to PlayerActionController GUI instead of GameController scanner - Tuesday
+11. [0%] Team: update readme - notes about code coverage (getters/setters), notes about missing features (trade w/ players and bank, ports), etc. - Wednesday
+12. [90%] Chloe/Crystal: mutation testing and code coverage - Wednesday
 13. [100%] Ben: fix PlacementValidator, verify TurnManager accuracy
-15. [100%] Ben: handleInitialPlacement written
-16. [100%] Aria: getPlayerAction
-17. [100%] Chloe: points for largestArmy (# knights)
-18. [100%] Crystal: updatePlayerPoints for longestRoad
-19. [100%] Alicia: handleDistributeResources on roll - by Saturday
-20. [100%] Ben: integration testing for handleInitialPlacement - by Saturday
-21. [100%] Ben/Aria: UI v2 PR merged into get-player-action, then merge get-player-action to main - by Saturday
+14. [100%] Ben: handleInitialPlacement written
+15. [100%] Aria: getPlayerAction
+16. [100%] Chloe: points for largestArmy (# knights)
+17. [100%] Crystal: updatePlayerPoints for longestRoad
+18. [100%] Alicia: handleDistributeResources on roll - by Saturday
+19. [100%] Ben: integration testing for handleInitialPlacement - by Saturday
+20. [100%] Ben/Aria: UI v2 PR merged into get-player-action, then merge get-player-action to main - by Saturday
+21. [100%] Aria: Review handleDistributeResources PR - by EOD Saturday
+22. [100%] Aria: dice roll + distribute resources - Monday
+23. [100%] Aria: add cities to UI
+24. [100%] Ben: merge devCard PR - Monday
+25. [100%] Crystal: post on EdStem to Prof. Yiji/TAs about the TDD stuff w/ ss of her notes - EOD Monday
