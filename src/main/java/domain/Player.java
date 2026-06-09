@@ -160,5 +160,15 @@ public class Player {
         return removedResource;
     }
 
+    public boolean hasMoreThanSevenResources() {
+        int totalResources = 0;
+
+        for (int amount : resourceHand.values()) {
+            totalResources += amount;
+        }
+
+        return totalResources > 7;
+    }
+
 
 }

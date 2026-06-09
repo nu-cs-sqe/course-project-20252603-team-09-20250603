@@ -792,6 +792,54 @@ public class PlayerTests {
         assertTrue(player.getResources().isEmpty());
     }
 
+    @Test
+    public void hasMoreThanSevenResources_emptyHand_returnsFalse() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        assertFalse(player.hasMoreThanSevenResources());
+    }
+
+    @Test
+    public void hasMoreThanSevenResources_sevenResources_returnsFalse() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WOOD, 4);
+        resources.put(ResourceType.BRICK, 3);
+
+        player.addResources(resources);
+
+        assertFalse(player.hasMoreThanSevenResources());
+    }
+
+    @Test
+    public void hasMoreThanSevenResources_eightResources_returnsTrue() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WOOD, 5);
+        resources.put(ResourceType.BRICK, 3);
+
+        player.addResources(resources);
+
+        assertTrue(player.hasMoreThanSevenResources());
+    }
+
+    @Test
+    public void hasMoreThanSevenResources_multipleResourceTypesOverSeven_returnsTrue() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WOOD, 2);
+        resources.put(ResourceType.BRICK, 2);
+        resources.put(ResourceType.WHEAT, 2);
+        resources.put(ResourceType.ORE, 2);
+
+        player.addResources(resources);
+
+        assertTrue(player.hasMoreThanSevenResources());
+    }
+
 
 
 
