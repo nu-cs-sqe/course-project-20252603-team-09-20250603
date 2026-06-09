@@ -186,6 +186,7 @@ public class Player {
         }
 
         return totalResources > 7;
+    }
     public List<DevCard> getDevCardHand() { return Collections.unmodifiableList(new ArrayList<>(this.devHand)); }
 
     public void removeDevCard(DevCard devCard) {
