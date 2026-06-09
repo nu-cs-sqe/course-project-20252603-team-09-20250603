@@ -1,20 +1,27 @@
 package ui;
 
+import domain.DevCardType;
 import domain.InfraType;
 import domain.Player;
 import domain.PlayerAction;
+import domain.ResourceType;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 public class PlayerActionView extends VBox {
     private final List<Player> players;
     private PlayerActionController controller;
     private Button selectedInfraButton = null;
+    private Button selectedDevCardButton = null;
 
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public PlayerActionView(List<Player> players) {
@@ -157,6 +164,88 @@ public class PlayerActionView extends VBox {
         );
     }
 
+    public void renderUseDevCardMenu(Player player, Map<DevCardType, Integer> cardCounts) {
+        getChildren().clear();
+        selectedInfraButton = null;
+        selectedDevCardButton = null;
+
+        Label title = new Label("Use Development Card");
+        title.getStyleClass().add("action-title");
+
+        Label playerTurn = new Label(player.getName() + "'s Turn");
+        playerTurn.getStyleClass().add("player-turn-label");
+        playerTurn.setStyle("-fx-text-fill: " + mapColorToHex(player.getColor().name()) + ";");
+
+        Label prompt = new Label("Select a development card, then press Use.");
+        prompt.getStyleClass().add("build-prompt-label");
+        prompt.setWrapText(true);
+
+        getChildren().addAll(title, playerTurn, prompt);
+
+        for (DevCardType type : DevCardType.values()) {
+            int count = cardCounts.getOrDefault(type, 0);
+            if (count > 0) {
+                getChildren().add(createDevCardButton(type, count));
+            }
+        }
+
+        Button useButton = new Button("Use");
+        useButton.getStyleClass().addAll("action-button", "confirm-button");
+        useButton.setMaxWidth(Double.MAX_VALUE);
+        useButton.setOnAction(e -> {
+            if (controller != null) {
+                controller.onUseDevCardConfirmed();
+            }
+        });
+
+        Button cancelButton = new Button("Cancel");
+        cancelButton.getStyleClass().addAll("action-button", "cancel-button");
+        cancelButton.setMaxWidth(Double.MAX_VALUE);
+        cancelButton.setOnAction(e -> {
+            if (controller != null) {
+                controller.onUseDevCardCanceled();
+            }
+        });
+
+        getChildren().addAll(useButton, cancelButton);
+    }
+
+    /** Prompts for a single non-desert resource. Empty if the player cancels. */
+    public Optional<ResourceType> promptResource(String header) {
+        List<ResourceType> choices = playableResources();
+        ChoiceDialog<ResourceType> dialog = new ChoiceDialog<>(choices.get(0), choices);
+        dialog.setTitle("Choose Resource");
+        dialog.setHeaderText(header);
+        dialog.setContentText("Resource:");
+        return dialog.showAndWait();
+    }
+
+    /** Prompts for which player to steal from. Empty if the player cancels. */
+    public Optional<Player> promptVictim(List<Player> candidates) {
+        Map<String, Player> byLabel = new LinkedHashMap<>();
+        for (Player candidate : candidates) {
+            byLabel.put(candidate.getName() + " (" + candidate.getColor() + ")", candidate);
+        }
+
+        List<String> labels = new ArrayList<>(byLabel.keySet());
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(labels.get(0), labels);
+        dialog.setTitle("Steal From");
+        dialog.setHeaderText("Choose a player to steal from");
+        dialog.setContentText("Victim:");
+
+        return dialog.showAndWait().map(byLabel::get);
+    }
+
+    private List<ResourceType> playableResources() {
+        List<ResourceType> choices = new ArrayList<>();
+        for (ResourceType resource : ResourceType.values()) {
+            if (resource != ResourceType.DESERT) {
+                choices.add(resource);
+            }
+        }
+        return choices;
+    }
+
     public void onBuildTypeSelected(InfraType infraType) {
         if (infraType == null) {
             return;
@@ -215,6 +304,46 @@ public class PlayerActionView extends VBox {
         selectedInfraButton = button;
         if (!selectedInfraButton.getStyleClass().contains("selected-infra-button")) {
             selectedInfraButton.getStyleClass().add("selected-infra-button");
+        }
+    }
+
+    private Button createDevCardButton(DevCardType type, int count) {
+        Button button = new Button(formatDevCardLabel(type) + "  x" + count);
+        button.getStyleClass().add("action-button");
+        button.setMaxWidth(Double.MAX_VALUE);
+        button.setOnAction(e -> {
+            if (controller != null) {
+                selectDevCardButton(button);
+                controller.onDevCardTypeSelected(type);
+            }
+        });
+        return button;
+    }
+
+    private void selectDevCardButton(Button button) {
+        if (selectedDevCardButton != null) {
+            selectedDevCardButton.getStyleClass().remove("selected-infra-button");
+        }
+        selectedDevCardButton = button;
+        if (!selectedDevCardButton.getStyleClass().contains("selected-infra-button")) {
+            selectedDevCardButton.getStyleClass().add("selected-infra-button");
+        }
+    }
+
+    private String formatDevCardLabel(DevCardType type) {
+        switch (type) {
+            case KNIGHT:
+                return "Knight";
+            case ROAD_BUILDING:
+                return "Road Building";
+            case YEAR_OF_PLENTY:
+                return "Year of Plenty";
+            case MONOPOLY:
+                return "Monopoly";
+            case VICTORY_POINT:
+                return "Victory Point";
+            default:
+                return type.name();
         }
     }
 
