@@ -37,7 +37,7 @@ public class TradeManager {
             throw new IllegalActionException("Cannot offer nothing for trade.");
         }
 
-        if (requestedResources.isEmpty()) {
+        if (requestedResources == null || requestedResources.isEmpty()) {
             throw new IllegalActionException("Cannot request nothing for trade.");
         }
 
