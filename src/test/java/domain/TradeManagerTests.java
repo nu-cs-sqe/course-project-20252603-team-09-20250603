@@ -56,4 +56,22 @@ public class TradeManagerTests {
 
         EasyMock.verify(mockPlayer);
     }
+
+    @Test
+    void tradeWithBank_PlayerHasThreeWheat_ThrowsIllegalActionException() {
+        Player mockPlayer = EasyMock.createMock(Player.class);
+        TradeManager tradeManager = new TradeManager();
+
+        Map<ResourceType, Integer> cost = new HashMap<>();
+        cost.put(ResourceType.WHEAT, 4);
+
+        EasyMock.expect(mockPlayer.hasResources(cost)).andReturn(false);
+
+        EasyMock.replay(mockPlayer);
+
+        assertThrows(IllegalActionException.class,
+                () -> tradeManager.tradeWithBank(mockPlayer, ResourceType.WHEAT, ResourceType.WOOD));
+
+        EasyMock.verify(mockPlayer);
+    }
 }
