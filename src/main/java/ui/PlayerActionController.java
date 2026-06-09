@@ -110,9 +110,6 @@ public class PlayerActionController {
             case USE_DEV_CARD:
                 // TODO: implement later
                 break;
-            case TRADE:
-                // TODO: implement later
-                break;
             case END_TURN:
                 advanceNormalPlayTurn();
                 clearBuildState();
