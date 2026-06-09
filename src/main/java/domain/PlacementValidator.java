@@ -13,7 +13,7 @@ public class PlacementValidator {
     }
 
     public void validateSettlementPlacement(Node targetNode) throws IllegalPlacementException {
-        // 1. Check that the node is not occupied - cannot occupy an already built upon node
+
         if (targetNode.getNodeOccupant() != null) {
             throw new IllegalPlacementException("Node already occupied.");
         }
