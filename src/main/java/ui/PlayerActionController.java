@@ -1,13 +1,20 @@
 package ui;
 
+import domain.DevCard;
+import domain.DevCardType;
 import domain.Game;
+import domain.IllegalActionException;
 import domain.InfraType;
 import domain.Player;
 import domain.PlayerAction;
+import domain.ResourceType;
 import domain.TurnManager;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class PlayerActionController {
     public enum LocationType {
@@ -30,6 +37,8 @@ public class PlayerActionController {
     private int selectedLocationId = -1;
     private LocationType selectedLocationType = null;
     private InfraType selectedBuildType = null;
+    private DevCardType selectedDevCardType = null;
+    private boolean awaitingKnightHex = false;
 
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public PlayerActionController(List<Player> players, Game game, TurnManager turnManager) {
@@ -95,6 +104,8 @@ public class PlayerActionController {
             return;
         }
 
+        awaitingKnightHex = false;
+
         switch (action) {
             case BUILD:
                 clearBuildState();
@@ -103,13 +114,10 @@ public class PlayerActionController {
                 }
                 break;
             case BUY_DEV_CARD:
-                // TODO: implement later
+                buyDevCard();
                 break;
             case USE_DEV_CARD:
-                // TODO: implement later
-                break;
-            case TRADE:
-                // TODO: implement later
+                openUseDevCardMenu();
                 break;
             case END_TURN:
                 advanceNormalPlayTurn();
@@ -119,6 +127,233 @@ public class PlayerActionController {
             default:
                 break;
         }
+    }
+
+    private void buyDevCard() {
+        Player currentPlayer = getCurrentPlayer();
+        if (currentPlayer == null) {
+            return;
+        }
+
+        try {
+            game.drawDevCard(currentPlayer.getId());
+
+            List<DevCard> hand = currentPlayer.getDevCardHand();
+            DevCard drawn = hand.get(hand.size() - 1);
+
+            if (boardController != null) {
+                boardController.setStatusMessage(
+                        currentPlayer.getName() + " bought a development card.");
+            }
+            if (view != null) {
+                view.showSuccess("You drew a " + formatDevCardType(drawn.getType()) + " card!");
+            }
+            if (statsController != null) {
+                statsController.updateStats();
+            }
+            update();
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            if (view != null) {
+                view.showError(e.getMessage());
+            }
+        }
+    }
+
+    private String formatDevCardType(DevCardType type) {
+        switch (type) {
+            case KNIGHT:
+                return "Knight";
+            case ROAD_BUILDING:
+                return "Road Building";
+            case YEAR_OF_PLENTY:
+                return "Year of Plenty";
+            case MONOPOLY:
+                return "Monopoly";
+            case VICTORY_POINT:
+                return "Victory Point";
+            default:
+                return type.name();
+        }
+    }
+
+    private void openUseDevCardMenu() {
+        Player currentPlayer = getCurrentPlayer();
+        if (currentPlayer == null) {
+            return;
+        }
+
+        Map<DevCardType, Integer> counts = countDevCards(currentPlayer);
+        if (counts.isEmpty()) {
+            if (view != null) {
+                view.showError("You have no development cards to use.");
+            }
+            return;
+        }
+
+        selectedDevCardType = null;
+        awaitingKnightHex = false;
+        if (view != null) {
+            view.renderUseDevCardMenu(currentPlayer, counts);
+        }
+    }
+
+    private Map<DevCardType, Integer> countDevCards(Player player) {
+        Map<DevCardType, Integer> counts = new EnumMap<>(DevCardType.class);
+        for (DevCard card : player.getDevCardHand()) {
+            counts.merge(card.getType(), 1, Integer::sum);
+        }
+        return counts;
+    }
+
+    public void onDevCardTypeSelected(DevCardType type) {
+        selectedDevCardType = type;
+    }
+
+    public void onUseDevCardCanceled() {
+        selectedDevCardType = null;
+        awaitingKnightHex = false;
+        update();
+    }
+
+    public void onUseDevCardConfirmed() {
+        if (selectedDevCardType == null) {
+            if (view != null) {
+                view.showError("Select a development card to use first.");
+            }
+            return;
+        }
+
+        switch (selectedDevCardType) {
+            case ROAD_BUILDING:
+                executeUseDevCard(DevCardType.ROAD_BUILDING, -1, -1, null, null, null, "Road Building played.");
+                break;
+            case YEAR_OF_PLENTY:
+                playYearOfPlenty();
+                break;
+            case MONOPOLY:
+                playMonopoly();
+                break;
+            case KNIGHT:
+                startKnightTargeting();
+                break;
+            case VICTORY_POINT:
+                if (view != null) {
+                    view.showSuccess("Victory Point cards are scored automatically and cannot be played.");
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void playYearOfPlenty() {
+        if (view == null) {
+            return;
+        }
+
+        Optional<ResourceType> first = view.promptResource("Year of Plenty: choose the first resource");
+        if (first.isEmpty()) {
+            update();
+            return;
+        }
+
+        Optional<ResourceType> second = view.promptResource("Year of Plenty: choose the second resource");
+        if (second.isEmpty()) {
+            update();
+            return;
+        }
+
+        executeUseDevCard(DevCardType.YEAR_OF_PLENTY, -1, -1, first.get(), second.get(), null,
+                "Year of Plenty played.");
+    }
+
+    private void playMonopoly() {
+        if (view == null) {
+            return;
+        }
+
+        Optional<ResourceType> choice = view.promptResource("Monopoly: choose a resource to take from all opponents");
+        if (choice.isEmpty()) {
+            update();
+            return;
+        }
+
+        executeUseDevCard(DevCardType.MONOPOLY, -1, -1, null, null, choice.get(), "Monopoly played.");
+    }
+
+    private void startKnightTargeting() {
+        awaitingKnightHex = true;
+        if (boardController != null) {
+            boardController.setStatusMessage("Knight: click a hex on the board to move the robber.");
+        }
+        update();
+    }
+
+    public void onHexSelected(int hexId) {
+        if (!awaitingKnightHex) {
+            return;
+        }
+        awaitingKnightHex = false;
+
+        Player currentPlayer = getCurrentPlayer();
+        if (currentPlayer == null) {
+            return;
+        }
+
+        List<Player> candidates = new ArrayList<>();
+        for (Player occupant : game.getBoard().getPlayersOnHex(hexId)) {
+            if (occupant.getId() != currentPlayer.getId()) {
+                candidates.add(occupant);
+            }
+        }
+
+        int victimId = -1;
+        if (candidates.size() == 1) {
+            victimId = candidates.get(0).getId();
+        } else if (candidates.size() > 1 && view != null) {
+            Optional<Player> chosen = view.promptVictim(candidates);
+            if (chosen.isEmpty()) {
+                if (boardController != null) {
+                    boardController.setStatusMessage("Knight canceled.");
+                }
+                update();
+                return;
+            }
+            victimId = chosen.get().getId();
+        }
+
+        executeUseDevCard(DevCardType.KNIGHT, hexId, victimId, null, null, null, "Knight played.");
+    }
+
+    private void executeUseDevCard(DevCardType type, int hexId, int victimId,
+                                   ResourceType choice1, ResourceType choice2, ResourceType targetType,
+                                   String successMessage) {
+        Player currentPlayer = getCurrentPlayer();
+        if (currentPlayer == null) {
+            return;
+        }
+
+        try {
+            game.useDevCard(currentPlayer.getId(), type, hexId, victimId, choice1, choice2, targetType);
+            if (boardController != null) {
+                boardController.refreshBoard();
+                boardController.setStatusMessage(currentPlayer.getName() + " played " + formatDevCardType(type) + ".");
+            }
+            if (view != null) {
+                view.showSuccess(successMessage);
+            }
+            if (statsController != null) {
+                statsController.updateStats();
+            }
+        } catch (IllegalActionException | IllegalArgumentException | IllegalStateException e) {
+            if (view != null) {
+                view.showError(e.getMessage());
+            }
+        }
+
+        selectedDevCardType = null;
+        awaitingKnightHex = false;
+        update();
     }
 
     public void onBuildTypeSelected(InfraType infraType) {
@@ -301,6 +536,9 @@ public class PlayerActionController {
             rollingForTurn = false;
             return;
         }
+
+        // Activate dev cards bought on previous turns and reset the once-per-turn limit.
+        currentPlayer.manageDevCardActivation(currentPlayer.getId());
 
         if (boardController != null) {
             boardController.setStatusMessage(currentPlayer.getName() + "'s turn. Rolling dice...");

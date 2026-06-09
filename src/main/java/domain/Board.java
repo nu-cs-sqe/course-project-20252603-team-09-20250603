@@ -1,6 +1,7 @@
 package domain;
 
 import java.util.*;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class Board {
 
@@ -14,7 +15,18 @@ public class Board {
     private Map<Node, List<Hex>> nodeToHexes;
     private Map<Hex, List<Node>> hexToNodes;
 
+    private final Random random;
+
     public Board() {
+        this(new Random());
+    }
+
+    @SuppressFBWarnings(
+            value = "EI_EXPOSE_REP2",
+            justification = "Board intentionally shares the caller's Random so steals can be seeded deterministically in tests."
+    )
+    public Board(Random random) {
+        this.random = random;
         this.hexes = new ArrayList<>();
         this.nodes = new ArrayList<>();
         this.edges = new ArrayList<>();
@@ -306,6 +318,87 @@ public class Board {
         return List.copyOf(edges);
     }
 
+    public void moveRobber(Player player, int targetHexId) {
+        Hex targetHex = getHex(targetHexId);
+
+        if (targetHex.getHasRobber()) {
+            throw new IllegalStateException("Selected hex already has the robber.");
+        }
+
+        for (Hex hex : hexes) {
+            hex.setHasRobber(false);
+        }
+
+        targetHex.setHasRobber(true);
+    }
+
+    /**
+     * moves the robber to targetHexId and steals one random resource card from victim.
+     * The victim must own a building on the target hex and cannot be the active player.
+     * Passing null for the victim moves the robber w/o stealing (no opponent borders the hex).
+     */
+    public void moveRobberAndSteal(Player activePlayer, int targetHexId, Player victim) {
+        if (victim != null) {
+            if (victim == activePlayer) {
+                throw new IllegalArgumentException("A player cannot steal from themselves.");
+            }
+            if (!getPlayersOnHex(targetHexId).contains(victim)) {
+                throw new IllegalArgumentException("Cannot steal from a player with no building on the robber's hex.");
+            }
+        }
+
+        moveRobber(activePlayer, targetHexId);
+
+        if (victim != null) {
+            stealRandomResource(activePlayer, victim);
+        }
+    }
+
+    /** Distinct players owning a settlement or city on a node bordering the hex. */
+    public List<Player> getPlayersOnHex(int hexId) {
+        Hex hex = getHex(hexId);
+        List<Player> occupants = new ArrayList<>();
+
+        for (Node node : hexToNodes.get(hex)) {
+            Player occupant = node.getNodeOccupant();
+            if (occupant != null && !occupants.contains(occupant)) {
+                occupants.add(occupant);
+            }
+        }
+
+        return occupants;
+    }
+
+    private void stealRandomResource(Player thief, Player victim) {
+        List<ResourceType> cards = new ArrayList<>();
+        for (Map.Entry<ResourceType, Integer> entry : victim.getResources().entrySet()) {
+            for (int i = 0; i < entry.getValue(); i++) {
+                cards.add(entry.getKey());
+            }
+        }
+
+        if (cards.isEmpty()) {
+            return;
+        }
+
+        ResourceType stolen = cards.get(random.nextInt(cards.size()));
+        Map<ResourceType, Integer> oneCard = new HashMap<>();
+        oneCard.put(stolen, 1);
+
+        victim.useResources(oneCard);
+        thief.addResources(oneCard);
+    }
+
+    public int getRobberHexId() {
+        for (Hex hex : hexes) {
+            if (hex.getHasRobber()) {
+                return hex.getId();
+            }
+        }
+        return -1;
+    }
+
+    public void freeRoads(Player player, int count) {}
     public List<Edge> getEdgesConnectedToNode(Node node) {
         if (node == null) {
             throw new IllegalArgumentException("The node object is null");
