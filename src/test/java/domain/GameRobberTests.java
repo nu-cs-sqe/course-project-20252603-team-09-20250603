@@ -8,18 +8,6 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GameRobberTests {
-    @Test
-    void handleMoveRobber_RollIsNotSeven_DoesNotMoveRobber() {
-        Board board = new Board();
-        Player player1 = new Player(0, "Bob", PlayerColor.RED);
-        Game game = new Game(board, List.of(player1), new Dice(new Random()), new TurnManager(1));
-
-        board.getHex(1).setHasRobber(true);
-        game.handleMoveRobber(6, 2);
-
-        assertTrue(board.getHex(1).getHasRobber());
-        assertFalse(board.getHex(2).getHasRobber());
-    }
 
     @Test
     void handleMoveRobber_RobberStillOnDesert_MovesRobber() {
@@ -27,7 +15,7 @@ public class GameRobberTests {
         Player player1 = new Player(0, "Bob", PlayerColor.RED);
         Game game = new Game(board, List.of(player1), new Dice(new Random()), new TurnManager(1));
 
-        game.handleMoveRobber(7, 1);
+        game.handleMoveRobber( 1);
 
         assertTrue(board.getHex(1).getHasRobber());
 
@@ -40,7 +28,7 @@ public class GameRobberTests {
         Game game = new Game(board, List.of(player1), new Dice(new Random()), new TurnManager(1));
 
         board.getHex(1).setHasRobber(true);
-        game.handleMoveRobber(7, 2);
+        game.handleMoveRobber(2);
 
         assertFalse(board.getHex(1).getHasRobber());
         assertTrue(board.getHex(2).getHasRobber());
@@ -55,7 +43,7 @@ public class GameRobberTests {
 
         // The robber starts on the desert (hex 9); moving it onto its own hex is illegal.
          assertThrows(IllegalStateException.class, () -> {
-             game.handleMoveRobber(7, 9);
+             game.handleMoveRobber( 9);
          });
 
         assertTrue(board.getHex(9).getHasRobber());
@@ -71,7 +59,7 @@ public class GameRobberTests {
 
         board.getHex(1).setHasRobber(true);
 
-        game.handleMoveRobber(7,2);
+        game.handleMoveRobber(2);
 
         assertEquals(1, countRobberHexes(board));
 
@@ -84,7 +72,7 @@ public class GameRobberTests {
         Game game = new Game(board, List.of(player1), new Dice(new Random()), new TurnManager(1));
 
         assertThrows(IllegalArgumentException.class, () -> {
-            game.handleMoveRobber(7, 999);
+            game.handleMoveRobber(999);
         });
 
     }

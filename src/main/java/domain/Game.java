@@ -160,10 +160,7 @@ public class Game {
         }
     }
 
-    public void handleMoveRobber(int roll, int newHexId) {
-        if (roll != 7){
-            return;
-        }
+    public void handleMoveRobber(int newHexId) {
 
         Hex newHex = board.getHex(newHexId);
 
