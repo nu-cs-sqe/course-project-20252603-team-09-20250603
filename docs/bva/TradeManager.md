@@ -28,4 +28,4 @@ Bank conversion ratio is 4:1
 | Test 12   | offeredResources is empty or requestedResources is empty                          | Throws IllegalActionException; resources remain unchanged                             | :x:          |
 | Test 13   | A trade map contains a quantity of 0                                              | Throws IllegalArgumentException; resources remain unchanged                           | :x:          |
 | Test 14   | A trade map contains a negative quantity                                          | Throws IllegalArgumentException; resources remain unchanged                           | :x:          |
-| Test 15   | One trade map is null                                                             | Throws IllegalArgumentException; resources remain unchanged                           | :x:          |
+| Test 15   | One trade map is null                                                             | Throws IllegalActionException; resources remain unchanged                             | :x:          |

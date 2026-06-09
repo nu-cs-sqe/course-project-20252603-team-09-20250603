@@ -33,6 +33,14 @@ public class TradeManager {
             Map<ResourceType, Integer> offeredResources,
             Map<ResourceType, Integer> requestedResources
     ) {
+        if (offeredResources == null || offeredResources.isEmpty()) {
+            throw new IllegalActionException("Cannot offer nothing for trade.");
+        }
+
+        if (requestedResources.isEmpty()) {
+            throw new IllegalActionException("Cannot request nothing for trade.");
+        }
+
         for (Integer amount : offeredResources.values()) {
             if (amount <= 0) {
                 throw new IllegalArgumentException("Offered resource quantities must be positive.");
@@ -47,14 +55,6 @@ public class TradeManager {
 
         if (offeringPlayer == receivingPlayer) {
             throw new IllegalActionException("Cannot trade with yourself.");
-        }
-
-        if (offeredResources.isEmpty()) {
-            throw new IllegalActionException("Cannot offer nothing for trade.");
-        }
-
-        if (requestedResources.isEmpty()) {
-            throw new IllegalActionException("Cannot request nothing for trade.");
         }
 
         if (!offeringPlayer.hasResources(offeredResources)
