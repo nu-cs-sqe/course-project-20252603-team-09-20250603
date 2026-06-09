@@ -21,6 +21,7 @@ public class BoardController {
     private final List<Player> players;
     private BoardView view;
     private LocationSelectionHandler actionSelectionHandler;
+    private java.util.function.IntConsumer hexSelectionHandler;
 
     public BoardController(List<Player> players) {
         this(new Board(), players);
@@ -49,6 +50,7 @@ public class BoardController {
 
     public void setActionController(PlayerActionController actionController) {
         this.actionSelectionHandler = actionController == null ? null : actionController::onLocationSelected;
+        this.hexSelectionHandler = actionController == null ? null : actionController::onHexSelected;
     }
 
     public void handleNodeSelected(int nodeId) {
@@ -91,6 +93,10 @@ public class BoardController {
     public void handleHexSelected(int hexId) {
         Hex hex = getHexById(hexId);
         view.setStatusMessage("Selected hex " + hex.getId() + " | resource: " + hex.getResourceType());
+
+        if (hexSelectionHandler != null) {
+            hexSelectionHandler.accept(hexId);
+        }
     }
 
     public void clearSelection() {

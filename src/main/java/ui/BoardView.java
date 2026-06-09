@@ -14,9 +14,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Shape;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -28,7 +30,7 @@ public final class BoardView extends BorderPane {
     private static final double IMAGE_WIDTH = 1392.0;
     private static final double IMAGE_HEIGHT = 1130.0;
     /** Shown size in the UI (image + overlays are scaled down together). */
-    private static final double BOARD_WIDTH = 880.0;
+    private static final double BOARD_WIDTH = 800.0;
     private static final double BOARD_HEIGHT = IMAGE_HEIGHT * (BOARD_WIDTH / IMAGE_WIDTH);
     private static final double DISPLAY_SCALE = BOARD_WIDTH / IMAGE_WIDTH;
 
@@ -58,9 +60,11 @@ public final class BoardView extends BorderPane {
     private final Map<Integer, BoardPoint> hexCenters;
     private final Map<Integer, BoardPoint> nodePositions;
     private final Map<Integer, Line> edgeShapes;
+    private final Map<Integer, Circle> nodeShapes;
     private final Map<Integer, Polygon> settlementShapes;
 
-    private Circle selectedNode;
+    private Integer selectedNodeId;
+    private Shape selectedNodeShape;
     private Line selectedEdge;
     private Polygon selectedHex;
 
@@ -72,6 +76,7 @@ public final class BoardView extends BorderPane {
         this.hexCenters = buildHexCenters();
         this.nodePositions = buildNodePositions();
         this.edgeShapes = new HashMap<>();
+        this.nodeShapes = new HashMap<>();
         this.settlementShapes = new HashMap<>();
         this.statusLabel = new Label("Board ready. Select a node or edge.");
 
@@ -106,9 +111,10 @@ public final class BoardView extends BorderPane {
     }
 
     public void clearSelection() {
-        if (selectedNode != null) {
-            selectedNode.getStyleClass().remove("selected-node");
-            selectedNode = null;
+        if (selectedNodeShape != null) {
+            selectedNodeShape.getStyleClass().remove("selected-node");
+            selectedNodeShape = null;
+            selectedNodeId = null;
         }
         if (selectedEdge != null) {
             selectedEdge.getStyleClass().remove("selected-edge");
@@ -135,8 +141,12 @@ public final class BoardView extends BorderPane {
             Polygon settlement = settlementShapes.get(node.getId());
 
             if (settlement != null) {
-                updateSettlementStyle(settlement, node.getNodeOccupant());
+                updateSettlementStyle(settlement, node);
             }
+        }
+
+        if (selectedNodeId != null) {
+            applyNodeSelection(selectedNodeId);
         }
     }
 
@@ -209,15 +219,22 @@ public final class BoardView extends BorderPane {
             circle.getStyleClass().add("node-overlay");
             Tooltip.install(circle, new Tooltip("Node " + node.getId()));
             circle.setOnMouseClicked(event -> {
-                selectNode(circle);
+                selectNode(node.getId());
                 controller.handleNodeSelected(node.getId());
                 event.consume();
             });
+            nodeShapes.put(node.getId(), circle);
             boardPane.getChildren().add(circle);
 
             Polygon settlement = createSettlementShape(point);
+            settlement.getStyleClass().add("building-overlay");
             settlement.setVisible(false);
-            settlement.setMouseTransparent(true);
+            Tooltip.install(settlement, new Tooltip("Node " + node.getId()));
+            settlement.setOnMouseClicked(event -> {
+                selectNode(node.getId());
+                controller.handleNodeSelected(node.getId());
+                event.consume();
+            });
             settlementShapes.put(node.getId(), settlement);
             boardPane.getChildren().add(settlement);
         }
@@ -225,17 +242,36 @@ public final class BoardView extends BorderPane {
 
     private Polygon createSettlementShape(BoardPoint point) {
         Polygon settlement = new Polygon();
+        applySettlementPoints(settlement, point);
+        settlement.setFill(Color.TRANSPARENT);
+        settlement.setStroke(Color.TRANSPARENT);
+        return settlement;
+    }
+
+    private void applySettlementPoints(Polygon settlement, BoardPoint point) {
         double s = DISPLAY_SCALE;
-        settlement.getPoints().addAll(
+        settlement.getPoints().setAll(
                 point.x, point.y - 16.0 * s,
                 point.x + 12.0 * s, point.y - 5.0 * s,
                 point.x + 9.0 * s, point.y + 11.0 * s,
                 point.x - 9.0 * s, point.y + 11.0 * s,
                 point.x - 12.0 * s, point.y - 5.0 * s
         );
+    }
 
-        settlement.setStyle("-fx-fill: transparent; -fx-stroke: transparent;");
-        return settlement;
+    private void applyCityPoints(Polygon city, BoardPoint point) {
+        double s = DISPLAY_SCALE;
+        city.getPoints().setAll(
+                point.x - 15.0 * s, point.y + 13.0 * s,
+                point.x - 15.0 * s, point.y - 2.0 * s,
+                point.x - 7.5 * s, point.y - 2.0 * s,
+                point.x - 7.5 * s, point.y - 12.0 * s,
+                point.x, point.y - 17.0 * s,
+                point.x + 7.5 * s, point.y - 12.0 * s,
+                point.x + 7.5 * s, point.y - 4.5 * s,
+                point.x + 15.0 * s, point.y - 4.5 * s,
+                point.x + 15.0 * s, point.y + 13.0 * s
+        );
     }
 
     private Polygon createHexShape(int hexId) {
@@ -365,16 +401,29 @@ public final class BoardView extends BorderPane {
                 + "; -fx-stroke-width: " + (10 * DISPLAY_SCALE) + "; -fx-stroke-line-cap: round;");
     }
 
-    private void updateSettlementStyle(Polygon settlement, Player occupant) {
+    private void updateSettlementStyle(Polygon settlement, Node node) {
+        Player occupant = node.getNodeOccupant();
         if (occupant == null) {
             settlement.setVisible(false);
-            settlement.setStyle("-fx-fill: transparent; -fx-stroke: transparent;");
+            settlement.setMouseTransparent(true);
+            settlement.setFill(Color.TRANSPARENT);
+            settlement.setStroke(Color.TRANSPARENT);
+            settlement.setStrokeWidth(0.0);
             return;
         }
-//board.getadjacentresources, player.addresources
+
+        BoardPoint point = nodePositions.get(node.getId());
+        if (node.getInfraType() == domain.InfraType.CITY) {
+            applyCityPoints(settlement, point);
+        } else {
+            applySettlementPoints(settlement, point);
+        }
+
         settlement.setVisible(true);
-        settlement.setStyle("-fx-fill: " + getPlayerColor(occupant)
-                + "; -fx-stroke: #1f1a13; -fx-stroke-width: 2;");
+        settlement.setMouseTransparent(false);
+        settlement.setFill(Color.web(getPlayerColor(occupant)));
+        settlement.setStroke(Color.web("#1f1a13"));
+        settlement.setStrokeWidth(2.0);
     }
 
     private String getPlayerColor(Player player) {
@@ -392,26 +441,46 @@ public final class BoardView extends BorderPane {
         }
     }
 
-    private void selectNode(Circle circle) {
-        if (selectedNode != null) {
-            selectedNode.getStyleClass().remove("selected-node");
+    private void selectNode(int nodeId) {
+        if (selectedNodeShape != null) {
+            selectedNodeShape.getStyleClass().remove("selected-node");
         }
         if (selectedEdge != null) {
             selectedEdge.getStyleClass().remove("selected-edge");
             selectedEdge = null;
         }
 
-        selectedNode = circle;
-        selectedNode.getStyleClass().add("selected-node");
+        applyNodeSelection(nodeId);
+    }
+
+    private void applyNodeSelection(int nodeId) {
+        if (selectedNodeShape != null) {
+            selectedNodeShape.getStyleClass().remove("selected-node");
+        }
+        selectedNodeId = nodeId;
+        Shape shape = getSelectableNodeShape(nodeId);
+        selectedNodeShape = shape;
+        if (selectedNodeShape != null && !selectedNodeShape.getStyleClass().contains("selected-node")) {
+            selectedNodeShape.getStyleClass().add("selected-node");
+        }
+    }
+
+    private Shape getSelectableNodeShape(int nodeId) {
+        Node node = controller.getBoard().getNode(nodeId);
+        if (node.getNodeOccupant() != null) {
+            return settlementShapes.get(nodeId);
+        }
+        return nodeShapes.get(nodeId);
     }
 
     private void selectEdge(Line line) {
         if (selectedEdge != null) {
             selectedEdge.getStyleClass().remove("selected-edge");
         }
-        if (selectedNode != null) {
-            selectedNode.getStyleClass().remove("selected-node");
-            selectedNode = null;
+        if (selectedNodeShape != null) {
+            selectedNodeShape.getStyleClass().remove("selected-node");
+            selectedNodeShape = null;
+            selectedNodeId = null;
         }
 
         selectedEdge = line;
