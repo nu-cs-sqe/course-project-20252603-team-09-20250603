@@ -53,6 +53,10 @@ public class PlayerActionController {
         this.statsController = statsController;
     }
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+            value = "EI_EXPOSE_REP2",
+            justification = "Shares mutable dice roll UI collaborator"
+    )
     public void setDiceRollView(DiceRollView diceRollView) {
         this.diceRollView = diceRollView;
     }
