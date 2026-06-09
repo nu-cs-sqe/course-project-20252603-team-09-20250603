@@ -680,6 +680,23 @@ public class PlayerTests {
         assertTrue(player.getResources().isEmpty());
     }
 
+    @Test
+    public void removeRandomCard_twoWood_returnsWoodAndLeavesOneWood() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WOOD, 2);
+        player.addResources(resources);
+
+        ResourceType removed = player.removeRandomCard();
+
+        Map<ResourceType, Integer> expected = new HashMap<>();
+        expected.put(ResourceType.WOOD, 1);
+
+        assertEquals(ResourceType.WOOD, removed);
+        assertEquals(expected, player.getResources());
+    }
+
 
 
 
