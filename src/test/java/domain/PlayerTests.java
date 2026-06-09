@@ -666,6 +666,20 @@ public class PlayerTests {
         assertTrue(player.getResources().isEmpty());
     }
 
+    @Test
+    public void removeRandomCard_oneBrick_returnsBrickAndRemovesBrick() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.BRICK, 1);
+        player.addResources(resources);
+
+        ResourceType removed = player.removeRandomCard();
+
+        assertEquals(ResourceType.BRICK, removed);
+        assertTrue(player.getResources().isEmpty());
+    }
+
 
 
 

@@ -131,7 +131,7 @@ Getter to pass to controller - untested as simply acts as a simple getter
 |---------------|------------------------------------------------------------------------|-------------------------------------------------------------------|--------------------|
 | Test Case 1   | ResourceHand is empty                                                  | Throws `IllegalStateException`                                    | :white_check_mark: |
 | Test Case 2   | ResourceHand has exactly 1 wood                                        | Returns `WOOD`; hand becomes empty                                | :white_check_mark: |
-| Test Case 3   | ResourceHand has exactly 1 brick                                       | Returns `BRICK`; hand becomes empty                               | :x:                |
+| Test Case 3   | ResourceHand has exactly 1 brick                                       | Returns `BRICK`; hand becomes empty                               | :white_check_mark: |
 | Test Case 4   | ResourceHand has 2 wood                                                | Returns `WOOD`; wood count decreases to 1                         | :x:                |
 | Test Case 5   | ResourceHand has 1 wood and 1 brick                                    | Returns either `WOOD` or `BRICK`; total card count decreases by 1 | :x:                |
 | Test Case 6   | ResourceHand has multiple resource types                               | Returned resource is one of the resources originally in the hand  | :x:                |
