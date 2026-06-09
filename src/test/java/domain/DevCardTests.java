@@ -26,7 +26,7 @@ public class DevCardTests {
 
         int targetHexId = 5;
         assertThrows(IllegalActionException.class, () -> {
-            card.doKnightAction(mockPlayer, mockBoard, targetHexId);
+            card.doKnightAction(mockPlayer, mockBoard, targetHexId, null);
         });
 
         EasyMock.verify(mockPlayer, mockBoard);
@@ -75,14 +75,40 @@ public class DevCardTests {
 
         int targetHexId = 5;
 
-        mockBoard.moveRobber(player1, targetHexId);
+        mockBoard.moveRobberAndSteal(player1, targetHexId, null);
         EasyMock.expectLastCall().times(1);
 
         EasyMock.replay(mockBoard);
 
-        card.doKnightAction(player1, mockBoard, targetHexId);
+        card.doKnightAction(player1, mockBoard, targetHexId, null);
 
         EasyMock.verify(mockBoard);
+    }
+
+    @Test // TC-DC-KN-STEAL
+    void test_KnightCard_StealsOneCardFromAdjacentVictim() {
+        Board board = new Board(new Random(0));
+        Player thief = new Player(0, "John", PlayerColor.RED);
+        Player victim = new Player(1, "Alice", PlayerColor.BLUE);
+
+        // Victim owns a settlement on node 0, which borders hex 0.
+        board.getNode(0).buildSettlement(victim);
+        Map<ResourceType, Integer> hand = new HashMap<>();
+        hand.put(ResourceType.WHEAT, 2);
+        victim.addResources(hand);
+
+        Game game = new Game(board, List.of(thief, victim), new Dice(new Random()), new TurnManager(1));
+
+        DevCard knight = new DevCard(DevCardType.KNIGHT);
+        thief.setDevCardHand(knight);
+        thief.manageDevCardActivation(thief.getId()); // start of turn: activate the card
+
+        game.useDevCard(thief.getId(), DevCardType.KNIGHT, 0, victim.getId(), null, null, null);
+
+        assertEquals(1, victim.getResources().getOrDefault(ResourceType.WHEAT, 0));
+        assertEquals(1, thief.getResources().getOrDefault(ResourceType.WHEAT, 0));
+        assertTrue(board.getHex(0).getHasRobber());
+        assertEquals(1, thief.getPlayedKnightCount());
     }
 
     @Test // TC-DC-RB
@@ -278,7 +304,7 @@ public class DevCardTests {
 
         assertFalse(player.getHasPlayedDevCardThisTurn());
 
-        game.useDevCard(owningPlayerId, DevCardType.YEAR_OF_PLENTY, 0,
+        game.useDevCard(owningPlayerId, DevCardType.YEAR_OF_PLENTY, 0, -1,
                 ResourceType.WOOD, ResourceType.WHEAT, null);
 
         assertTrue(player.getHasPlayedDevCardThisTurn());
@@ -294,11 +320,11 @@ public class DevCardTests {
 
         Game game = newGameWith(player);
 
-        game.useDevCard(owningPlayerId, DevCardType.YEAR_OF_PLENTY, 0,
+        game.useDevCard(owningPlayerId, DevCardType.YEAR_OF_PLENTY, 0, -1,
                 ResourceType.WOOD, ResourceType.WHEAT, null);
 
         assertThrows(IllegalActionException.class, () ->
-                game.useDevCard(owningPlayerId, DevCardType.MONOPOLY, 0,
+                game.useDevCard(owningPlayerId, DevCardType.MONOPOLY, 0, -1,
                         null, null, ResourceType.ORE));
 
         assertEquals(1, player.getDevCardHand().size());
@@ -315,7 +341,7 @@ public class DevCardTests {
 
         Game game = newGameWith(player);
 
-        game.useDevCard(owningPlayerId, DevCardType.YEAR_OF_PLENTY, 0,
+        game.useDevCard(owningPlayerId, DevCardType.YEAR_OF_PLENTY, 0, -1,
                 ResourceType.WOOD, ResourceType.WHEAT, null);
         assertTrue(player.getHasPlayedDevCardThisTurn());
 
@@ -323,7 +349,7 @@ public class DevCardTests {
         assertFalse(player.getHasPlayedDevCardThisTurn());
 
         assertDoesNotThrow(() ->
-                game.useDevCard(owningPlayerId, DevCardType.MONOPOLY, 0,
+                game.useDevCard(owningPlayerId, DevCardType.MONOPOLY, 0, -1,
                         null, null, ResourceType.ORE));
         assertEquals(0, player.getDevCardHand().size());
     }

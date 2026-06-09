@@ -23,11 +23,11 @@ public class DevCard {
     public void activateCard() {
         this.isActive = true;
     }
-    public void doKnightAction(Player player, Board board, int targetHexId) {
+    public void doKnightAction(Player player, Board board, int targetHexId, Player victim) {
         verifyCardIsPlayable(DevCardType.KNIGHT);
 
         player.incrementPlayedKnightCount();
-        board.moveRobber(player, targetHexId);
+        board.moveRobberAndSteal(player, targetHexId, victim);
 
         this.isActive = false;
     }

@@ -84,7 +84,7 @@ public class DevCardStepDefinitions {
         DevCardType cardType = DevCardType.valueOf(cardTypeStr);
         ResourceType targetType = ResourceType.valueOf(targetTypeStr);
 
-        game.useDevCard(player.getId(), cardType, -1, null, null, targetType);
+        game.useDevCard(player.getId(), cardType, -1, -1, null, null, targetType);
     }
 
     @Given("the robber is currently located on hex {int}")
@@ -98,7 +98,7 @@ public class DevCardStepDefinitions {
         DevCardType cardType = DevCardType.valueOf(cardTypeStr);
 
         try {
-            game.useDevCard(player.getId(), cardType, targetHexId, null, null, null);
+            game.useDevCard(player.getId(), cardType, targetHexId, -1, null, null, null);
         } catch (Exception e) {
             caughtException = e;
         }
@@ -128,7 +128,7 @@ public class DevCardStepDefinitions {
         Player player = game.findPlayerByName(playerName);
         DevCardType cardType = DevCardType.valueOf(cardTypeStr);
 
-        game.useDevCard(player.getId(), cardType, -1, null, null, null);
+        game.useDevCard(player.getId(), cardType, -1, -1, null, null, null);
     }
 
     @Then("the board should grant {int} free roads to {string}")
@@ -144,7 +144,7 @@ public class DevCardStepDefinitions {
         ResourceType choice1 = ResourceType.valueOf(choice1Str);
         ResourceType choice2 = ResourceType.valueOf(choice2Str);
 
-        game.useDevCard(player.getId(), cardType, -1, choice1, choice2, null);
+        game.useDevCard(player.getId(), cardType, -1, -1, choice1, choice2, null);
     }
 
     @Then("{string} should have {int} {string} cards and {int} {string} card")

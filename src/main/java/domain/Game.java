@@ -163,12 +163,15 @@ public class Game {
         }
     }
 
-    public void handleMoveRobber(int roll, int newHexId) {
+    public void handleMoveRobber(int roll, int newHexId, int activePlayerId, int victimId) {
         if (roll != 7){
             return;
         }
 
-        board.moveRobber(null, newHexId);
+        Player activePlayer = victimId < 0 ? null : findPlayerById(activePlayerId);
+        Player victim = victimId < 0 ? null : findPlayerById(victimId);
+
+        board.moveRobberAndSteal(activePlayer, newHexId, victim);
     }
     private int countPlayerSettlements(Player player) {
         int count = 0;
@@ -243,7 +246,7 @@ public class Game {
         return cost;
     }
 
-    public void useDevCard(int currentPlayerId, DevCardType cardType, int targetHexId,
+    public void useDevCard(int currentPlayerId, DevCardType cardType, int targetHexId, int victimPlayerId,
                            ResourceType choice1, ResourceType choice2, ResourceType targetType) {
 
         Player player = findPlayerById(currentPlayerId);
@@ -259,7 +262,8 @@ public class Game {
 
         switch (cardType) {
             case KNIGHT:
-                cardToPlay.doKnightAction(player, this.board, targetHexId);
+                Player victim = victimPlayerId < 0 ? null : findPlayerById(victimPlayerId);
+                cardToPlay.doKnightAction(player, this.board, targetHexId, victim);
                 this.updateLargestArmyPlayer();
                 break;
             case ROAD_BUILDING:
