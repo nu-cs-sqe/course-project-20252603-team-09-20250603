@@ -9,6 +9,10 @@ public class TradeManager {
             throw new IllegalActionException("Cannot trade a resource for itself.");
         }
 
+        if (giveResource == null || receiveResource == null) {
+            throw new IllegalArgumentException("Cannot trade a resource for null.");
+        }
+
         Map<ResourceType, Integer> cost = new HashMap<>();
         cost.put(giveResource, 4);
 
