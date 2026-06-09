@@ -6,15 +6,13 @@ Validates and executes trades with the bank and between players.
 
 Bank conversion ratio is 4:1
 
-| Test Case | State of the System                              | Expected output                                              | Implemented? |
-|-----------|--------------------------------------------------|--------------------------------------------------------------|--------------|
-| Test 1    | Player has exactly 4 WOOD and trades for 1 BRICK | WOOD decreases to 0 and BRICK increases by 1                 | :x:          |
-| Test 2    | Player has 5 SHEEP and trades for 1 ORE          | SHEEP decreases by 4 and 1 SHEEP remains; ORE increases by 1 | :x:          |
-| Test 3    | Player has 3 WHEAT and tries to trade for 1 WOOD | Throws IllegalActionException; resources remain unchanged    | :x:          |
-| Test 4    | giveResource and receiveResource are the same    | Throws IllegalActionException; resources remain unchanged    | :x:          |
-| Test 5    | player is null                                   | Throws IllegalArgumentException; resources remain unchanged  | :x:          |
-| Test 6    | giveResource is null                             | Throws IllegalArgumentException; resources remain unchanged  | :x:          |
-| Test 7    | receiveResource is null                          | Throws IllegalArgumentException; resources remain unchanged  | :x:          |
+| Test Case | State of the System                              | Expected output                                              | Implemented?       |
+|-----------|--------------------------------------------------|--------------------------------------------------------------|--------------------|
+| Test 1    | Player has exactly 4 WOOD and trades for 1 BRICK | WOOD decreases to 0 and BRICK increases by 1                 | :white_check_mark: |
+| Test 2    | Player has 5 SHEEP and trades for 1 ORE          | SHEEP decreases by 4 and 1 SHEEP remains; ORE increases by 1 | :white_check_mark: |
+| Test 3    | Player has 3 WHEAT and tries to trade for 1 WOOD | Throws IllegalActionException; resources remain unchanged    | :white_check_mark: |
+| Test 4    | giveResource and receiveResource are the same    | Throws IllegalActionException; resources remain unchanged    | :white_check_mark: |
+| Test 6    | giveResource is null or receiveResource is null  | Throws IllegalArgumentException; resources remain unchanged  | :white_check_mark: |
 
 ## Method under test:
 
