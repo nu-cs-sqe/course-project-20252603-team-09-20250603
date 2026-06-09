@@ -41,6 +41,10 @@ public class TradeManager {
             throw new IllegalActionException("Cannot offer nothing for trade.");
         }
 
+        if (requestedResources.isEmpty()) {
+            throw new IllegalActionException("Cannot request nothing for trade.");
+        }
+
         if (!offeringPlayer.hasResources(offeredResources)
                 || !receivingPlayer.hasResources(requestedResources)) {
             throw new IllegalActionException("One or both players do not have the required resources.");
