@@ -54,9 +54,12 @@ public class GameStatsView extends VBox {
             Label vpLabel = new Label("Victory Points: " + p.getVictoryPoints());
             vpLabel.getStyleClass().add("player-vp");
 
+            Label devCardLabel = new Label("Development Cards: " + p.getDevCardHand().size());
+            devCardLabel.getStyleClass().add("player-vp");
+
             HBox resourcesRow = buildResourcesRow(p);
 
-            playerBox.getChildren().addAll(nameLabel, vpLabel, resourcesRow);
+            playerBox.getChildren().addAll(nameLabel, vpLabel, devCardLabel, resourcesRow);
             getChildren().add(playerBox);
         }
 

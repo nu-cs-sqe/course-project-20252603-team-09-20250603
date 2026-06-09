@@ -3,6 +3,7 @@ package ui;
 import domain.Game;
 import domain.Player;
 
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.BorderPane;
 
 import java.util.List;
@@ -51,10 +52,15 @@ public class MainView extends BorderPane {
         setupGameController.setBoardView(boardView);
         boardView.setStatusMessage("Setup Phase: Waiting for Player 1 to place a Settlement.");
 
+        DiceRollView diceRollView = new DiceRollView();
+        diceRollView.showSetupMessage();
+        StackPane boardStack = new StackPane(boardView, diceRollView);
+
         PlayerActionController playerActionController =
                 new PlayerActionController(players, game, game.getTurnManager());
         PlayerActionView playerActionView = new PlayerActionView(players);
         playerActionController.setView(playerActionView);
+        playerActionController.setDiceRollView(diceRollView);
         playerActionView.setController(playerActionController);
         setupGameController.setPlayerActionController(playerActionController);
         setupGameController.setStatsController(statsController);
@@ -64,7 +70,7 @@ public class MainView extends BorderPane {
         playerActionController.setStatsController(statsController);
 
         setBottom(null);
-        setCenter(boardView);
+        setCenter(boardStack);
         setRight(playerActionView);
         setLeft(statsView);
     }
