@@ -17,6 +17,7 @@ public class Player {
     private boolean hasLargestArmy;
     private int playedKnightCount = 0;
     private boolean hasPlayedDevCardThisTurn = false;
+    private final Random random;
 
     public Player(int id, String name, PlayerColor color){
         this.id = id;
@@ -29,6 +30,7 @@ public class Player {
         this.victoryPoints = 0;
         this.devHand = new ArrayList<>();
         this.resourceHand = new HashMap<>();
+        this.random = new Random();
     }
 
     public int getId() {
@@ -164,7 +166,6 @@ public class Player {
             throw new IllegalStateException("Player has no resource cards.");
         }
 
-        Random random = new Random();
         int randomIndex = random.nextInt(cards.size());
 
         ResourceType removedResource = cards.get(randomIndex);
