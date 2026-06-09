@@ -28,7 +28,7 @@ public final class BoardView extends BorderPane {
     private static final double IMAGE_WIDTH = 1392.0;
     private static final double IMAGE_HEIGHT = 1130.0;
     /** Shown size in the UI (image + overlays are scaled down together). */
-    private static final double BOARD_WIDTH = 880.0;
+    private static final double BOARD_WIDTH = 800.0;
     private static final double BOARD_HEIGHT = IMAGE_HEIGHT * (BOARD_WIDTH / IMAGE_WIDTH);
     private static final double DISPLAY_SCALE = BOARD_WIDTH / IMAGE_WIDTH;
 
