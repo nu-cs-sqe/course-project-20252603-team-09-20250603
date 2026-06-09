@@ -764,6 +764,20 @@ public class PlayerTests {
         assertThrows(IllegalStateException.class, player::removeRandomCard);
     }
 
+    @Test
+    public void removeRandomCard_desertAndWood_returnsWood() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.DESERT, 1);
+        resources.put(ResourceType.WOOD, 1);
+        player.addResources(resources);
+
+        ResourceType removed = player.removeRandomCard();
+
+        assertEquals(ResourceType.WOOD, removed);
+    }
+
 
 
 
