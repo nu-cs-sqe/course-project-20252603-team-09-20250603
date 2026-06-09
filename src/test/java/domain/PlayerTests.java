@@ -720,6 +720,20 @@ public class PlayerTests {
         assertEquals(1, totalCards);
     }
 
+    @Test
+    public void removeRandomCard_multipleTypes_returnsExistingResourceType() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WOOD, 1);
+        resources.put(ResourceType.BRICK, 1);
+        resources.put(ResourceType.ORE, 1);
+        player.addResources(resources);
+
+        ResourceType removed = player.removeRandomCard();
+
+        assertTrue(resources.containsKey(removed));
+    }
 
 
 
