@@ -18,14 +18,14 @@ Bank conversion ratio is 4:1
 
 `tradeWithPlayer(Player offeringPlayer, Player receivingPlayer, Map<ResourceType, Integer> offeredResources, Map<ResourceType, Integer> requestedResources)`
 
-| Test Case | State of the System                                                               | Expected output                                                                       | Implemented? |
-|-----------|-----------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|--------------|
-| Test 7    | Two players trade 1-for-1 and both have exactly enough resources                  | Resources are exchanged correctly; both exact counts reach 0 for traded-away resource | :x:          |
-| Test 8    | Two players trade multi-resource bundles and both have more than enough resources | Resources are exchanged correctly and surplus resources remain                        | :x:          |
-| Test 9    | Offering player is short by 1 resource                                            | Throws IllegalActionException; neither player's resources change                      | :x:          |
-| Test 10   | Receiving player is short by 1 resource                                           | Throws IllegalActionException; neither player's resources change                      | :x:          |
-| Test 11   | offeringPlayer and receivingPlayer are the same player                            | Throws IllegalActionException; resources remain unchanged                             | :x:          |
-| Test 12   | offeredResources is empty or requestedResources is empty                          | Throws IllegalActionException; resources remain unchanged                             | :x:          |
-| Test 13   | A trade map contains a quantity of 0                                              | Throws IllegalArgumentException; resources remain unchanged                           | :x:          |
-| Test 14   | A trade map contains a negative quantity                                          | Throws IllegalArgumentException; resources remain unchanged                           | :x:          |
-| Test 15   | One trade map is null                                                             | Throws IllegalActionException; resources remain unchanged                             | :x:          |
+| Test Case | State of the System                                                               | Expected output                                                                       | Implemented?       |
+|-----------|-----------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|--------------------|
+| Test 7    | Two players trade 1-for-1 and both have exactly enough resources                  | Resources are exchanged correctly; both exact counts reach 0 for traded-away resource | :white_check_mark: |
+| Test 8    | Two players trade multi-resource bundles and both have more than enough resources | Resources are exchanged correctly and surplus resources remain                        | :white_check_mark: |
+| Test 9    | Offering player is short by 1 resource                                            | Throws IllegalActionException; neither player's resources change                      | :white_check_mark: |
+| Test 10   | Receiving player is short by 1 resource                                           | Throws IllegalActionException; neither player's resources change                      | :white_check_mark: |
+| Test 11   | offeringPlayer and receivingPlayer are the same player                            | Throws IllegalActionException; resources remain unchanged                             | :white_check_mark: |
+| Test 12   | offeredResources is empty or requestedResources is empty                          | Throws IllegalActionException; resources remain unchanged                             | :white_check_mark: |
+| Test 13   | A trade map contains a quantity of 0                                              | Throws IllegalArgumentException; resources remain unchanged                           | :white_check_mark: |
+| Test 14   | A trade map contains a negative quantity                                          | Throws IllegalArgumentException; resources remain unchanged                           | :white_check_mark: |
+| Test 15   | One trade map is null                                                             | Throws IllegalActionException; resources remain unchanged                             | :white_check_mark: |
