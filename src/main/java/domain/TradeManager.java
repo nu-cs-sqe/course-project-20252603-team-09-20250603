@@ -5,6 +5,10 @@ import java.util.Map;
 
 public class TradeManager {
     public void tradeWithBank(Player player, ResourceType giveResource, ResourceType receiveResource) {
+        if (giveResource == receiveResource) {
+            throw new IllegalActionException("Cannot trade a resource for itself.");
+        }
+
         Map<ResourceType, Integer> cost = new HashMap<>();
         cost.put(giveResource, 4);
 

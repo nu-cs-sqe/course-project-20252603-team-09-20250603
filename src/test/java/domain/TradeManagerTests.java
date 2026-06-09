@@ -74,4 +74,17 @@ public class TradeManagerTests {
 
         EasyMock.verify(mockPlayer);
     }
+
+    @Test
+    void tradeWithBank_SameGiveAndReceiveResource_ThrowsIllegalActionException() {
+        Player mockPlayer = EasyMock.createMock(Player.class);
+        TradeManager tradeManager = new TradeManager();
+
+        EasyMock.replay(mockPlayer);
+
+        assertThrows(IllegalActionException.class,
+                () -> tradeManager.tradeWithBank(mockPlayer, ResourceType.WOOD, ResourceType.WOOD));
+
+        EasyMock.verify(mockPlayer);
+    }
 }
