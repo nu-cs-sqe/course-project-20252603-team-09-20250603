@@ -17,10 +17,15 @@ public class PlayerActionController {
     private PlayerActionView view;
     private BoardController boardController;
     private GameStatsController statsController;
+    private DiceRollView diceRollView;
     private final Game game;
     private final TurnManager turnManager;
     private final List<Player> players;
     private int normalPlayPlayerIndex = 1;
+    private boolean rollingForTurn = false;
+    private boolean turnRollResolved = false;
+    private int lastDieOne = 1;
+    private int lastDieTwo = 1;
 
     private int selectedLocationId = -1;
     private LocationType selectedLocationType = null;
@@ -48,6 +53,14 @@ public class PlayerActionController {
         this.statsController = statsController;
     }
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+            value = "EI_EXPOSE_REP2",
+            justification = "Shares mutable dice roll UI collaborator"
+    )
+    public void setDiceRollView(DiceRollView diceRollView) {
+        this.diceRollView = diceRollView;
+    }
+
     public void update() {
         if (view != null) {
             view.renderActionMenu();
@@ -71,9 +84,17 @@ public class PlayerActionController {
             normalPlayPlayerIndex = 1;
         }
         update();
+        beginNormalPlayTurn();
     }
 
     public void onActionClicked(PlayerAction action) {
+        if (!canTakeNormalPlayActions()) {
+            if (view != null) {
+                view.showError("Wait for the dice roll to finish before taking actions.");
+            }
+            return;
+        }
+
         switch (action) {
             case BUILD:
                 clearBuildState();
@@ -101,6 +122,13 @@ public class PlayerActionController {
     }
 
     public void onBuildTypeSelected(InfraType infraType) {
+        if (!canTakeNormalPlayActions()) {
+            if (view != null) {
+                view.showError("Wait for the dice roll to finish before taking actions.");
+            }
+            return;
+        }
+
         if (infraType == null) {
             return;
         }
@@ -114,6 +142,13 @@ public class PlayerActionController {
     }
 
     public void onLocationSelected(int locationId, LocationType locationType) {
+        if (!canTakeNormalPlayActions()) {
+            if (view != null) {
+                view.showError("Wait for the dice roll to finish before selecting a build location.");
+            }
+            return;
+        }
+
         if (selectedBuildType == null) {
             if (view != null) {
                 view.showError("Select infrastructure type to build first!");
@@ -135,6 +170,13 @@ public class PlayerActionController {
     }
 
     public void onBuildConfirmed() {
+        if (!canTakeNormalPlayActions()) {
+            if (view != null) {
+                view.showError("Wait for the dice roll to finish before building.");
+            }
+            return;
+        }
+
         if (selectedBuildType == null || selectedLocationId < 0 || selectedLocationType == null) {
             if (view != null) {
                 view.showError("must select both infrastructure type and location in order to build");
@@ -197,6 +239,31 @@ public class PlayerActionController {
         }
 
         normalPlayPlayerIndex = (normalPlayPlayerIndex % players.size()) + 1;
+        beginNormalPlayTurn();
+    }
+
+    public boolean canTakeNormalPlayActions() {
+        return game.phaseSetupCheck() || (!rollingForTurn && turnRollResolved);
+    }
+
+    public boolean isRollingForTurn() {
+        return rollingForTurn;
+    }
+
+    public String getNormalPlayPrompt() {
+        if (game.phaseSetupCheck()) {
+            return "";
+        }
+
+        if (rollingForTurn) {
+            return "Dice are rolling for this turn.";
+        }
+
+        if (!turnRollResolved) {
+            return "Waiting for dice roll.";
+        }
+
+        return "Choose an action for this turn.";
     }
 
     private boolean isLocationTypeValidForInfra(LocationType locationType) {
@@ -218,5 +285,78 @@ public class PlayerActionController {
         if (boardController != null) {
             boardController.clearSelection();
         }
+    }
+
+    private void beginNormalPlayTurn() {
+        if (game.phaseSetupCheck() || players.isEmpty()) {
+            return;
+        }
+
+        rollingForTurn = true;
+        turnRollResolved = false;
+        clearBuildState();
+
+        Player currentPlayer = getCurrentPlayer();
+        if (currentPlayer == null) {
+            rollingForTurn = false;
+            return;
+        }
+
+        if (boardController != null) {
+            boardController.setStatusMessage(currentPlayer.getName() + "'s turn. Rolling dice...");
+        }
+        if (diceRollView != null) {
+            diceRollView.showTurnReady(currentPlayer);
+        }
+        update();
+
+        game.rollDice();
+        lastDieOne = game.getDie1();
+        lastDieTwo = game.getDie2();
+
+        if (diceRollView != null) {
+            diceRollView.playRollAnimation(currentPlayer, lastDieOne, lastDieTwo, this::finishCurrentTurnRoll);
+        } else {
+            finishCurrentTurnRoll();
+        }
+    }
+
+    private void finishCurrentTurnRoll() {
+        Player currentPlayer = getCurrentPlayer();
+        if (currentPlayer == null) {
+            rollingForTurn = false;
+            turnRollResolved = true;
+            update();
+            return;
+        }
+
+        int rollTotal = game.getDieSum();
+        if (rollTotal != 7) {
+            game.getBoard().distributeResourcesOnRoll(rollTotal);
+        }
+
+        rollingForTurn = false;
+        turnRollResolved = true;
+
+        if (diceRollView != null) {
+            String message = (rollTotal == 7)
+                    ? "Rolled 7. Robber handling is not wired yet."
+                    : "Rolled " + lastDieOne + " + " + lastDieTwo + " = " + rollTotal + ". Resources distributed.";
+            diceRollView.showRollResult(currentPlayer, lastDieOne, lastDieTwo, message);
+        }
+
+        if (boardController != null) {
+            String message = (rollTotal == 7)
+                    ? currentPlayer.getName() + " rolled 7. Robber handling is not wired yet."
+                    : currentPlayer.getName() + " rolled " + rollTotal + ". Resources distributed.";
+            boardController.setStatusMessage(message);
+            boardController.refreshBoard();
+        }
+
+        if (statsController != null) {
+            statsController.updateStats();
+        }
+
+        update();
     }
 }

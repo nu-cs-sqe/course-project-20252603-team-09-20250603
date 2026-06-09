@@ -79,6 +79,10 @@ public class PlayerActionView extends VBox {
         playerTurn.getStyleClass().add("player-turn-label");
         playerTurn.setStyle("-fx-text-fill: " + mapColorToHex(currentPlayer.getColor().name()) + ";");
 
+        Label promptLabel = new Label(controller == null ? "" : controller.getNormalPlayPrompt());
+        promptLabel.getStyleClass().add("build-prompt-label");
+        promptLabel.setWrapText(true);
+
         Label actionsTitle = new Label("Actions:");
         actionsTitle.getStyleClass().add("resources-title");
 
@@ -91,7 +95,10 @@ public class PlayerActionView extends VBox {
                 createActionButton(PlayerAction.END_TURN)
         );
 
-        getChildren().addAll(title, playerTurn, actionsTitle, actions);
+        boolean actionsDisabled = controller != null && !controller.canTakeNormalPlayActions();
+        actions.setDisable(actionsDisabled);
+
+        getChildren().addAll(title, playerTurn, promptLabel, actionsTitle, actions);
     }
 
     public void renderBuildMenu() {
