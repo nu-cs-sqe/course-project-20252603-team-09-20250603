@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class TradeManagerTests {
     @Test
     void tradeWithBank_PlayerHasExactlyFourWood_TradesForOneBrick() {
@@ -27,6 +29,30 @@ public class TradeManagerTests {
         EasyMock.replay(mockPlayer);
 
         tradeManager.tradeWithBank(mockPlayer, ResourceType.WOOD, ResourceType.BRICK);
+
+        EasyMock.verify(mockPlayer);
+    }
+
+    @Test
+    void tradeWithBank_PlayerHasFiveSheep_TradesForOneOre() {
+        Player mockPlayer = EasyMock.createMock(Player.class);
+        TradeManager tradeManager = new TradeManager();
+
+        Map<ResourceType, Integer> cost = new HashMap<>();
+        cost.put(ResourceType.SHEEP, 4);
+
+        Map<ResourceType, Integer> gain = new HashMap<>();
+        gain.put(ResourceType.ORE, 1);
+
+        EasyMock.expect(mockPlayer.hasResources(cost)).andReturn(true);
+        mockPlayer.useResources(cost);
+        EasyMock.expectLastCall().once();
+        mockPlayer.addResources(gain);
+        EasyMock.expectLastCall().once();
+
+        EasyMock.replay(mockPlayer);
+
+        tradeManager.tradeWithBank(mockPlayer, ResourceType.SHEEP, ResourceType.ORE);
 
         EasyMock.verify(mockPlayer);
     }
