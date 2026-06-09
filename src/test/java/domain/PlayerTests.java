@@ -778,6 +778,20 @@ public class PlayerTests {
         assertEquals(ResourceType.WOOD, removed);
     }
 
+    @Test
+    public void removeRandomCard_multipleCalls_updatesResourcesCumulatively() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WOOD, 2);
+        player.addResources(resources);
+
+        player.removeRandomCard();
+        player.removeRandomCard();
+
+        assertTrue(player.getResources().isEmpty());
+    }
+
 
 
 

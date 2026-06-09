@@ -138,4 +138,4 @@ Getter to pass to controller - untested as simply acts as a simple getter
 | Test Case 7   | ResourceHand has multiple cards of one type and other resource types   | Only the returned resource count decreases by 1                   | :white_check_mark: |
 | Test Case 8   | ResourceHand contains desert only                                      | Throws `IllegalStateException`                                    | :white_check_mark: |
 | Test Case 9   | ResourceHand contains desert and valid resources                       | Desert is never returned; one valid resource is removed           | :white_check_mark: |
-| Test Case 10  | `removeRandomCard()` is called multiple times on a non-empty hand      | Resource counts update cumulatively across calls                  | :x:                |
+| Test Case 10  | `removeRandomCard()` is called multiple times on a non-empty hand      | Resource counts update cumulatively across calls                  | :white_check_mark: |
