@@ -793,6 +793,25 @@ public class PlayerTests {
     }
 
     @Test
+    void removeRandomCard_ValidResourceWithZeroCount_DoesNotRemoveThatResource() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WOOD, 1);
+        player.addResources(resources);
+
+        Map<ResourceType, Integer> cost = new HashMap<>();
+        cost.put(ResourceType.WOOD, 1);
+        player.useResources(cost);
+
+        assertEquals(0, player.getResources().get(ResourceType.WOOD));
+
+        assertThrows(IllegalStateException.class, () -> {
+            player.removeRandomCard();
+        });
+    }
+
+    @Test
     public void hasMoreThanSevenResources_emptyHand_returnsFalse() {
         Player player = new Player(1, "Alice", PlayerColor.RED);
 
@@ -889,7 +908,5 @@ public class PlayerTests {
         assertEquals(0, player.getVictoryPoints());
     }
 
-
-
-
+    
 }
