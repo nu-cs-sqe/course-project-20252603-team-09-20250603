@@ -39,12 +39,9 @@ public class HandleBuildStepDefinitions {
         game = new Game(board, List.of(currentPlayer), dice, turnManager);
         game.setCurrPhase(GamePhase.NORMAL_PLAY);
 
-        // Drive the real GUI controller headlessly: no view/board/stats controllers are set,
-        // so every view call is null-guarded and no JavaFX class is loaded.
         controller = new PlayerActionController(List.of(currentPlayer), game, turnManager);
     }
 
-    // --- Domain setup -------------------------------------------------------
 
     @Given("the player has the resources to build {word}")
     public void the_player_has_the_resources_to_build(String infraTypeText) {
@@ -106,14 +103,19 @@ public class HandleBuildStepDefinitions {
         assertEquals(InfraType.CITY, node.getInfraType());
     }
 
+    @Given("the player has a settlement at an endpoint of edge {int}")
+    public void the_player_has_a_settlement_at_an_endpoint_of_edge(Integer edgeId) {
+        Node endpoint = board.getEdge(edgeId).getNodeA();
+        endpoint.buildSettlement(currentPlayer);
+        assertEquals(currentPlayer, endpoint.getNodeOccupant());
+    }
+
     @Given("node {int} is empty")
     public void node_is_empty(Integer locationId) {
         Node node = board.getNode(locationId);
         assertNull(node.getNodeOccupant());
         assertNull(node.getInfraType());
     }
-
-    // --- GUI actions (simulate the action-menu button clicks) ---------------
 
     @When("the player clicks Build")
     public void the_player_clicks_build() {
@@ -136,8 +138,6 @@ public class HandleBuildStepDefinitions {
         startingResources = currentPlayer.getResources();
         controller.onBuildConfirmed();
     }
-
-    // --- Outcomes -----------------------------------------------------------
 
     @Then("{word} {int} should be occupied by the player's {word}")
     public void location_should_be_occupied_by_the_players(
@@ -214,8 +214,6 @@ public class HandleBuildStepDefinitions {
     public void the_players_resources_should_remain_unchanged() {
         assertEquals(startingResources, currentPlayer.getResources());
     }
-
-    // --- Helpers ------------------------------------------------------------
 
     private LocationType toLocationType(String locationType) {
         if (locationType.equalsIgnoreCase("edge")) {
