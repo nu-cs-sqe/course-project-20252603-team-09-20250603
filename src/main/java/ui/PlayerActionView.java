@@ -1,5 +1,6 @@
 package ui;
 
+import domain.DevCard;
 import domain.DevCardType;
 import domain.InfraType;
 import domain.Player;
@@ -16,7 +17,6 @@ import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class PlayerActionView extends VBox {
@@ -173,7 +173,7 @@ public class PlayerActionView extends VBox {
         );
     }
 
-    public void renderUseDevCardMenu(Player player, Map<DevCardType, Integer> cardCounts) {
+    public void renderUseDevCardMenu(Player player, List<DevCard> devCards) {
         getChildren().clear();
         selectedInfraButton = null;
         selectedDevCardButton = null;
@@ -191,11 +191,8 @@ public class PlayerActionView extends VBox {
 
         getChildren().addAll(title, playerTurn, prompt);
 
-        for (DevCardType type : DevCardType.values()) {
-            int count = cardCounts.getOrDefault(type, 0);
-            if (count > 0) {
-                getChildren().add(createDevCardButton(type, count));
-            }
+        for (DevCard card : devCards) {
+            getChildren().add(createDevCardButton(card));
         }
 
         Button useButton = new Button(I18n.text("button.use"));
@@ -357,14 +354,19 @@ public class PlayerActionView extends VBox {
         }
     }
 
-    private Button createDevCardButton(DevCardType type, int count) {
-        Button button = new Button(I18n.text("playerAction.devCardCount", UiText.devCard(type), count));
+    private Button createDevCardButton(DevCard card) {
+        String statusKey = card.getIsActive()
+                ? "playerAction.devCardStatus.active"
+                : "playerAction.devCardStatus.inactive";
+        Button button = new Button(I18n.text("playerAction.devCardEntry",
+                UiText.devCard(card.getType()),
+                I18n.text(statusKey)));
         button.getStyleClass().add("action-button");
         button.setMaxWidth(Double.MAX_VALUE);
         button.setOnAction(e -> {
             if (controller != null) {
                 selectDevCardButton(button);
-                controller.onDevCardTypeSelected(type);
+                controller.onDevCardSelected(card);
             }
         });
         return button;

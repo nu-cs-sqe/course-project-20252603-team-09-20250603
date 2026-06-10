@@ -2,6 +2,7 @@ package ui;
 
 import domain.DevCard;
 import domain.DevCardType;
+import domain.DomainErrorKey;
 import domain.Game;
 import domain.IllegalActionException;
 import domain.InfraType;
@@ -12,9 +13,7 @@ import domain.TradeManager;
 import domain.TurnManager;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class PlayerActionController {
@@ -39,7 +38,7 @@ public class PlayerActionController {
     private int selectedLocationId = -1;
     private LocationType selectedLocationType = null;
     private InfraType selectedBuildType = null;
-    private DevCardType selectedDevCardType = null;
+    private DevCard selectedDevCard = null;
     private boolean awaitingKnightHex = false;
     private boolean awaitingRobberHex = false;
 
@@ -216,60 +215,60 @@ public class PlayerActionController {
             return;
         }
 
-        Map<DevCardType, Integer> counts = countDevCards(currentPlayer);
-        if (counts.isEmpty()) {
+        List<DevCard> devCards = currentPlayer.getDevCardHand();
+        if (devCards.isEmpty()) {
             if (view != null) {
                 view.showError(I18n.text("playerAction.error.noDevCards"));
             }
             return;
         }
 
-        selectedDevCardType = null;
+        selectedDevCard = null;
         awaitingKnightHex = false;
         if (view != null) {
-            view.renderUseDevCardMenu(currentPlayer, counts);
+            view.renderUseDevCardMenu(currentPlayer, devCards);
         }
     }
 
-    private Map<DevCardType, Integer> countDevCards(Player player) {
-        Map<DevCardType, Integer> counts = new EnumMap<>(DevCardType.class);
-        for (DevCard card : player.getDevCardHand()) {
-            counts.merge(card.getType(), 1, Integer::sum);
-        }
-        return counts;
-    }
-
-    public void onDevCardTypeSelected(DevCardType type) {
-        selectedDevCardType = type;
+    public void onDevCardSelected(DevCard card) {
+        selectedDevCard = card;
     }
 
     public void onUseDevCardCanceled() {
-        selectedDevCardType = null;
+        selectedDevCard = null;
         awaitingKnightHex = false;
         setHexSelectionMode(false);
         update();
     }
 
     public void onUseDevCardConfirmed() {
-        if (selectedDevCardType == null) {
+        if (selectedDevCard == null) {
             if (view != null) {
                 view.showError(I18n.text("playerAction.error.selectDevCardFirst"));
             }
             return;
         }
 
-        switch (selectedDevCardType) {
+        DevCard cardToPlay = selectedDevCard;
+        if (!cardToPlay.getIsActive()) {
+            if (view != null) {
+                view.showError(I18n.text(DomainErrorKey.DEV_CARD_NOT_PLAYABLE_ON_PURCHASE_TURN.key()));
+            }
+            return;
+        }
+
+        switch (cardToPlay.getType()) {
             case ROAD_BUILDING:
-                executeUseDevCard(DevCardType.ROAD_BUILDING, -1, -1, null, null, null, I18n.text("playerAction.success.roadBuildingPlayed"));
+                executeUseDevCard(cardToPlay, -1, -1, null, null, null, I18n.text("playerAction.success.roadBuildingPlayed"));
                 break;
             case YEAR_OF_PLENTY:
-                playYearOfPlenty();
+                playYearOfPlenty(cardToPlay);
                 break;
             case MONOPOLY:
-                playMonopoly();
+                playMonopoly(cardToPlay);
                 break;
             case KNIGHT:
-                startKnightTargeting();
+                startKnightTargeting(cardToPlay);
                 break;
             case VICTORY_POINT:
                 if (view != null) {
@@ -281,7 +280,7 @@ public class PlayerActionController {
         }
     }
 
-    private void playYearOfPlenty() {
+    private void playYearOfPlenty(DevCard cardToPlay) {
         if (view == null) {
             return;
         }
@@ -298,11 +297,11 @@ public class PlayerActionController {
             return;
         }
 
-        executeUseDevCard(DevCardType.YEAR_OF_PLENTY, -1, -1, first.get(), second.get(), null,
+        executeUseDevCard(cardToPlay, -1, -1, first.get(), second.get(), null,
                 I18n.text("playerAction.success.yearOfPlentyPlayed"));
     }
 
-    private void playMonopoly() {
+    private void playMonopoly(DevCard cardToPlay) {
         if (view == null) {
             return;
         }
@@ -313,10 +312,11 @@ public class PlayerActionController {
             return;
         }
 
-        executeUseDevCard(DevCardType.MONOPOLY, -1, -1, null, null, choice.get(), I18n.text("playerAction.success.monopolyPlayed"));
+        executeUseDevCard(cardToPlay, -1, -1, null, null, choice.get(), I18n.text("playerAction.success.monopolyPlayed"));
     }
 
-    private void startKnightTargeting() {
+    private void startKnightTargeting(DevCard cardToPlay) {
+        selectedDevCard = cardToPlay;
         awaitingKnightHex = true;
         setHexSelectionMode(true);
         if (boardController != null) {
@@ -365,7 +365,7 @@ public class PlayerActionController {
             victimId = chosen.get().getId();
         }
 
-        executeUseDevCard(DevCardType.KNIGHT, hexId, victimId, null, null, null, I18n.text("playerAction.success.knightPlayed"));
+        executeUseDevCard(selectedDevCard, hexId, victimId, null, null, null, I18n.text("playerAction.success.knightPlayed"));
     }
 
     private void handleRobberHexSelected(int hexId) {
@@ -471,14 +471,15 @@ public class PlayerActionController {
         return candidates;
     }
 
-    private void executeUseDevCard(DevCardType type, int hexId, int victimId,
+    private void executeUseDevCard(DevCard cardToPlay, int hexId, int victimId,
                                    ResourceType choice1, ResourceType choice2, ResourceType targetType,
                                    String successMessage) {
         Player currentPlayer = getCurrentPlayer();
-        if (currentPlayer == null) {
+        if (currentPlayer == null || cardToPlay == null) {
             return;
         }
 
+        DevCardType type = cardToPlay.getType();
         try {
             game.useDevCard(currentPlayer.getId(), type, hexId, victimId, choice1, choice2, targetType);
             if (boardController != null) {
@@ -498,7 +499,7 @@ public class PlayerActionController {
             }
         }
 
-        selectedDevCardType = null;
+        selectedDevCard = null;
         awaitingKnightHex = false;
         setHexSelectionMode(false);
         update();
