@@ -511,6 +511,11 @@ public class PlayerActionController {
         }
     }
 
+    private void beginRobberPlacement() {
+        turnRollResolved = true;
+        handleRollSeven();
+    }
+
     public void onBuildTypeSelected(InfraType infraType) {
         if (!canTakeNormalPlayActions()) {
             if (view != null) {
@@ -650,7 +655,7 @@ public class PlayerActionController {
         }
 
         if (!turnRollResolved) {
-            return "Waiting for dice roll.";
+            return "Close the dice result to continue.";
         }
 
         if (awaitingRobberHex) {
@@ -729,15 +734,16 @@ public class PlayerActionController {
 
         int rollTotal = game.getDieSum();
         rollingForTurn = false;
-        turnRollResolved = true;
 
         if (rollTotal == 7) {
             if (diceRollView != null) {
                 diceRollView.showRollResult(currentPlayer, lastDieOne, lastDieTwo,
-                        "Rolled 7! The robber activates.");
+                        "Rolled 7! The robber activates.", this::beginRobberPlacement);
+            } else {
+                beginRobberPlacement();
             }
-            handleRollSeven();
         } else {
+            turnRollResolved = true;
             game.getBoard().distributeResourcesOnRoll(rollTotal);
 
             if (diceRollView != null) {
