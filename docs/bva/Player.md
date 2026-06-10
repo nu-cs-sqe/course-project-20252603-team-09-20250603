@@ -139,3 +139,13 @@ Getter to pass to controller - untested as simply acts as a simple getter
 | Test Case 8   | ResourceHand contains desert only                                      | Throws `IllegalStateException`                                    | :white_check_mark: |
 | Test Case 9   | ResourceHand contains desert and valid resources                       | Desert is never returned; one valid resource is removed           | :white_check_mark: |
 | Test Case 10  | `removeRandomCard()` is called multiple times on a non-empty hand      | Resource counts update cumulatively across calls                  | :white_check_mark: |
+
+### Method under test: `setHasLargestArmy(boolean hasLargestArmy)`
+
+|              | State of the System                                   | Expected output / behavior                              | Implemented? |
+|--------------|-------------------------------------------------------|----------------------------------------------------------|--------------|
+| Test Case 1  | New player does not have largest army                 | `isHasLargestArmy()` returns `false`                     | :x: |
+| Test Case 2  | Player does not have largest army, then gains it      | `hasLargestArmy` becomes `true` and victory points +2    | :x: |
+| Test Case 3  | Player already has largest army, set to true again    | Victory points do not increase again                     | :x: |
+| Test Case 4  | Player has largest army, then loses it                | `hasLargestArmy` becomes `false` and victory points -2   | :x: |
+| Test Case 5  | Player does not have largest army, set to false again | Victory points do not decrease                           | :x: |
