@@ -550,6 +550,17 @@ public class DevCardTests {
         assertThrows(IllegalArgumentException.class, () -> game.drawDevCard(999));
     }
 
+    @Test // TC-DC-RB-INACTIVE
+    void test_RoadBuilding_OnInactiveCard_ThrowsAndDeductsNoRoads() {
+        DevCard card = new DevCard(DevCardType.ROAD_BUILDING); // bought this turn -> inactive
+        Player player = new Player(0, "John", PlayerColor.RED);
+        Board board = new Board();
+
+        // verifyCardIsPlayable must reject an inactive card before any roads are spent.
+        assertThrows(IllegalActionException.class, () -> card.doRoadBuildingAction(player, board));
+        assertEquals(15, player.getInventory().get("roads"));
+    }
+
     @Test // TC-DC-USE-VP
     void test_UseDevCard_VictoryPoint_ThrowsUnsupportedOperation() {
         Player player = new Player(0, "John", PlayerColor.RED);
