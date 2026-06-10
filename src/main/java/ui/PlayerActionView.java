@@ -2,6 +2,7 @@ package ui;
 
 import domain.DevCard;
 import domain.DevCardType;
+import domain.DomainErrorKey;
 import domain.InfraType;
 import domain.Player;
 import domain.PlayerAction;
@@ -192,7 +193,7 @@ public class PlayerActionView extends VBox {
         getChildren().addAll(title, playerTurn, prompt);
 
         for (DevCard card : devCards) {
-            getChildren().add(createDevCardButton(card));
+            getChildren().add(createDevCardButton(player, card));
         }
 
         Button useButton = new Button(I18n.text("button.use"));
@@ -354,8 +355,9 @@ public class PlayerActionView extends VBox {
         }
     }
 
-    private Button createDevCardButton(DevCard card) {
-        String statusKey = card.getIsActive()
+    private Button createDevCardButton(Player player, DevCard card) {
+        boolean isPlayableNow = isDevCardPlayableNow(player, card);
+        String statusKey = isPlayableNow
                 ? "playerAction.devCardStatus.active"
                 : "playerAction.devCardStatus.inactive";
         Button button = new Button(I18n.text("playerAction.devCardEntry",
@@ -365,11 +367,22 @@ public class PlayerActionView extends VBox {
         button.setMaxWidth(Double.MAX_VALUE);
         button.setOnAction(e -> {
             if (controller != null) {
+                if (!isDevCardPlayableNow(player, card)) {
+                    String errorKey = player.getHasPlayedDevCardThisTurn()
+                            ? DomainErrorKey.DEV_CARD_ALREADY_PLAYED_THIS_TURN.key()
+                            : DomainErrorKey.DEV_CARD_NOT_PLAYABLE_ON_PURCHASE_TURN.key();
+                    showError(I18n.text(errorKey));
+                    return;
+                }
                 selectDevCardButton(button);
                 controller.onDevCardSelected(card);
             }
         });
         return button;
+    }
+
+    private boolean isDevCardPlayableNow(Player player, DevCard card) {
+        return card.getIsActive() && !player.getHasPlayedDevCardThisTurn();
     }
 
     private void selectDevCardButton(Button button) {

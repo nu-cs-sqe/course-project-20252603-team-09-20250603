@@ -249,6 +249,18 @@ public class PlayerActionController {
             return;
         }
 
+        Player currentPlayer = getCurrentPlayer();
+        if (currentPlayer == null) {
+            return;
+        }
+
+        if (currentPlayer.getHasPlayedDevCardThisTurn()) {
+            if (view != null) {
+                view.showError(I18n.text(DomainErrorKey.DEV_CARD_ALREADY_PLAYED_THIS_TURN.key()));
+            }
+            return;
+        }
+
         DevCard cardToPlay = selectedDevCard;
         if (!cardToPlay.getIsActive()) {
             if (view != null) {
