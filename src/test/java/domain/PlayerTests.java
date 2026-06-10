@@ -645,6 +645,315 @@ public class PlayerTests {
         assertEquals(0, player.getVictoryPoints());
     }
 
+    @Test
+    void removeVictoryPoints_RemoveOneMoreThanPlayerHas_PointsBecomeZero() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
 
+        player.addVictoryPoints(2);
 
+        player.removeVictoryPoints(3);
+
+        assertEquals(0, player.getVictoryPoints());
+    }
+
+    @Test
+    public void removeRandomCard_emptyHand_throwsIllegalStateException() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        assertThrows(IllegalStateException.class, player::removeRandomCard);
+    }
+
+    @Test
+    public void removeRandomCard_oneWood_returnsWoodAndRemovesWood() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WOOD, 1);
+        player.addResources(resources);
+
+        ResourceType removed = player.removeRandomCard();
+
+        assertEquals(ResourceType.WOOD, removed);
+        assertTrue(player.getResources().isEmpty());
+    }
+
+    @Test
+    public void removeRandomCard_oneBrick_returnsBrickAndRemovesBrick() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.BRICK, 1);
+        player.addResources(resources);
+
+        ResourceType removed = player.removeRandomCard();
+
+        assertEquals(ResourceType.BRICK, removed);
+        assertTrue(player.getResources().isEmpty());
+    }
+
+    @Test
+    public void removeRandomCard_twoWood_returnsWoodAndLeavesOneWood() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WOOD, 2);
+        player.addResources(resources);
+
+        ResourceType removed = player.removeRandomCard();
+
+        Map<ResourceType, Integer> expected = new HashMap<>();
+        expected.put(ResourceType.WOOD, 1);
+
+        assertEquals(ResourceType.WOOD, removed);
+        assertEquals(expected, player.getResources());
+    }
+
+    @Test
+    public void removeRandomCard_woodAndBrick_removesOneCard() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WOOD, 1);
+        resources.put(ResourceType.BRICK, 1);
+        player.addResources(resources);
+
+        ResourceType removed = player.removeRandomCard();
+
+        assertTrue(
+                removed == ResourceType.WOOD ||
+                        removed == ResourceType.BRICK
+        );
+
+        int totalCards =
+                player.getResources().getOrDefault(ResourceType.WOOD, 0)
+                        + player.getResources().getOrDefault(ResourceType.BRICK, 0);
+
+        assertEquals(1, totalCards);
+    }
+
+    @Test
+    public void removeRandomCard_multipleTypes_returnsExistingResourceType() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WOOD, 1);
+        resources.put(ResourceType.BRICK, 1);
+        resources.put(ResourceType.ORE, 1);
+        player.addResources(resources);
+
+        ResourceType removed = player.removeRandomCard();
+
+        assertTrue(resources.containsKey(removed));
+    }
+
+    @Test
+    public void removeRandomCard_multipleCards_decreasesTotalCardCountByOne() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WOOD, 2);
+        resources.put(ResourceType.BRICK, 1);
+        player.addResources(resources);
+
+        player.removeRandomCard();
+
+        int totalCards =
+                player.getResources().getOrDefault(ResourceType.WOOD, 0)
+                        + player.getResources().getOrDefault(ResourceType.BRICK, 0);
+
+        assertEquals(2, totalCards);
+    }
+
+    @Test
+    public void removeRandomCard_desertOnly_throwsIllegalStateException() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.DESERT, 1);
+        player.addResources(resources);
+
+        assertThrows(IllegalStateException.class, player::removeRandomCard);
+    }
+
+    @Test
+    public void removeRandomCard_desertAndWood_returnsWood() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.DESERT, 1);
+        resources.put(ResourceType.WOOD, 1);
+        player.addResources(resources);
+
+        ResourceType removed = player.removeRandomCard();
+
+        assertEquals(ResourceType.WOOD, removed);
+    }
+
+    @Test
+    public void removeRandomCard_multipleCalls_updatesResourcesCumulatively() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WOOD, 2);
+        player.addResources(resources);
+
+        player.removeRandomCard();
+        player.removeRandomCard();
+
+        assertTrue(player.getResources().isEmpty());
+    }
+
+    @Test
+    void removeRandomCard_ValidResourceWithZeroCount_DoesNotRemoveThatResource() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WOOD, 1);
+        player.addResources(resources);
+
+        Map<ResourceType, Integer> cost = new HashMap<>();
+        cost.put(ResourceType.WOOD, 1);
+        player.useResources(cost);
+
+        assertEquals(0, player.getResources().get(ResourceType.WOOD));
+
+        assertThrows(IllegalStateException.class, () -> {
+            player.removeRandomCard();
+        });
+    }
+
+    @Test
+    public void hasMoreThanSevenResources_emptyHand_returnsFalse() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        assertFalse(player.hasMoreThanSevenResources());
+    }
+
+    @Test
+    public void hasMoreThanSevenResources_sevenResources_returnsFalse() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WOOD, 4);
+        resources.put(ResourceType.BRICK, 3);
+
+        player.addResources(resources);
+
+        assertFalse(player.hasMoreThanSevenResources());
+    }
+
+    @Test
+    public void hasMoreThanSevenResources_eightResources_returnsTrue() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WOOD, 5);
+        resources.put(ResourceType.BRICK, 3);
+
+        player.addResources(resources);
+
+        assertTrue(player.hasMoreThanSevenResources());
+    }
+
+    @Test
+    public void hasMoreThanSevenResources_multipleResourceTypesOverSeven_returnsTrue() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WOOD, 2);
+        resources.put(ResourceType.BRICK, 2);
+        resources.put(ResourceType.WHEAT, 2);
+        resources.put(ResourceType.ORE, 2);
+
+        player.addResources(resources);
+
+        assertTrue(player.hasMoreThanSevenResources());
+    }
+
+    @Test
+    void isHasLargestArmy_NewPlayer_ReturnsFalse() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        assertFalse(player.isHasLargestArmy());
+    }
+
+    @Test
+    void setHasLargestArmy_PlayerGainsLargestArmy_AddsTwoVictoryPoints() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.setHasLargestArmy(true);
+
+        assertTrue(player.isHasLargestArmy());
+        assertEquals(2, player.getVictoryPoints());
+    }
+
+    @Test
+    void setHasLargestArmy_PlayerAlreadyHasLargestArmy_DoesNotAddPointsAgain() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.setHasLargestArmy(true);
+        player.setHasLargestArmy(true);
+
+        assertTrue(player.isHasLargestArmy());
+        assertEquals(2, player.getVictoryPoints());
+    }
+
+    @Test
+    void setHasLargestArmy_PlayerLosesLargestArmy_RemovesTwoVictoryPoints() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.setHasLargestArmy(true);
+        player.setHasLargestArmy(false);
+
+        assertFalse(player.isHasLargestArmy());
+        assertEquals(0, player.getVictoryPoints());
+    }
+
+    @Test
+    void setHasLargestArmy_PlayerAlreadyDoesNotHaveLargestArmy_DoesNotRemovePoints() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.setHasLargestArmy(false);
+
+        assertFalse(player.isHasLargestArmy());
+        assertEquals(0, player.getVictoryPoints());
+    }
+
+    @Test
+    void deductRoads_PlayerHasMoreThanCount_DecreasesRoadCount() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.deductRoads(1);
+
+        assertEquals(14, player.getInventory().get("roads"));
+    }
+
+    @Test
+    void deductRoads_PlayerHasExactlyCount_DecreasesRoadCountToZero() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.deductRoads(15);
+
+        assertEquals(0, player.getInventory().get("roads"));
+    }
+
+    @Test
+    void deductRoads_CountIsZero_RoadCountStaysSame() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.deductRoads(0);
+
+        assertEquals(15, player.getInventory().get("roads"));
+    }
+
+    @Test
+    void deductRoads_CountGreaterThanCurrentRoads_ThrowsExceptionAndRoadCountUnchanged() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        assertThrows(IllegalStateException.class, () -> {
+            player.deductRoads(16);
+        });
+
+        assertEquals(15, player.getInventory().get("roads"));
+    }
 }

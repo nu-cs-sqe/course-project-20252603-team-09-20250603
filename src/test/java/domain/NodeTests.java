@@ -166,7 +166,42 @@ public class NodeTests {
         assertNotEquals(node1.hashCode(), node2.hashCode());
     }
 
+    @Test
+    public void equals_SameObject_ReturnsTrue() {
+        Node node = new Node(0);
 
+        assertTrue(node.equals(node));
+    }
+
+    @Test
+    public void equals_SameIdDifferentObject_ReturnsTrue() {
+        Node node1 = new Node(0);
+        Node node2 = new Node(0);
+
+        assertEquals(node1, node2);
+    }
+
+    @Test
+    public void equals_DifferentId_ReturnsFalse() {
+        Node node1 = new Node(0);
+        Node node2 = new Node(1);
+
+        assertNotEquals(node1, node2);
+    }
+
+    @Test
+    public void equals_Null_ReturnsFalse() {
+        Node node = new Node(0);
+
+        assertFalse(node.equals(null));
+    }
+
+    @Test
+    public void equals_NonNodeObject_ReturnsFalse() {
+        Node node = new Node(0);
+
+        assertFalse(node.equals("not a node"));
+    }
 
 
 }

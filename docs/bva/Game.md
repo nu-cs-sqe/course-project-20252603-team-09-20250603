@@ -2,45 +2,15 @@
 
 Handles the progression of game
 
-## Methods:
-`start()` - loops until game ends
-`build(Player currentPlayer, InfraType infraType, int locationId)`
-    handles building a road, settlement, or city
-    validates placement
-    during setup, tracks the second settlement per player for starting resources
-    handles decrementing inventory and resources
-`distributeSetupResources()`
-    gives each player resources from hexes adjacent to their second setup settlement
-`handleMoveRobber(int roll, int newHexId)`
-    handles moving a robber when the roll is 7
-    block a hex by setting its hasRobber
-    removes the robber from wherever it was before
-`getBoard`
-    Getter to pass to controller - untested as simply acts as a simple getter (discussed with Prof. Yiji in OH)
-`getPlayers`
-    Getter to pass to controller - untested as simply acts as a simple getter
-`setCurrPhase`
-    Setter to pass to controller - untested as simply acts as a simple getter
-`getTurnManager`
-    Getter to pass to controller - untested as simply acts as a simple getter
-`getPlayer(int id)`
-    Returns the player with the matching id. Throws `IllegalArgumentException` if not found.
-`phaseSetupCheck()`
-    returns `true` if the current phase is `SETUP`, `false` otherwise.
-`advancePhase()`
-    Advances the phase forward one step: `SETUP` → `NORMAL_PLAY` → `GAME_OVER`.
-    When leaving `SETUP`, calls `distributeSetupResources()`.
-
-### Method under test: `handleMoveRobber()`
+### Method under test: `handleMoveRobberLocation()`
 
 |             | State of the System                         | Expected output / behavior                                 | Implemented?       |
 |-------------|---------------------------------------------|------------------------------------------------------------|--------------------|
-| Test Case 1 | Roll is not 7                               | Robber does not move                                       | :white_check_mark: |
-| Test Case 2 | Roll is 7 and no hex currently has robber   | Selected hex has robber                                    | :white_check_mark: |
-| Test Case 3 | Roll is 7 and robber starts on another hex  | Previous hex no longer has robber; selected hex has robber | :white_check_mark: |
-| Test Case 4 | Roll is 7 and selected hex already has robber | Throws `IllegalStateException`                           | :white_check_mark: |
-| Test Case 5 | Roll is 7 and robber moves                  | Exactly one hex has robber                                 | :white_check_mark: |
-| Test Case 6 | Roll is 7 and selected hex ID is invalid    | Throws `IllegalArgumentException`                          | :white_check_mark: |
+| Test Case 1 | Roll is 7 and no hex currently has robber   | Selected hex has robber                                    | :white_check_mark:                |
+| Test Case 2 | Roll is 7 and robber starts on another hex  | Previous hex no longer has robber; selected hex has robber | :white_check_mark:                |
+| Test Case 3 | Roll is 7 and selected hex already has robber | Throws `IllegalStateException`                           | :white_check_mark:                |
+| Test Case 4 | Roll is 7 and robber moves                  | Exactly one hex has robber                                 | :white_check_mark:                |
+| Test Case 5 | Roll is 7 and selected hex ID is invalid    | Throws `IllegalArgumentException`                          | :white_check_mark:                |
 
 ## Method under test: `getPlayer(int id)`
 
