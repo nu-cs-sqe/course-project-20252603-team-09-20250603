@@ -98,6 +98,8 @@ public class PlayerActionView extends VBox {
                 createActionButton(PlayerAction.BUILD),
                 createActionButton(PlayerAction.BUY_DEV_CARD),
                 createActionButton(PlayerAction.USE_DEV_CARD),
+                createActionButton(PlayerAction.TRADE_WITH_PLAYER),
+                createActionButton(PlayerAction.TRADE_WITH_BANK),
                 createActionButton(PlayerAction.END_TURN)
         );
 
@@ -355,6 +357,10 @@ public class PlayerActionView extends VBox {
                 return "Buy Development Card";
             case USE_DEV_CARD:
                 return "Use Development Card";
+            case TRADE_WITH_PLAYER:
+                return "Trade With Player";
+            case TRADE_WITH_BANK:
+                return "Trade With Bank";
             case END_TURN:
                 return "End Turn";
             default:

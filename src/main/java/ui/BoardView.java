@@ -106,6 +106,10 @@ public final class BoardView extends BorderPane {
         statusLabel.setText(message);
     }
 
+    public void showError(String message) {
+        MessageDialog.showError(this, message);
+    }
+
     public void clearSelection() {
         if (selectedNodeShape != null) {
             selectedNodeShape.getStyleClass().remove("selected-node");

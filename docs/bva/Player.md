@@ -123,3 +123,39 @@ Getter to pass to controller - untested as simply acts as a simple getter
 | Test Case 3  | Player has 2 points and loses 0 points               | Victory points stay 2             | :x: |
 | Test Case 4  | Player tries to lose negative points                 | Throws `IllegalArgumentException` | :x: |
 | Test Case 5  | Player tries to lose more points than they have      | Victory points become 0           | :x: |
+
+
+### Method under test: `removeRandomCard()`
+
+|               | State of the System                                                    | Expected output / behavior                                        | Implemented?    |
+|---------------|------------------------------------------------------------------------|-------------------------------------------------------------------|-----------------|
+| Test Case 1   | ResourceHand is empty                                                  | Throws `IllegalStateException`                                    | :white_check_mark: |
+| Test Case 2   | ResourceHand has exactly 1 wood                                        | Returns `WOOD`; hand becomes empty                                | :white_check_mark: |
+| Test Case 3   | ResourceHand has exactly 1 brick                                       | Returns `BRICK`; hand becomes empty                               | :white_check_mark: |
+| Test Case 4   | ResourceHand has 2 wood                                                | Returns `WOOD`; wood count decreases to 1                         | :white_check_mark: |
+| Test Case 5   | ResourceHand has 1 wood and 1 brick                                    | Returns either `WOOD` or `BRICK`; total card count decreases by 1 | :white_check_mark: |
+| Test Case 6   | ResourceHand has multiple resource types                               | Returned resource is one of the resources originally in the hand  | :white_check_mark: |
+| Test Case 7   | ResourceHand has multiple cards of one type and other resource types   | Only the returned resource count decreases by 1                   | :white_check_mark: |
+| Test Case 8   | ResourceHand contains desert only                                      | Throws `IllegalStateException`                                    | :white_check_mark: |
+| Test Case 9   | ResourceHand contains desert and valid resources                       | Desert is never returned; one valid resource is removed           | :white_check_mark: |
+| Test Case 10  | `removeRandomCard()` is called multiple times on a non-empty hand      | Resource counts update cumulatively across calls                  | :white_check_mark: |
+| Test Case 11  | ResourceHand contains a valid resource with count 0                  | That resource is not treated as removable; throws `IllegalStateException` if no other valid cards exist | :white_check_mark: |
+
+### Method under test: `setHasLargestArmy(boolean hasLargestArmy)`
+
+|              | State of the System                                   | Expected output / behavior                              | Implemented? |
+|--------------|-------------------------------------------------------|----------------------------------------------------------|--|
+| Test Case 1  | New player does not have largest army                 | `isHasLargestArmy()` returns `false`                     | :white_check_mark: |
+| Test Case 2  | Player does not have largest army, then gains it      | `hasLargestArmy` becomes `true` and victory points +2    | :white_check_mark: |
+| Test Case 3  | Player already has largest army, set to true again    | Victory points do not increase again                     | :white_check_mark: |
+| Test Case 4  | Player has largest army, then loses it                | `hasLargestArmy` becomes `false` and victory points -2   | :white_check_mark: |
+| Test Case 5  | Player does not have largest army, set to false again | Victory points do not decrease                           | :white_check_mark: |
+
+### Method under test: `deductRoads(int count)`
+
+|              | State of the System                          | Expected output / behavior                         | Implemented? |
+|--------------|----------------------------------------------|-----------------------------------------------------|--------------|
+| Test Case 1  | Player has 15 roads and deducts 1 road       | Road count decreases to 14                          | :x: |
+| Test Case 2  | Player has exactly 15 roads and deducts 15   | Road count decreases to 0                           | :x: |
+| Test Case 3  | Player has 15 roads and deducts 0 roads      | Road count stays 15                                 | :x: |
+| Test Case 4  | Player has 15 roads and deducts 16 roads     | Throws `IllegalStateException`; road count unchanged | :x: |
