@@ -1,87 +1,94 @@
-Feature: Game handleBuild
+Feature: Build through the player action menu (GUI)
   As a player
-  I want to build roads, settlements, and cities
-  So that I can expand my position during the game
+  I want to build roads, settlements, and cities from the action menu
+  So that I can expand my position during normal play
 
   Background:
     Given a game with a current player
     And an initialized board
 
-  Scenario Outline: Player successfully builds a road or settlement with sufficient resources and inventory through the controller
-    When player chooses build option <optionNumber>
-    And enters to build at <locationType> <locationId>
-    And the game validates that player has the resources needed to build <infraType>
-    And the game validates that player has at least one <infraType> in their inventory
-    And the game validates that <locationType> <locationId> is available for building <infraType>
-    Then the <locationType> <locationId> should be occupied by the player's <infraType>
+  Scenario Outline: Player builds a road or settlement through the action menu
+    Given the player has the resources to build <infraType>
+    And the player has at least one <infraType> in their inventory
+    When the player clicks Build
+    And the player selects <infraType>
+    And the player clicks <locationType> <locationId>
+    And the player confirms the build
+    Then <locationType> <locationId> should be occupied by the player's <infraType>
     And the player's inventory should decrease by one <infraType>
     And the player's resources should decrease by the cost of building <infraType>
 
     Examples:
-    |optionNumber |infraType   | locationType | locationId |
-    |1            | road       | edge         | 1          |
-    |1            | road       | edge         | 10         |
-    |2            | settlement | node         | 1          |
-    |2            | settlement | node         | 10         |
+      | infraType  | locationType | locationId |
+      | road       | edge         | 1          |
+      | road       | edge         | 10         |
+      | settlement | node         | 1          |
+      | settlement | node         | 10         |
 
-  Scenario Outline: Player successfully upgrades their settlement to a city through the controller
-    When player chooses build option 3
-    And enters to build at node <locationId>
-    And the game validates that player has the resources needed to build city
-    And the game validates that player has at least one city in their inventory
-    And the game validates that node <locationId> is occupied by the player's settlement
+  Scenario Outline: Player upgrades their settlement to a city through the action menu
+    Given node <locationId> already has the player's settlement
+    And the player has the resources to build city
+    And the player has at least one city in their inventory
+    When the player clicks Build
+    And the player selects city
+    And the player clicks node <locationId>
+    And the player confirms the build
     Then node <locationId> should be occupied by the player's city
     And the player's inventory should decrease by one city
     And the player's resources should decrease by the cost of building city
 
     Examples:
-    |locationId |
-    | 1          |
-    | 8          |
-    | 10         |
+      | locationId |
+      | 1          |
+      | 8          |
+      | 10         |
 
-  Scenario Outline: Player cannot build without enough infrastructure inventory through the controller
-    When player chooses build option <optionNumber>
-    And enters to build at <locationType> <locationId>
-    And the game validates that player has the resources needed to build <infraType>
-    And the game validates that player does not have any <infraType> in their inventory
-    And the game validates that <locationType> <locationId> is available for building <infraType>
-    Then the game should prevent the player from building
+  Scenario Outline: Player cannot build without infrastructure in their inventory
+    Given the player has the resources to build <infraType>
+    And the player has no <infraType> in their inventory
+    When the player clicks Build
+    And the player selects <infraType>
+    And the player clicks <locationType> <locationId>
+    And the player confirms the build
+    Then the build should be rejected
     And <locationType> <locationId> should not be occupied by the player's <infraType>
     And the player's inventory should remain unchanged
     And the player's resources should remain unchanged
 
     Examples:
-    |optionNumber |infraType   | locationType | locationId |
-    |1            | road       | edge         | 1          |
-    |1            | road       | edge         | 10         |
-    |2            | settlement | node         | 1          |
-    |2            | settlement | node         | 10         |
+      | infraType  | locationType | locationId |
+      | road       | edge         | 1          |
+      | road       | edge         | 10         |
+      | settlement | node         | 1          |
+      | settlement | node         | 10         |
 
-  Scenario Outline: Player cannot build without enough resources through the controller
-    When player chooses build option <optionNumber>
-    And enters to build at <locationType> <locationId>
-    And the game validates that player does not have the resources needed to build <infraType>
-    And the game validates that player has at least one <infraType> in their inventory
-    And the game validates that <locationType> <locationId> is available for building <infraType>
-    Then the game should prevent the player from building
+  Scenario Outline: Player cannot build without enough resources
+    Given the player lacks the resources to build <infraType>
+    And the player has at least one <infraType> in their inventory
+    When the player clicks Build
+    And the player selects <infraType>
+    And the player clicks <locationType> <locationId>
+    And the player confirms the build
+    Then the build should be rejected
     And <locationType> <locationId> should not be occupied by the player's <infraType>
     And the player's inventory should remain unchanged
     And the player's resources should remain unchanged
 
     Examples:
-      | optionNumber | infraType  | locationType | locationId |
-      | 1            | road       | edge         | 1          |
-      | 2            | settlement | node         | 1          |
+      | infraType  | locationType | locationId |
+      | road       | edge         | 1          |
+      | settlement | node         | 1          |
 
-  Scenario Outline: Player cannot upgrade settlement to city without enough resources through the controller
-    When player chooses build option 3
-    And enters to build at node <locationId>
-    And the game validates that player does not have the resources needed to build city
-    And the game validates that player has at least one city in their inventory
-    And the game validates that node <locationId> is occupied by the player's settlement
-    Then the game should prevent the player from building
-    And the node <locationId> should be occupied by the player's settlement
+  Scenario Outline: Player cannot upgrade a settlement to a city without enough resources
+    Given node <locationId> already has the player's settlement
+    And the player lacks the resources to build city
+    And the player has at least one city in their inventory
+    When the player clicks Build
+    And the player selects city
+    And the player clicks node <locationId>
+    And the player confirms the build
+    Then the build should be rejected
+    And node <locationId> should be occupied by the player's settlement
     And the player's inventory should remain unchanged
     And the player's resources should remain unchanged
 
@@ -90,103 +97,110 @@ Feature: Game handleBuild
       | 1          |
       | 8          |
 
-  Scenario Outline: Player cannot build a settlement or road on an occupied node or edge through the controller
-    When player chooses build option <optionNumber>
-    And enters to build at <locationType> <locationId>
-    And the game validates that player has the resources needed to build <infraType>
-    And the game validates that player has at least one <infraType> in their inventory
-    And the game validates that <locationType> <locationId> is occupied by another player
-    Then the game should prevent the player from building
+  Scenario Outline: Player cannot build on a location occupied by another player
+    Given the player has the resources to build <infraType>
+    And the player has at least one <infraType> in their inventory
+    And <locationType> <locationId> is occupied by another player
+    When the player clicks Build
+    And the player selects <infraType>
+    And the player clicks <locationType> <locationId>
+    And the player confirms the build
+    Then the build should be rejected
     And <locationType> <locationId> should remain occupied by the other player
     And the player's inventory should remain unchanged
     And the player's resources should remain unchanged
 
     Examples:
-    |optionNumber |infraType   | locationType | locationId |
-    |1            | road       | edge         | 1          |
-    |1            | road       | edge         | 10         |
-    |2            | settlement | node         | 1          |
-    |2            | settlement | node         | 10         |
+      | infraType  | locationType | locationId |
+      | road       | edge         | 1          |
+      | road       | edge         | 10         |
+      | settlement | node         | 1          |
+      | settlement | node         | 10         |
 
-  Scenario Outline: Player cannot build a settlement next to an occupied neighboring node through the controller
-    When player chooses build option 2
-    And enters to build at node <locationId>
-    And the game validates that player has the resources needed to build settlement
-    And the game validates that player has at least one settlement in their inventory
+  Scenario Outline: Player cannot build a settlement next to an occupied neighboring node
+    Given the player has the resources to build settlement
+    And the player has at least one settlement in their inventory
     And node <neighborId> is occupied by another player
-    Then the game should prevent the player from building
+    When the player clicks Build
+    And the player selects settlement
+    And the player clicks node <locationId>
+    And the player confirms the build
+    Then the build should be rejected
     And node <locationId> should not be occupied by the player's settlement
     And node <neighborId> should remain occupied by the other player
     And the player's inventory should remain unchanged
     And the player's resources should remain unchanged
 
     Examples:
-    |locationId | neighborId |
-    | 1          | 2          |
-    | 2          | 1          |
-    |10          |11          |
+      | locationId | neighborId |
+      | 1          | 2          |
+      | 2          | 1          |
+      | 10         | 11         |
 
-  Scenario Outline: Player cannot upgrade an empty node to a city through the controller
-    When player chooses build option 3
-    And enters to build at node <locationId>
-    And the game validates that player has the resources needed to build city
-    And the game validates that player has at least one city in their inventory
-    And the game validates that node <locationId> is not occupied by any player's settlement
-    Then the game should prevent the player from building
+  Scenario Outline: Player cannot upgrade an empty node to a city
+    Given the player has the resources to build city
+    And the player has at least one city in their inventory
+    And node <locationId> is empty
+    When the player clicks Build
+    And the player selects city
+    And the player clicks node <locationId>
+    And the player confirms the build
+    Then the build should be rejected
     And node <locationId> should remain unoccupied
     And the player's inventory should remain unchanged
     And the player's resources should remain unchanged
 
     Examples:
-    |locationId |
-    | 1          |
-    | 8          |
-    | 10         |
+      | locationId |
+      | 1          |
+      | 8          |
+      | 10         |
 
-  Scenario Outline: Player cannot upgrade another player's settlement to a city through the controller
-    When player chooses build option 3
-    And enters to build at node <locationId>
-    And the game validates that player has the resources needed to build city
-    And the game validates that player has at least one city in their inventory
-    And the game validates that node <locationId> is occupied by another player's settlement
-    Then the game should prevent the player from building
+  Scenario Outline: Player cannot upgrade another player's settlement to a city
+    Given node <locationId> is occupied by another player
+    And the player has the resources to build city
+    And the player has at least one city in their inventory
+    When the player clicks Build
+    And the player selects city
+    And the player clicks node <locationId>
+    And the player confirms the build
+    Then the build should be rejected
     And node <locationId> should remain occupied by the other player
     And the player's inventory should remain unchanged
     And the player's resources should remain unchanged
 
     Examples:
-    |locationId |
-    | 1          |
-    | 8          |
-    | 10         |
+      | locationId |
+      | 1          |
+      | 8          |
+      | 10         |
 
-  Scenario Outline: Player cannot upgrade an existing city through the controller
-    When player chooses build option 3
-    And enters to build at node <locationId>
-    And the game validates that player has the resources needed to build city
-    And the game validates that player has at least one city in their inventory
-    And the game validates that node <locationId> is occupied by the player's city
-    Then the game should prevent the player from building
-    And node <locationId> should remain occupied by the player's city
+  Scenario Outline: Player cannot upgrade an existing city
+    Given node <locationId> already has the player's city
+    And the player has the resources to build city
+    And the player has at least one city in their inventory
+    When the player clicks Build
+    And the player selects city
+    And the player clicks node <locationId>
+    And the player confirms the build
+    Then the build should be rejected
+    And node <locationId> should be occupied by the player's city
     And the player's inventory should remain unchanged
     And the player's resources should remain unchanged
 
     Examples:
-    |locationId |
-    | 1          |
-    | 8          |
-    | 10         |
+      | locationId |
+      | 1          |
+      | 8          |
+      | 10         |
 
-  Scenario Outline: Player cannot choose an invalid build option through the controller
-    When player chooses build option <optionNumber>
-    And enters to build at node 1
-    Then the game should prevent the player from building
+  Scenario: Player cannot confirm a build without selecting an infrastructure type
+    Given the player has the resources to build settlement
+    And the player has at least one settlement in their inventory
+    When the player clicks Build
+    And the player clicks node 1
+    And the player confirms the build
+    Then the build should be rejected
+    And node 1 should not be occupied by the player's settlement
     And the player's inventory should remain unchanged
     And the player's resources should remain unchanged
-
-    Examples:
-    |optionNumber |
-    | 0           |
-    | 4           |
-    | -1          |
-
