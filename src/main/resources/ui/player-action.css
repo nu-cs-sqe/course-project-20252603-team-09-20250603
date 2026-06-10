@@ -146,6 +146,10 @@
     -fx-background-color: #ded8c7;
 }
 
+.trade-adjust-button:disabled {
+    -fx-opacity: 0.35;
+}
+
 .trade-summary-label {
     -fx-font-size: 13;
     -fx-text-fill: #2c3e50;

@@ -174,23 +174,31 @@ public class TradeWithPlayerDialog {
 
         Button plus = new Button("+");
         plus.getStyleClass().add("trade-adjust-button");
+        plus.setDisable(available == 0);
+
+        Button minus = new Button("-");
+        minus.getStyleClass().add("trade-adjust-button");
+        minus.setDisable(true);
+
         plus.setOnAction(e -> {
             int current = selections.get(resource);
             if (current < available) {
                 int next = current + 1;
                 selections.put(resource, next);
                 selectedLabel.setText(String.valueOf(next));
+                minus.setDisable(false);
+                plus.setDisable(next >= available);
             }
         });
 
-        Button minus = new Button("-");
-        minus.getStyleClass().add("trade-adjust-button");
         minus.setOnAction(e -> {
             int current = selections.get(resource);
             if (current > 0) {
                 int next = current - 1;
                 selections.put(resource, next);
                 selectedLabel.setText(String.valueOf(next));
+                plus.setDisable(false);
+                minus.setDisable(next <= 0);
             }
         });
 

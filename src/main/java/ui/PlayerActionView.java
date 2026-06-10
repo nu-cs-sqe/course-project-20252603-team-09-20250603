@@ -266,6 +266,14 @@ public class PlayerActionView extends VBox {
         new TradeWithPlayerDialog(getScene().getWindow(), activePlayer, allPlayers);
     }
 
+    public void showTradeWithBankDialog(Player activePlayer) {
+        new TradeWithBankDialog(getScene().getWindow(), activePlayer);
+    }
+
+    public void showDiscardDialog(Player player, int discardCount) {
+        new DiscardResourcesDialog(getScene().getWindow(), player, discardCount);
+    }
+
     private Player getCurrentPlayer() {
         if (players.isEmpty() || controller == null) {
             return null;
