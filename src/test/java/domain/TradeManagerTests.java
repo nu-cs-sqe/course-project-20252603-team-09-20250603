@@ -6,9 +6,43 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TradeManagerTests {
+    @Test
+    void localizedDomainException_NullMessageArgs_ReturnsEmptyArgsArray() {
+        IllegalActionException exception = new IllegalActionException(
+                DomainErrorKey.TRADE_BANK_INSUFFICIENT_RESOURCES,
+                (Object[]) null
+        );
+
+        assertEquals(DomainErrorKey.TRADE_BANK_INSUFFICIENT_RESOURCES, exception.getErrorKey());
+        assertEquals("error.trade.bank.insufficientResources", exception.getMessageKey());
+        assertArrayEquals(new Object[0], exception.getMessageArgs());
+    }
+
+    @Test
+    void localizedDomainException_MessageAccessors_ReturnDefensiveCopiesAndExpectedValues() {
+        Object[] args = {"wood", 4};
+        IllegalActionException exception = new IllegalActionException(
+                DomainErrorKey.TRADE_BANK_SAME_RESOURCE,
+                args
+        );
+
+        args[0] = "brick";
+        Object[] messageArgs = exception.getMessageArgs();
+        messageArgs[1] = 99;
+
+        assertEquals(DomainErrorKey.TRADE_BANK_SAME_RESOURCE, exception.getErrorKey());
+        assertEquals("error.trade.bank.sameResource", exception.getMessageKey());
+        assertArrayEquals(new Object[]{"wood", 4}, exception.getMessageArgs());
+        assertNotSame(args, exception.getMessageArgs());
+        assertNotSame(messageArgs, exception.getMessageArgs());
+    }
+
     @Test
     void tradeWithBank_PlayerHasExactlyFourWood_TradesForOneBrick() {
         Player mockPlayer = EasyMock.createMock(Player.class);
