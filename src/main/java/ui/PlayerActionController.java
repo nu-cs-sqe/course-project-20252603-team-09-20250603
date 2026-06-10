@@ -8,6 +8,7 @@ import domain.InfraType;
 import domain.Player;
 import domain.PlayerAction;
 import domain.ResourceType;
+import domain.TradeManager;
 import domain.TurnManager;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class PlayerActionController {
     private DiceRollView diceRollView;
     private final Game game;
     private final TurnManager turnManager;
+    private final TradeManager tradeManager;
     private final List<Player> players;
     private int normalPlayPlayerIndex = 1;
     private boolean rollingForTurn = false;
@@ -39,12 +41,14 @@ public class PlayerActionController {
     private InfraType selectedBuildType = null;
     private DevCardType selectedDevCardType = null;
     private boolean awaitingKnightHex = false;
+    private boolean awaitingRobberHex = false;
 
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public PlayerActionController(List<Player> players, Game game, TurnManager turnManager) {
         this.players = new ArrayList<>(players);
         this.game = game;
         this.turnManager = turnManager;
+        this.tradeManager = new TradeManager();
     }
 
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
@@ -119,6 +123,12 @@ public class PlayerActionController {
             case USE_DEV_CARD:
                 openUseDevCardMenu();
                 break;
+            case TRADE_WITH_PLAYER:
+                openTradeWithPlayer();
+                break;
+            case TRADE_WITH_BANK:
+                openTradeWithBank();
+                break;
             case END_TURN:
                 advanceNormalPlayTurn();
                 clearBuildState();
@@ -126,6 +136,46 @@ public class PlayerActionController {
                 break;
             default:
                 break;
+        }
+    }
+
+    private void openTradeWithPlayer() {
+        Player currentPlayer = getCurrentPlayer();
+        if (currentPlayer == null) {
+            return;
+        }
+
+        boolean hasOtherPlayers = false;
+        for (Player p : players) {
+            if (p.getId() != currentPlayer.getId()) {
+                hasOtherPlayers = true;
+                break;
+            }
+        }
+        if (!hasOtherPlayers) {
+            if (view != null) {
+                view.showError("No other players to trade with.");
+            }
+            return;
+        }
+
+        boolean tradeExecuted = view != null
+                && view.showTradeWithPlayerDialog(currentPlayer, players, tradeManager);
+        if (tradeExecuted && statsController != null) {
+            statsController.updateStats();
+        }
+    }
+
+    private void openTradeWithBank() {
+        Player currentPlayer = getCurrentPlayer();
+        if (currentPlayer == null) {
+            return;
+        }
+
+        boolean tradeExecuted = view != null
+                && view.showTradeWithBankDialog(currentPlayer, tradeManager);
+        if (tradeExecuted && statsController != null) {
+            statsController.updateStats();
         }
     }
 
@@ -151,6 +201,7 @@ public class PlayerActionController {
             if (statsController != null) {
                 statsController.updateStats();
             }
+            announceWinnerIfGameOver();
             update();
         } catch (IllegalStateException | IllegalArgumentException e) {
             if (view != null) {
@@ -212,6 +263,7 @@ public class PlayerActionController {
     public void onUseDevCardCanceled() {
         selectedDevCardType = null;
         awaitingKnightHex = false;
+        setHexSelectionMode(false);
         update();
     }
 
@@ -283,6 +335,7 @@ public class PlayerActionController {
 
     private void startKnightTargeting() {
         awaitingKnightHex = true;
+        setHexSelectionMode(true);
         if (boardController != null) {
             boardController.setStatusMessage("Knight: click a hex on the board to move the robber.");
         }
@@ -290,11 +343,18 @@ public class PlayerActionController {
     }
 
     public void onHexSelected(int hexId) {
-        if (!awaitingKnightHex) {
-            return;
+        if (awaitingKnightHex) {
+            awaitingKnightHex = false;
+            setHexSelectionMode(false);
+            handleKnightHexSelected(hexId);
+        } else if (awaitingRobberHex) {
+            awaitingRobberHex = false;
+            setHexSelectionMode(false);
+            handleRobberHexSelected(hexId);
         }
-        awaitingKnightHex = false;
+    }
 
+    private void handleKnightHexSelected(int hexId) {
         Player currentPlayer = getCurrentPlayer();
         if (currentPlayer == null) {
             return;
@@ -325,6 +385,117 @@ public class PlayerActionController {
         executeUseDevCard(DevCardType.KNIGHT, hexId, victimId, null, null, null, "Knight played.");
     }
 
+    private void handleRobberHexSelected(int hexId) {
+        Player currentPlayer = getCurrentPlayer();
+        if (currentPlayer == null) {
+            return;
+        }
+
+        List<Player> candidates = robberVictimsForHex(hexId, currentPlayer);
+
+        Player victim = null;
+        if (!candidates.isEmpty()) {
+            if (view != null) {
+                Optional<Player> chosen = view.promptVictim(candidates);
+                if (chosen.isEmpty()) {
+                    awaitingRobberHex = true;
+                    setHexSelectionMode(true);
+                    if (boardController != null) {
+                        boardController.setStatusMessage(
+                                currentPlayer.getName()
+                                        + ": choose a player to steal from, or click a different hex for the robber.");
+                    }
+                    update();
+                    return;
+                }
+                victim = chosen.get();
+            } else {
+                victim = candidates.get(0);
+            }
+        }
+
+        boolean victimHadResources = victim != null && getTotalResources(victim) > 0;
+        try {
+            if (victim == null) {
+                game.handleMoveRobberLocation(hexId);
+            } else {
+                game.handleMoveRobber(7, hexId, currentPlayer.getId(), victim.getId());
+            }
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            if (view != null) {
+                view.showError(e.getMessage());
+            }
+            awaitingRobberHex = true;
+            if (boardController != null) {
+                boardController.setStatusMessage(
+                        currentPlayer.getName() + ": click a different hex to place the robber.");
+            }
+            setHexSelectionMode(true);
+            return;
+        }
+
+        if (boardController != null) {
+            boardController.refreshBoard();
+            if (victim == null) {
+                boardController.setStatusMessage(
+                        currentPlayer.getName() + " moved the robber. No opponents to steal from.");
+            } else if (victimHadResources) {
+                boardController.setStatusMessage(
+                        currentPlayer.getName() + " stole a resource from " + victim.getName() + ".");
+            } else {
+                boardController.setStatusMessage(
+                        currentPlayer.getName() + " moved the robber. "
+                                + victim.getName() + " had no resources to steal.");
+            }
+        }
+
+        if (statsController != null) {
+            statsController.updateStats();
+        }
+        update();
+    }
+
+    private void handleRollSeven() {
+        for (Player p : players) {
+            if (p.hasMoreThanSevenResources()) {
+                int discardCount = getTotalResources(p) / 2;
+                if (discardCount > 0 && view != null) {
+                    view.showDiscardDialog(p, discardCount);
+                }
+            }
+        }
+
+        Player currentPlayer = getCurrentPlayer();
+        awaitingRobberHex = true;
+        setHexSelectionMode(true);
+        if (boardController != null) {
+            boardController.setStatusMessage(
+                    currentPlayer.getName() + ": click a hex on the board to place the robber.");
+        }
+        if (statsController != null) {
+            statsController.updateStats();
+        }
+        update();
+    }
+
+    private int getTotalResources(Player player) {
+        int total = 0;
+        for (int count : player.getResources().values()) {
+            total += count;
+        }
+        return total;
+    }
+
+    private List<Player> robberVictimsForHex(int hexId, Player currentPlayer) {
+        List<Player> candidates = new ArrayList<>();
+        for (Player occupant : game.getBoard().getPlayersOnHex(hexId)) {
+            if (occupant.getId() != currentPlayer.getId()) {
+                candidates.add(occupant);
+            }
+        }
+        return candidates;
+    }
+
     private void executeUseDevCard(DevCardType type, int hexId, int victimId,
                                    ResourceType choice1, ResourceType choice2, ResourceType targetType,
                                    String successMessage) {
@@ -345,6 +516,7 @@ public class PlayerActionController {
             if (statsController != null) {
                 statsController.updateStats();
             }
+            announceWinnerIfGameOver();
         } catch (IllegalActionException | IllegalArgumentException | IllegalStateException e) {
             if (view != null) {
                 view.showError(e.getMessage());
@@ -353,7 +525,19 @@ public class PlayerActionController {
 
         selectedDevCardType = null;
         awaitingKnightHex = false;
+        setHexSelectionMode(false);
         update();
+    }
+
+    private void setHexSelectionMode(boolean enabled) {
+        if (boardController != null) {
+            boardController.setHexSelectionMode(enabled);
+        }
+    }
+
+    private void beginRobberPlacement() {
+        turnRollResolved = true;
+        handleRollSeven();
     }
 
     public void onBuildTypeSelected(InfraType infraType) {
@@ -426,6 +610,7 @@ public class PlayerActionController {
 
         try {
             game.build(currentPlayer, selectedBuildType, selectedLocationId);
+            game.updateLongestRoadBonus();
             if (boardController != null) {
                 boardController.refreshBoard();
                 boardController.setStatusMessage(
@@ -444,6 +629,7 @@ public class PlayerActionController {
             if (statsController != null) {
                 statsController.updateStats();
             }
+            announceWinnerIfGameOver();
             clearBuildState();
             update();
         } catch (IllegalStateException | IllegalArgumentException e) {
@@ -478,7 +664,15 @@ public class PlayerActionController {
     }
 
     public boolean canTakeNormalPlayActions() {
-        return game.phaseSetupCheck() || (!rollingForTurn && turnRollResolved);
+        return !game.isGameOver() && (game.phaseSetupCheck() || (!rollingForTurn && turnRollResolved));
+    }
+
+    private void announceWinnerIfGameOver() {
+        Player winner = game.checkForWinner();
+        if (winner != null && view != null) {
+            view.showSuccess("🏆 " + winner.getName() + " wins with "
+                    + winner.getVictoryPoints() + " victory points!");
+        }
     }
 
     public boolean isRollingForTurn() {
@@ -495,7 +689,11 @@ public class PlayerActionController {
         }
 
         if (!turnRollResolved) {
-            return "Waiting for dice roll.";
+            return "Close the dice result to continue.";
+        }
+
+        if (awaitingRobberHex) {
+            return "Click a hex on the board to place the robber.";
         }
 
         return "Choose an action for this turn.";
@@ -569,32 +767,33 @@ public class PlayerActionController {
         }
 
         int rollTotal = game.getDieSum();
-        if (rollTotal != 7) {
-            game.getBoard().distributeResourcesOnRoll(rollTotal);
-        }
-
         rollingForTurn = false;
-        turnRollResolved = true;
 
-        if (diceRollView != null) {
-            String message = (rollTotal == 7)
-                    ? "Rolled 7. Robber handling is not wired yet."
-                    : "Rolled " + lastDieOne + " + " + lastDieTwo + " = " + rollTotal + ". Resources distributed.";
-            diceRollView.showRollResult(currentPlayer, lastDieOne, lastDieTwo, message);
+        if (rollTotal == 7) {
+            if (diceRollView != null) {
+                diceRollView.showRollResult(currentPlayer, lastDieOne, lastDieTwo,
+                        "Rolled 7! The robber activates.", this::beginRobberPlacement);
+            } else {
+                beginRobberPlacement();
+            }
+        } else {
+            turnRollResolved = true;
+            game.getBoard().distributeResourcesOnRoll(rollTotal);
+
+            if (diceRollView != null) {
+                diceRollView.showRollResult(currentPlayer, lastDieOne, lastDieTwo,
+                        "Rolled " + lastDieOne + " + " + lastDieTwo + " = " + rollTotal
+                                + ". Resources distributed.");
+            }
+            if (boardController != null) {
+                boardController.setStatusMessage(
+                        currentPlayer.getName() + " rolled " + rollTotal + ". Resources distributed.");
+                boardController.refreshBoard();
+            }
+            if (statsController != null) {
+                statsController.updateStats();
+            }
+            update();
         }
-
-        if (boardController != null) {
-            String message = (rollTotal == 7)
-                    ? currentPlayer.getName() + " rolled 7. Robber handling is not wired yet."
-                    : currentPlayer.getName() + " rolled " + rollTotal + ". Resources distributed.";
-            boardController.setStatusMessage(message);
-            boardController.refreshBoard();
-        }
-
-        if (statsController != null) {
-            statsController.updateStats();
-        }
-
-        update();
     }
 }

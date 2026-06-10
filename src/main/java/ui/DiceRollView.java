@@ -27,13 +27,14 @@ public class DiceRollView extends StackPane {
     private final Label dieTwoLabel;
     private final Button closeButton;
     private Timeline activeTimeline;
+    private Runnable closeHandler;
 
     public DiceRollView() {
         setAlignment(Pos.CENTER);
         getStyleClass().add("dice-roll-view");
         setVisible(false);
         setManaged(false);
-        setMouseTransparent(false);
+        setMouseTransparent(true);
 
         URL stylesheetUrl = getClass().getResource("/ui/dice-roll.css");
         if (stylesheetUrl != null) {
@@ -50,7 +51,7 @@ public class DiceRollView extends StackPane {
         dieTwoLabel = createDieLabel();
         closeButton = new Button("X");
         closeButton.getStyleClass().add("dice-close-button");
-        closeButton.setOnAction(event -> hideOverlay());
+        closeButton.setOnAction(event -> handleClose());
 
         VBox textBox = new VBox(4, turnLabel, resultLabel);
         textBox.setAlignment(Pos.CENTER);
@@ -76,6 +77,7 @@ public class DiceRollView extends StackPane {
 
     public void showSetupMessage() {
         stopActiveTimeline();
+        closeHandler = null;
         turnLabel.setText("Setup Phase");
         resultLabel.setText("Dice rolling begins once normal play starts.");
         setDiceFaces(1, 1);
@@ -85,7 +87,8 @@ public class DiceRollView extends StackPane {
 
     public void showTurnReady(Player player) {
         stopActiveTimeline();
-        showOverlay();
+        closeHandler = null;
+        showOverlay(true);
         turnLabel.setText(player.getName() + "'s Turn");
         resultLabel.setText("Preparing dice roll...");
         setDiceFaces(1, 1);
@@ -94,7 +97,8 @@ public class DiceRollView extends StackPane {
 
     public void playRollAnimation(Player player, int finalDieOne, int finalDieTwo, Runnable onFinished) {
         stopActiveTimeline();
-        showOverlay();
+        closeHandler = null;
+        showOverlay(true);
         turnLabel.setText(player.getName() + "'s Turn");
         resultLabel.setText("Rolling dice...");
         setCloseEnabled(false);
@@ -118,8 +122,13 @@ public class DiceRollView extends StackPane {
     }
 
     public void showRollResult(Player player, int dieOne, int dieTwo, String message) {
+        showRollResult(player, dieOne, dieTwo, message, null);
+    }
+
+    public void showRollResult(Player player, int dieOne, int dieTwo, String message, Runnable onClose) {
         stopActiveTimeline();
-        showOverlay();
+        closeHandler = onClose;
+        showOverlay(true);
         turnLabel.setText(player.getName() + "'s Turn");
         resultLabel.setText(message);
         setDiceFaces(dieOne, dieTwo);
@@ -154,13 +163,24 @@ public class DiceRollView extends StackPane {
         closeButton.setMouseTransparent(!enabled);
     }
 
-    private void showOverlay() {
+    private void showOverlay(boolean blocksInteraction) {
         setManaged(true);
         setVisible(true);
+        setMouseTransparent(!blocksInteraction);
+    }
+
+    private void handleClose() {
+        hideOverlay();
+        Runnable callback = closeHandler;
+        closeHandler = null;
+        if (callback != null) {
+            callback.run();
+        }
     }
 
     private void hideOverlay() {
         setVisible(false);
         setManaged(false);
+        setMouseTransparent(true);
     }
 }

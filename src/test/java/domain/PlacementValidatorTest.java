@@ -160,4 +160,78 @@ public class PlacementValidatorTest {
             validator.validateInitialRoad(finalInvalidEdgeId, finalSettlementNode);
         });
     }
+
+    @Test // TC-PV-06
+    void test_RegularRoadFailsWhenEdgeOccupied() {
+        board = new Board();
+        validator = new PlacementValidator(board);
+        Player player = new Player(0, "Player", PlayerColor.RED);
+        Player other = new Player(1, "Other", PlayerColor.BLUE);
+
+        board.getEdge(0).buildRoad(other);
+
+        assertThrows(IllegalPlacementException.class,
+                () -> validator.validateRegularRoad(0, player));
+    }
+
+    @Test // TC-PV-07
+    void test_RegularRoadSucceedsWhenConnectedToOwnSettlement() {
+        board = new Board();
+        validator = new PlacementValidator(board);
+        Player player = new Player(0, "Player", PlayerColor.RED);
+
+        board.getEdge(0).getNodeA().buildSettlement(player);
+
+        assertDoesNotThrow(() -> validator.validateRegularRoad(0, player));
+    }
+
+    @Test // TC-PV-08
+    void test_RegularRoadSucceedsWhenConnectedToOwnRoad() {
+        board = new Board();
+        validator = new PlacementValidator(board);
+        Player player = new Player(0, "Player", PlayerColor.RED);
+
+        Edge neighbour = findNeighbourEdge(board.getEdge(0));
+        assertNotNull(neighbour, "Expected an edge sharing an endpoint with edge 0.");
+        neighbour.buildRoad(player);
+
+        assertDoesNotThrow(() -> validator.validateRegularRoad(0, player));
+    }
+
+    @Test // TC-PV-09
+    void test_RegularRoadFailsWhenDisconnected() {
+        board = new Board();
+        validator = new PlacementValidator(board);
+        Player player = new Player(0, "Player", PlayerColor.RED);
+
+        assertThrows(IllegalPlacementException.class,
+                () -> validator.validateRegularRoad(0, player));
+    }
+
+    @Test // TC-PV-10
+    void test_RegularRoadFailsWhenConnectedOnlyToOpponent() {
+        board = new Board();
+        validator = new PlacementValidator(board);
+        Player player = new Player(0, "Player", PlayerColor.RED);
+        Player other = new Player(1, "Other", PlayerColor.BLUE);
+
+        board.getEdge(0).getNodeA().buildSettlement(other);
+
+        assertThrows(IllegalPlacementException.class,
+                () -> validator.validateRegularRoad(0, player));
+    }
+
+    private Edge findNeighbourEdge(Edge target) {
+        for (Edge edge : board.getEdgesConnectedToNode(target.getNodeA())) {
+            if (edge.getId() != target.getId()) {
+                return edge;
+            }
+        }
+        for (Edge edge : board.getEdgesConnectedToNode(target.getNodeB())) {
+            if (edge.getId() != target.getId()) {
+                return edge;
+            }
+        }
+        return null;
+    }
 }
