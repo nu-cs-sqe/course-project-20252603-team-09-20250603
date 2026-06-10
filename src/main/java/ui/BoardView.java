@@ -53,15 +53,19 @@ public final class BoardView extends BorderPane {
     private static final double HEX_RADIUS_X = HEX_SIZE * DISPLAY_SCALE;
     private static final double HEX_RADIUS_Y = HEX_SIZE * DISPLAY_SCALE;
     private static final double NODE_RADIUS = 6.0;
+    private static final double ROBBER_RADIUS = 14.4;
     private static final double[] HEX_VERTEX_ANGLES = {-150.0, -90.0, -30.0, 30.0, 90.0, 150.0};
 
     private final BoardController controller;
     private final Label statusLabel;
     private final Map<Integer, BoardPoint> hexCenters;
+    private final Map<Integer, Polygon> hexShapes;
     private final Map<Integer, BoardPoint> nodePositions;
     private final Map<Integer, Line> edgeShapes;
     private final Map<Integer, Circle> nodeShapes;
     private final Map<Integer, Polygon> settlementShapes;
+    private Circle robberMarker;
+    private boolean hexSelectionMode;
 
     private Integer selectedNodeId;
     private Shape selectedNodeShape;
@@ -74,6 +78,7 @@ public final class BoardView extends BorderPane {
         controller.setView(this);
 
         this.hexCenters = buildHexCenters();
+        this.hexShapes = new HashMap<>();
         this.nodePositions = buildNodePositions();
         this.edgeShapes = new HashMap<>();
         this.nodeShapes = new HashMap<>();
@@ -108,6 +113,24 @@ public final class BoardView extends BorderPane {
 
     public void showError(String message) {
         MessageDialog.showError(this, message);
+    }
+
+    public void setHexSelectionMode(boolean enabled) {
+        hexSelectionMode = enabled;
+        for (Line edge : edgeShapes.values()) {
+            edge.setMouseTransparent(enabled);
+        }
+        for (Circle node : nodeShapes.values()) {
+            node.setMouseTransparent(enabled);
+        }
+        for (Polygon settlement : settlementShapes.values()) {
+            if (settlement.isVisible()) {
+                settlement.setMouseTransparent(enabled);
+            }
+        }
+        for (Polygon hex : hexShapes.values()) {
+            hex.setMouseTransparent(false);
+        }
     }
 
     public void clearSelection() {
@@ -145,6 +168,13 @@ public final class BoardView extends BorderPane {
             }
         }
 
+        int robberHexId = board.getRobberHexId();
+        if (robberMarker != null && robberHexId >= 0) {
+            BoardPoint center = hexCenters.get(robberHexId);
+            robberMarker.setCenterX(center.x);
+            robberMarker.setCenterY(center.y);
+        }
+
         if (selectedNodeId != null) {
             applyNodeSelection(selectedNodeId);
         }
@@ -172,6 +202,7 @@ public final class BoardView extends BorderPane {
         drawHexes(boardPane, board);
         drawEdges(boardPane, board);
         drawNodes(boardPane, board);
+        drawRobber(boardPane, board);
 
         return boardPane;
     }
@@ -180,6 +211,7 @@ public final class BoardView extends BorderPane {
         for (Hex hex : board.getHexes()) {
             Polygon hexShape = createHexShape(hex.getId());
             hexShape.getStyleClass().add("hex-overlay");
+            hexShapes.put(hex.getId(), hexShape);
             Tooltip.install(hexShape, new Tooltip("Hex " + hex.getId() + " (" + hex.getResourceType() + ")"));
             hexShape.setOnMouseClicked(event -> {
                 selectHex(hexShape);
@@ -210,6 +242,15 @@ public final class BoardView extends BorderPane {
             });
             boardPane.getChildren().add(line);
         }
+    }
+
+    private void drawRobber(Pane boardPane, Board board) {
+        int hexId = board.getRobberHexId();
+        BoardPoint center = hexCenters.get(hexId);
+        robberMarker = new Circle(center.x, center.y, ROBBER_RADIUS);
+        robberMarker.getStyleClass().add("robber-marker");
+        robberMarker.setMouseTransparent(true);
+        boardPane.getChildren().add(robberMarker);
     }
 
     private void drawNodes(Pane boardPane, Board board) {
@@ -420,7 +461,7 @@ public final class BoardView extends BorderPane {
         }
 
         settlement.setVisible(true);
-        settlement.setMouseTransparent(false);
+        settlement.setMouseTransparent(hexSelectionMode);
         settlement.setFill(Color.web(getPlayerColor(occupant)));
         settlement.setStroke(Color.web("#1f1a13"));
         settlement.setStrokeWidth(2.0);

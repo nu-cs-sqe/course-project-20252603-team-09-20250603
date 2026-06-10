@@ -117,6 +117,12 @@ public class BoardController {
         }
     }
 
+    public void setHexSelectionMode(boolean enabled) {
+        if (view != null) {
+            view.setHexSelectionMode(enabled);
+        }
+    }
+
     private Hex getHexById(int hexId) {
         for (Hex hex : board.getHexes()) {
             if (hex.getId() == hexId) {
