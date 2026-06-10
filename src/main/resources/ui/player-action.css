@@ -87,3 +87,66 @@
     -fx-font-size: 13;
     -fx-text-fill: #2c3e50;
 }
+
+/* ── Trade dialog ─────────────────────────────────────────── */
+
+.trade-dialog-root {
+    -fx-background-color: #f2efe6;
+}
+
+.trade-panel {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d1ccb8;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.trade-separator {
+    -fx-padding: 0 8 0 8;
+}
+
+.trade-resource-col {
+    -fx-min-width: 52;
+    -fx-pref-width: 52;
+}
+
+.trade-avail-count {
+    -fx-font-size: 11;
+    -fx-text-fill: #7f8c8d;
+}
+
+.trade-selected-count {
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-min-width: 24;
+    -fx-alignment: center;
+}
+
+.trade-adjust-button {
+    -fx-min-width: 28;
+    -fx-pref-width: 28;
+    -fx-max-width: 28;
+    -fx-min-height: 24;
+    -fx-pref-height: 24;
+    -fx-font-weight: bold;
+    -fx-background-color: #f7f4ec;
+    -fx-border-color: #c6c0ad;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 0;
+}
+
+.trade-adjust-button:hover {
+    -fx-background-color: #ffffff;
+}
+
+.trade-adjust-button:armed {
+    -fx-background-color: #ded8c7;
+}
+
+.trade-summary-label {
+    -fx-font-size: 13;
+    -fx-text-fill: #2c3e50;
+}

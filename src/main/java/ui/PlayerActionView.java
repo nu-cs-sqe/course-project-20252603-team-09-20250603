@@ -262,6 +262,10 @@ public class PlayerActionView extends VBox {
         MessageDialog.showInfo(this, message);
     }
 
+    public void showTradeWithPlayerDialog(Player activePlayer, List<Player> allPlayers) {
+        new TradeWithPlayerDialog(getScene().getWindow(), activePlayer, allPlayers);
+    }
+
     private Player getCurrentPlayer() {
         if (players.isEmpty() || controller == null) {
             return null;

@@ -119,6 +119,9 @@ public class PlayerActionController {
             case USE_DEV_CARD:
                 openUseDevCardMenu();
                 break;
+            case TRADE_WITH_PLAYER:
+                openTradeWithPlayer();
+                break;
             case END_TURN:
                 advanceNormalPlayTurn();
                 clearBuildState();
@@ -126,6 +129,35 @@ public class PlayerActionController {
                 break;
             default:
                 break;
+        }
+    }
+
+    private void openTradeWithPlayer() {
+        Player currentPlayer = getCurrentPlayer();
+        if (currentPlayer == null) {
+            return;
+        }
+
+        boolean hasOtherPlayers = false;
+        for (Player p : players) {
+            if (p.getId() != currentPlayer.getId()) {
+                hasOtherPlayers = true;
+                break;
+            }
+        }
+        if (!hasOtherPlayers) {
+            if (view != null) {
+                view.showError("No other players to trade with.");
+            }
+            return;
+        }
+
+        if (view != null) {
+            view.showTradeWithPlayerDialog(currentPlayer, players);
+        }
+
+        if (statsController != null) {
+            statsController.updateStats();
         }
     }
 

@@ -53,6 +53,7 @@ public final class BoardView extends BorderPane {
     private static final double HEX_RADIUS_X = HEX_SIZE * DISPLAY_SCALE;
     private static final double HEX_RADIUS_Y = HEX_SIZE * DISPLAY_SCALE;
     private static final double NODE_RADIUS = 6.0;
+    private static final double ROBBER_RADIUS = 14.4;
     private static final double[] HEX_VERTEX_ANGLES = {-150.0, -90.0, -30.0, 30.0, 90.0, 150.0};
 
     private final BoardController controller;
@@ -62,6 +63,7 @@ public final class BoardView extends BorderPane {
     private final Map<Integer, Line> edgeShapes;
     private final Map<Integer, Circle> nodeShapes;
     private final Map<Integer, Polygon> settlementShapes;
+    private Circle robberMarker;
 
     private Integer selectedNodeId;
     private Shape selectedNodeShape;
@@ -145,6 +147,13 @@ public final class BoardView extends BorderPane {
             }
         }
 
+        int robberHexId = board.getRobberHexId();
+        if (robberMarker != null && robberHexId >= 0) {
+            BoardPoint center = hexCenters.get(robberHexId);
+            robberMarker.setCenterX(center.x);
+            robberMarker.setCenterY(center.y);
+        }
+
         if (selectedNodeId != null) {
             applyNodeSelection(selectedNodeId);
         }
@@ -172,6 +181,7 @@ public final class BoardView extends BorderPane {
         drawHexes(boardPane, board);
         drawEdges(boardPane, board);
         drawNodes(boardPane, board);
+        drawRobber(boardPane, board);
 
         return boardPane;
     }
@@ -210,6 +220,15 @@ public final class BoardView extends BorderPane {
             });
             boardPane.getChildren().add(line);
         }
+    }
+
+    private void drawRobber(Pane boardPane, Board board) {
+        int hexId = board.getRobberHexId();
+        BoardPoint center = hexCenters.get(hexId);
+        robberMarker = new Circle(center.x, center.y, ROBBER_RADIUS);
+        robberMarker.getStyleClass().add("robber-marker");
+        robberMarker.setMouseTransparent(true);
+        boardPane.getChildren().add(robberMarker);
     }
 
     private void drawNodes(Pane boardPane, Board board) {
