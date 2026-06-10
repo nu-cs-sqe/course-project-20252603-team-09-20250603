@@ -39,8 +39,37 @@ public class PlacementValidator {
 
     public void validateInitialRoad(int edgeId, Node settlementNode) throws IllegalPlacementException {
         Edge edge = board.getEdge(edgeId);
+        if (edge.getEdgeOccupant() != null) {
+            throw new IllegalPlacementException("Edge already occupied.");
+        }
         if (!edge.getNodeA().equals(settlementNode) && !edge.getNodeB().equals(settlementNode)) {
             throw new IllegalPlacementException("Road must connect to your settlement.");
         }
+    }
+
+    public void validateRegularRoad(int edgeId, Player player) throws IllegalPlacementException {
+        Edge edge = board.getEdge(edgeId);
+
+        if (edge.getEdgeOccupant() != null) {
+            throw new IllegalPlacementException("Edge already occupied.");
+        }
+
+        boolean touchesRoad = connectsToOwnRoad(edge.getNodeA(), player) || connectsToOwnRoad(edge.getNodeB(), player);
+        boolean touchesBuilding =
+                player.equals(edge.getNodeA().getNodeOccupant()) || player.equals(edge.getNodeB().getNodeOccupant());
+
+        if (!touchesRoad && !touchesBuilding) {
+            throw new IllegalPlacementException(
+                    "Road must connect to your settlement, city, or another of your roads.");
+        }
+    }
+
+    private boolean connectsToOwnRoad(Node node, Player player) {
+        for (Edge neighbour : board.getEdgesConnectedToNode(node)) {
+            if (player.equals(neighbour.getEdgeOccupant())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
