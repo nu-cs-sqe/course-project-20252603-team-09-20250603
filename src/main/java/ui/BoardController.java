@@ -22,6 +22,10 @@ public class BoardController {
     private BoardView view;
     private LocationSelectionHandler actionSelectionHandler;
     private java.util.function.IntConsumer hexSelectionHandler;
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+            value = "EI_EXPOSE_REP2",
+            justification = "BoardController intentionally keeps a shared mutable JavaFX parent view to drive navigation."
+    )
     private final MainView mainView;
 
     public BoardController(MainView mainView, List<Player> players) {
