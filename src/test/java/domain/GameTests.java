@@ -101,6 +101,79 @@ public class GameTests {
     }
 
     @Test
+    public void isGameOver_NewGame_ReturnsFalse() {
+        assertFalse(game.isGameOver());
+    }
+
+    @Test
+    public void getWinner_NoPlayerAtThreshold_ReturnsNull() {
+        player0.addVictoryPoints(9);
+        player1.addVictoryPoints(5);
+
+        assertNull(game.getWinner());
+    }
+
+    @Test
+    public void getWinner_PlayerWithTenPoints_ReturnsThatPlayer() {
+        player1.addVictoryPoints(10);
+
+        assertEquals(player1, game.getWinner());
+    }
+
+    @Test
+    public void getWinner_PlayerAboveThreshold_ReturnsThatPlayer() {
+        player2.addVictoryPoints(12);
+
+        assertEquals(player2, game.getWinner());
+    }
+
+    @Test
+    public void getWinner_MultiplePlayersAtThreshold_ReturnsHighest() {
+        player0.addVictoryPoints(10);
+        player2.addVictoryPoints(11);
+
+        assertEquals(player2, game.getWinner());
+    }
+
+    @Test
+    public void getWinner_DoesNotEndGameOnItsOwn() {
+        player0.addVictoryPoints(10);
+
+        assertEquals(player0, game.getWinner());
+        assertFalse(game.isGameOver());
+    }
+
+    @Test
+    public void checkForWinner_NoWinner_ReturnsNullAndGameNotOver() {
+        player0.addVictoryPoints(8);
+
+        assertNull(game.checkForWinner());
+        assertFalse(game.isGameOver());
+    }
+
+    @Test
+    public void checkForWinner_PlayerHasWon_EndsGameAndReturnsWinner() {
+        player1.addVictoryPoints(10);
+
+        assertEquals(player1, game.checkForWinner());
+        assertTrue(game.isGameOver());
+        assertFalse(game.phaseSetupCheck());
+    }
+
+    @Test
+    public void checkForWinner_PlayerJumpsFromEightToEleven_EndsGameAndReturnsWinner() {
+        player2.addVictoryPoints(8);
+        assertNull(game.checkForWinner());
+        assertFalse(game.isGameOver());
+
+        player2.addVictoryPoints(3); // 8 -> 11, skipping the exact threshold of 10
+
+        assertEquals(player2, game.checkForWinner());
+        assertTrue(game.isGameOver());
+        assertEquals(11, player2.getVictoryPoints());
+    }
+
+    @Test
     public void distributeSetupResources_UsesOnlySecondSetupSettlement() {
         game.setCurrPhase(GamePhase.SETUP);
         placeSetupSettlements(player0, 0, 10);

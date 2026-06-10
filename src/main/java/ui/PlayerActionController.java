@@ -151,6 +151,7 @@ public class PlayerActionController {
             if (statsController != null) {
                 statsController.updateStats();
             }
+            announceWinnerIfGameOver();
             update();
         } catch (IllegalStateException | IllegalArgumentException e) {
             if (view != null) {
@@ -345,6 +346,7 @@ public class PlayerActionController {
             if (statsController != null) {
                 statsController.updateStats();
             }
+            announceWinnerIfGameOver();
         } catch (IllegalActionException | IllegalArgumentException | IllegalStateException e) {
             if (view != null) {
                 view.showError(e.getMessage());
@@ -426,6 +428,7 @@ public class PlayerActionController {
 
         try {
             game.build(currentPlayer, selectedBuildType, selectedLocationId);
+            game.updateLongestRoadBonus();
             if (boardController != null) {
                 boardController.refreshBoard();
                 boardController.setStatusMessage(
@@ -444,6 +447,7 @@ public class PlayerActionController {
             if (statsController != null) {
                 statsController.updateStats();
             }
+            announceWinnerIfGameOver();
             clearBuildState();
             update();
         } catch (IllegalStateException | IllegalArgumentException e) {
@@ -478,7 +482,15 @@ public class PlayerActionController {
     }
 
     public boolean canTakeNormalPlayActions() {
-        return game.phaseSetupCheck() || (!rollingForTurn && turnRollResolved);
+        return !game.isGameOver() && (game.phaseSetupCheck() || (!rollingForTurn && turnRollResolved));
+    }
+
+    private void announceWinnerIfGameOver() {
+        Player winner = game.checkForWinner();
+        if (winner != null && view != null) {
+            view.showSuccess("🏆 " + winner.getName() + " wins with "
+                    + winner.getVictoryPoints() + " victory points!");
+        }
     }
 
     public boolean isRollingForTurn() {

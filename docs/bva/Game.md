@@ -93,3 +93,28 @@ behavior is exercised by JUnit tests (pitest does not run the cucumber suite).
 | Test Case 18 | One player reaches a road length of 5            | That player gains 2 victory points                  | :white_check_mark:       |
 | Test Case 19 | Same player still has longest road               | Victory points do not change again                  | :white_check_mark:       |
 | Test Case 20 | Another player exceeds the current longest road  | Old player loses 2 points; new player gains 2       | :white_check_mark:       |
+
+## Method under test: `isGameOver()`
+
+| Test Case   | State of the System                | Expected Output | Implemented?       |
+|-------------|------------------------------------|-----------------|--------------------|
+| Test Case 1 | New game (phase is not GAME_OVER)  | Returns `false` | :white_check_mark: |
+| Test Case 2 | A player has won (phase GAME_OVER) | Returns `true`  | :white_check_mark: |
+
+## Method under test: `getWinner()`
+
+|             | State of the System                                       | Expected output / behavior              | Implemented?       |
+|-------------|-----------------------------------------------------------|-----------------------------------------|--------------------|
+| Test Case 1 | No player has reached `pointsNeededToWin` (10)            | Returns `null`                          | :white_check_mark: |
+| Test Case 2 | A player has exactly 10 victory points                    | Returns that player                     | :white_check_mark: |
+| Test Case 3 | A player has more than 10 victory points                  | Returns that player                     | :white_check_mark: |
+| Test Case 4 | Multiple players are at or above 10 victory points        | Returns the player with the most points | :white_check_mark: |
+| Test Case 5 | A player has reached 10 points but `getWinner` is called  | Game is **not** ended (no side effect)  | :white_check_mark: |
+
+## Method under test: `checkForWinner()`
+
+|             | State of the System                          | Expected output / behavior                              | Implemented?       |
+|-------------|----------------------------------------------|---------------------------------------------------------|--------------------|
+| Test Case 1 | No player has reached 10 victory points      | Returns `null`; phase stays unchanged (game not over)   | :white_check_mark: |
+| Test Case 2 | A player has reached 10 victory points       | Returns that player; phase becomes `GAME_OVER`          | :white_check_mark: |
+| Test Case 3 | A player jumps from 8 to 11 points (skips 10) | Returns that player; phase becomes `GAME_OVER`         | :white_check_mark: |
