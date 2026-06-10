@@ -133,6 +133,53 @@ public class GameLongestRoadTests {
         assertEquals(2, otherPlayer.getVictoryPoints());
     }
 
+    // Kills: isBlockedByOtherPlayer() "negated conditional" (was NO_COVERAGE).
+    // An enemy settlement mid-path breaks the player's road at that node.
+    @Test
+    void calculateLongestRoad_PathRunsThroughEnemySettlement_StopsAtEnemyNode() {
+        Board board = new Board();
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+        Player otherPlayer = new Player(1, "Jane", PlayerColor.BLUE);
+        Game game = createGame(board, player, otherPlayer);
+
+        buildRoadBetweenNodes(board, player, 0, 1);
+        buildRoadBetweenNodes(board, player, 1, 2);
+        buildRoadBetweenNodes(board, player, 2, 3);
+
+        board.getNode(2).buildSettlement(otherPlayer);
+
+        // Without the block the path would be 3; the enemy node caps it at 2.
+        assertEquals(2, game.calculateLongestRoad(player));
+    }
+
+    // Kills: updateLongestRoadBonus() "changed conditional boundary"
+    // (roadLength > candidateLength -> >=). When two players tie at five roads,
+    // the first one evaluated must keep the bonus; >= would hand it to the second.
+    @Test
+    void updateLongestRoadBonus_TwoPlayersTiedAtFiveRoads_FirstPlayerKeepsBonus() {
+        Board board = new Board();
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+        Player otherPlayer = new Player(1, "Jane", PlayerColor.BLUE);
+        Game game = createGame(board, player, otherPlayer);
+
+        buildRoadBetweenNodes(board, player, 0, 1);
+        buildRoadBetweenNodes(board, player, 1, 2);
+        buildRoadBetweenNodes(board, player, 2, 3);
+        buildRoadBetweenNodes(board, player, 3, 4);
+        buildRoadBetweenNodes(board, player, 4, 5);
+
+        buildRoadBetweenNodes(board, otherPlayer, 7, 8);
+        buildRoadBetweenNodes(board, otherPlayer, 8, 9);
+        buildRoadBetweenNodes(board, otherPlayer, 9, 10);
+        buildRoadBetweenNodes(board, otherPlayer, 10, 11);
+        buildRoadBetweenNodes(board, otherPlayer, 11, 12);
+
+        game.updateLongestRoadBonus();
+
+        assertEquals(2, player.getVictoryPoints());
+        assertEquals(0, otherPlayer.getVictoryPoints());
+    }
+
     private Game createGame(Board board, Player player) {
         return createGame(board, player, null);
     }
