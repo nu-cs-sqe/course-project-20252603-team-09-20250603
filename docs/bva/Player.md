@@ -127,8 +127,8 @@ Getter to pass to controller - untested as simply acts as a simple getter
 
 ### Method under test: `removeRandomCard()`
 
-|               | State of the System                                                    | Expected output / behavior                                        | Implemented?       |
-|---------------|------------------------------------------------------------------------|-------------------------------------------------------------------|--------------------|
+|               | State of the System                                                    | Expected output / behavior                                        | Implemented?    |
+|---------------|------------------------------------------------------------------------|-------------------------------------------------------------------|-----------------|
 | Test Case 1   | ResourceHand is empty                                                  | Throws `IllegalStateException`                                    | :white_check_mark: |
 | Test Case 2   | ResourceHand has exactly 1 wood                                        | Returns `WOOD`; hand becomes empty                                | :white_check_mark: |
 | Test Case 3   | ResourceHand has exactly 1 brick                                       | Returns `BRICK`; hand becomes empty                               | :white_check_mark: |
@@ -151,3 +151,11 @@ Getter to pass to controller - untested as simply acts as a simple getter
 | Test Case 4  | Player has largest army, then loses it                | `hasLargestArmy` becomes `false` and victory points -2   | :white_check_mark: |
 | Test Case 5  | Player does not have largest army, set to false again | Victory points do not decrease                           | :white_check_mark: |
 
+### Method under test: `deductRoads(int count)`
+
+|              | State of the System                          | Expected output / behavior                         | Implemented? |
+|--------------|----------------------------------------------|-----------------------------------------------------|--------------|
+| Test Case 1  | Player has 15 roads and deducts 1 road       | Road count decreases to 14                          | :x: |
+| Test Case 2  | Player has exactly 15 roads and deducts 15   | Road count decreases to 0                           | :x: |
+| Test Case 3  | Player has 15 roads and deducts 0 roads      | Road count stays 15                                 | :x: |
+| Test Case 4  | Player has 15 roads and deducts 16 roads     | Throws `IllegalStateException`; road count unchanged | :x: |
