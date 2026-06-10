@@ -1,7 +1,6 @@
 package ui;
 
 import domain.DevCard;
-import domain.DevCardType;
 import domain.DomainErrorKey;
 import domain.InfraType;
 import domain.Player;
