@@ -7,18 +7,15 @@ import domain.TradeManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 
 import java.net.URL;
 import java.util.EnumMap;
@@ -32,7 +29,8 @@ public class TradeWithBankDialog {
     };
     private static final int BANK_RATE = 4;
 
-    private final Stage stage;
+    private final Node owner;
+    private final OverlayModal<Boolean> modal;
     private final Player player;
     private final TradeManager tradeManager;
     private boolean tradeExecuted;
@@ -47,29 +45,27 @@ public class TradeWithBankDialog {
     private final Map<ResourceType, Button> receiveMinusButtons = new EnumMap<>(ResourceType.class);
     private final Map<ResourceType, Label> receiveSelectedLabels = new EnumMap<>(ResourceType.class);
 
-    public TradeWithBankDialog(Window owner, Player player, TradeManager tradeManager) {
+    public TradeWithBankDialog(Node owner, Player player, TradeManager tradeManager) {
+        this.owner = owner;
+        this.modal = new OverlayModal<>(owner);
         this.player = player;
         this.tradeManager = tradeManager;
 
-        stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.initOwner(owner);
-        stage.setTitle("Trade With Bank");
-        stage.setResizable(false);
-
-        buildScene();
-        stage.showAndWait();
+        modal.setContent(buildContent());
+        Boolean result = modal.show();
+        tradeExecuted = Boolean.TRUE.equals(result);
     }
 
     public boolean wasTradeExecuted() {
         return tradeExecuted;
     }
 
-    private void buildScene() {
+    private Node buildContent() {
         VBox root = new VBox(14);
         root.setPadding(new Insets(20));
         root.setAlignment(Pos.TOP_CENTER);
-        root.getStyleClass().add("trade-dialog-root");
+        root.getStyleClass().addAll("trade-dialog-root", "message-dialog");
+        root.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
         Label title = new Label(player.getName() + " - Trade With Bank  (4 : 1)");
         title.getStyleClass().add("action-title");
@@ -87,26 +83,19 @@ public class TradeWithBankDialog {
         confirmBtn.getStyleClass().addAll("action-button", "confirm-button");
         confirmBtn.setOnAction(e -> {
             if (executeTrade()) {
-                tradeExecuted = true;
-                stage.close();
+                modal.close(true);
             }
         });
 
         Button cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().addAll("action-button", "cancel-button");
-        cancelBtn.setOnAction(e -> stage.close());
+        cancelBtn.setOnAction(e -> modal.close(false));
 
         HBox buttons = new HBox(10, confirmBtn, cancelBtn);
         buttons.setAlignment(Pos.CENTER);
 
         root.getChildren().addAll(title, panels, buttons);
-
-        Scene scene = new Scene(root, 740, 340);
-        URL css = getClass().getResource("/ui/player-action.css");
-        if (css != null) {
-            scene.getStylesheets().add(css.toExternalForm());
-        }
-        stage.setScene(scene);
+        return root;
     }
 
     private VBox buildGivePanel() {
@@ -276,12 +265,7 @@ public class TradeWithBankDialog {
     }
 
     private void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.initOwner(stage);
-        alert.setTitle("Trade Error");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+        MessageDialog.showError(owner, message);
     }
 
     private ImageView loadIcon(ResourceType resource) {

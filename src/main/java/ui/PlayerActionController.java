@@ -390,24 +390,36 @@ public class PlayerActionController {
             return;
         }
 
-        List<Player> candidates = new ArrayList<>();
-        for (Player p : game.getBoard().getPlayersOnHex(hexId)) {
-            if (p.getId() != currentPlayer.getId()) {
-                candidates.add(p);
-            }
-        }
+        List<Player> candidates = robberVictimsForHex(hexId, currentPlayer);
 
         Player victim = null;
-        if (candidates.size() == 1) {
-            victim = candidates.get(0);
-        } else if (candidates.size() > 1 && view != null) {
-            Optional<Player> chosen = view.promptVictim(candidates);
-            victim = chosen.orElse(null);
+        if (!candidates.isEmpty()) {
+            if (view != null) {
+                Optional<Player> chosen = view.promptVictim(candidates);
+                if (chosen.isEmpty()) {
+                    awaitingRobberHex = true;
+                    setHexSelectionMode(true);
+                    if (boardController != null) {
+                        boardController.setStatusMessage(
+                                currentPlayer.getName()
+                                        + ": choose a player to steal from, or click a different hex for the robber.");
+                    }
+                    update();
+                    return;
+                }
+                victim = chosen.get();
+            } else {
+                victim = candidates.get(0);
+            }
         }
 
         boolean victimHadResources = victim != null && getTotalResources(victim) > 0;
         try {
-            game.handleMoveRobber(7, hexId, currentPlayer.getId(), victim == null ? -1 : victim.getId());
+            if (victim == null) {
+                game.handleMoveRobberLocation(hexId);
+            } else {
+                game.handleMoveRobber(7, hexId, currentPlayer.getId(), victim.getId());
+            }
         } catch (IllegalArgumentException | IllegalStateException e) {
             if (view != null) {
                 view.showError(e.getMessage());
@@ -471,6 +483,16 @@ public class PlayerActionController {
             total += count;
         }
         return total;
+    }
+
+    private List<Player> robberVictimsForHex(int hexId, Player currentPlayer) {
+        List<Player> candidates = new ArrayList<>();
+        for (Player occupant : game.getBoard().getPlayersOnHex(hexId)) {
+            if (occupant.getId() != currentPlayer.getId()) {
+                candidates.add(occupant);
+            }
+        }
+        return candidates;
     }
 
     private void executeUseDevCard(DevCardType type, int hexId, int victimId,

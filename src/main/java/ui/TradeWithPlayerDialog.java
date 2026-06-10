@@ -7,18 +7,15 @@ import domain.TradeManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,7 +30,8 @@ public class TradeWithPlayerDialog {
         ResourceType.SHEEP, ResourceType.WHEAT
     };
 
-    private final Stage stage;
+    private final Node owner;
+    private final OverlayModal<Boolean> modal;
     private final Player activePlayer;
     private final TradeManager tradeManager;
     private final List<Player> otherPlayers;
@@ -43,7 +41,9 @@ public class TradeWithPlayerDialog {
     private final Map<ResourceType, Integer> offer = new EnumMap<>(ResourceType.class);
     private final Map<ResourceType, Integer> request = new EnumMap<>(ResourceType.class);
 
-    public TradeWithPlayerDialog(Window owner, Player activePlayer, List<Player> allPlayers, TradeManager tradeManager) {
+    public TradeWithPlayerDialog(Node owner, Player activePlayer, List<Player> allPlayers, TradeManager tradeManager) {
+        this.owner = owner;
+        this.modal = new OverlayModal<>(owner);
         this.activePlayer = activePlayer;
         this.tradeManager = tradeManager;
         this.otherPlayers = new ArrayList<>();
@@ -57,14 +57,9 @@ public class TradeWithPlayerDialog {
             request.put(r, 0);
         }
 
-        stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.initOwner(owner);
-        stage.setTitle("Trade With Player");
-        stage.setResizable(false);
-
         showPlayerSelectScreen();
-        stage.showAndWait();
+        Boolean result = modal.show();
+        tradeExecuted = Boolean.TRUE.equals(result);
     }
 
     public boolean wasTradeExecuted() {
@@ -72,10 +67,7 @@ public class TradeWithPlayerDialog {
     }
 
     private void showPlayerSelectScreen() {
-        VBox root = new VBox(12);
-        root.setPadding(new Insets(24));
-        root.setAlignment(Pos.TOP_CENTER);
-        root.getStyleClass().add("trade-dialog-root");
+        VBox root = createDialogRoot();
 
         Label title = new Label("Who do you want to trade with?");
         title.getStyleClass().add("action-title");
@@ -95,10 +87,10 @@ public class TradeWithPlayerDialog {
         Button cancelBtn = new Button("Cancel");
         cancelBtn.setMaxWidth(Double.MAX_VALUE);
         cancelBtn.getStyleClass().addAll("action-button", "cancel-button");
-        cancelBtn.setOnAction(e -> stage.close());
+        cancelBtn.setOnAction(e -> modal.close(false));
         root.getChildren().add(cancelBtn);
 
-        stage.setScene(buildScene(root, 360, 260));
+        modal.setContent(root);
     }
 
     private void showResourceSelectionScreen() {
@@ -107,18 +99,13 @@ public class TradeWithPlayerDialog {
             request.put(r, 0);
         }
 
-        VBox root = new VBox(14);
-        root.setPadding(new Insets(20));
-        root.setAlignment(Pos.TOP_CENTER);
-        root.getStyleClass().add("trade-dialog-root");
+        VBox root = createDialogRoot();
 
         Label title = new Label(activePlayer.getName() + " <-> " + opponent.getName());
         title.getStyleClass().add("action-title");
 
-        VBox offerPanel = buildResourcePanel(
-                activePlayer.getName() + " offers:", activePlayer, offer);
-        VBox requestPanel = buildResourcePanel(
-                activePlayer.getName() + " receives:", opponent, request);
+        VBox offerPanel = buildResourcePanel(activePlayer.getName() + " offers:", activePlayer, offer);
+        VBox requestPanel = buildResourcePanel(activePlayer.getName() + " receives:", opponent, request);
 
         Separator sep = new Separator(Orientation.VERTICAL);
         sep.getStyleClass().add("trade-separator");
@@ -136,17 +123,16 @@ public class TradeWithPlayerDialog {
 
         Button cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().addAll("action-button", "cancel-button");
-        cancelBtn.setOnAction(e -> stage.close());
+        cancelBtn.setOnAction(e -> modal.close(false));
 
         HBox buttons = new HBox(10, continueBtn, backBtn, cancelBtn);
         buttons.setAlignment(Pos.CENTER);
 
         root.getChildren().addAll(title, panels, buttons);
-        stage.setScene(buildScene(root, 740, 380));
+        modal.setContent(root);
     }
 
-    private VBox buildResourcePanel(String header, Player player,
-                                    Map<ResourceType, Integer> selections) {
+    private VBox buildResourcePanel(String header, Player player, Map<ResourceType, Integer> selections) {
         VBox panel = new VBox(10);
         panel.setAlignment(Pos.TOP_CENTER);
         panel.getStyleClass().add("trade-panel");
@@ -168,8 +154,7 @@ public class TradeWithPlayerDialog {
         return panel;
     }
 
-    private VBox buildResourceColumn(ResourceType resource, int available,
-                                     Map<ResourceType, Integer> selections) {
+    private VBox buildResourceColumn(ResourceType resource, int available, Map<ResourceType, Integer> selections) {
         VBox col = new VBox(4);
         col.setAlignment(Pos.CENTER);
         col.getStyleClass().add("trade-resource-col");
@@ -217,10 +202,7 @@ public class TradeWithPlayerDialog {
     }
 
     private void showConfirmScreen() {
-        VBox root = new VBox(16);
-        root.setPadding(new Insets(24));
-        root.setAlignment(Pos.TOP_CENTER);
-        root.getStyleClass().add("trade-dialog-root");
+        VBox root = createDialogRoot();
 
         Label title = new Label(opponent.getName() + ": Accept this trade?");
         title.getStyleClass().add("action-title");
@@ -235,20 +217,19 @@ public class TradeWithPlayerDialog {
         acceptBtn.getStyleClass().addAll("action-button", "confirm-button");
         acceptBtn.setOnAction(e -> {
             if (executeTrade()) {
-                tradeExecuted = true;
-                stage.close();
+                modal.close(true);
             }
         });
 
         Button declineBtn = new Button("Decline");
         declineBtn.getStyleClass().addAll("action-button", "cancel-button");
-        declineBtn.setOnAction(e -> stage.close());
+        declineBtn.setOnAction(e -> modal.close(false));
 
         HBox buttons = new HBox(12, acceptBtn, declineBtn);
         buttons.setAlignment(Pos.CENTER);
 
         root.getChildren().addAll(title, offerLine, requestLine, buttons);
-        stage.setScene(buildScene(root, 440, 260));
+        modal.setContent(root);
     }
 
     private boolean executeTrade() {
@@ -258,18 +239,9 @@ public class TradeWithPlayerDialog {
             tradeManager.tradeWithPlayer(activePlayer, opponent, activeOffer, activeRequest);
             return true;
         } catch (IllegalActionException | IllegalArgumentException e) {
-            showError(e.getMessage());
+            MessageDialog.showError(owner, e.getMessage());
             return false;
         }
-    }
-
-    private void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.initOwner(stage);
-        alert.setTitle("Trade Error");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
     private Map<ResourceType, Integer> nonZero(Map<ResourceType, Integer> map) {
@@ -317,12 +289,12 @@ public class TradeWithPlayerDialog {
         }
     }
 
-    private Scene buildScene(VBox root, double width, double height) {
-        Scene scene = new Scene(root, width, height);
-        URL css = getClass().getResource("/ui/player-action.css");
-        if (css != null) {
-            scene.getStylesheets().add(css.toExternalForm());
-        }
-        return scene;
+    private VBox createDialogRoot() {
+        VBox root = new VBox(14);
+        root.setPadding(new Insets(24));
+        root.setAlignment(Pos.TOP_CENTER);
+        root.getStyleClass().addAll("trade-dialog-root", "message-dialog");
+        root.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        return root;
     }
 }

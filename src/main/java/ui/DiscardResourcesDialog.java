@@ -4,16 +4,14 @@ import domain.Player;
 import domain.ResourceType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 
 import java.net.URL;
 import java.util.EnumMap;
@@ -26,7 +24,7 @@ public class DiscardResourcesDialog {
         ResourceType.SHEEP, ResourceType.WHEAT
     };
 
-    private final Stage stage;
+    private final OverlayModal<Void> modal;
     private final Player player;
     private final int discardCount;
     private final Map<ResourceType, Integer> selections = new EnumMap<>(ResourceType.class);
@@ -36,28 +34,24 @@ public class DiscardResourcesDialog {
     private Button discardButton;
     private int totalSelected = 0;
 
-    public DiscardResourcesDialog(Window owner, Player player, int discardCount) {
+    public DiscardResourcesDialog(Node owner, Player player, int discardCount) {
+        this.modal = new OverlayModal<>(owner);
         this.player = player;
         this.discardCount = discardCount;
         for (ResourceType r : TRADE_RESOURCES) {
             selections.put(r, 0);
         }
 
-        stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.initOwner(owner);
-        stage.setTitle("Discard Resources");
-        stage.setResizable(false);
-
-        buildScene();
-        stage.showAndWait();
+        modal.setContent(buildContent());
+        modal.show();
     }
 
-    private void buildScene() {
+    private Node buildContent() {
         VBox root = new VBox(14);
         root.setPadding(new Insets(24));
         root.setAlignment(Pos.TOP_CENTER);
-        root.getStyleClass().add("trade-dialog-root");
+        root.getStyleClass().addAll("trade-dialog-root", "message-dialog");
+        root.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
         Label playerLabel = new Label(player.getName() + "'s Turn");
         playerLabel.getStyleClass().add("player-turn-label");
@@ -79,17 +73,11 @@ public class DiscardResourcesDialog {
         discardButton.setDisable(true);
         discardButton.setOnAction(e -> {
             player.useResources(nonZero(selections));
-            stage.close();
+            modal.close(null);
         });
 
         root.getChildren().addAll(playerLabel, instructionLabel, totalLabel, resourceRow, discardButton);
-
-        Scene scene = new Scene(root, 480, 320);
-        URL css = getClass().getResource("/ui/player-action.css");
-        if (css != null) {
-            scene.getStylesheets().add(css.toExternalForm());
-        }
-        stage.setScene(scene);
+        return root;
     }
 
     private HBox buildResourceRow() {
@@ -158,7 +146,6 @@ public class DiscardResourcesDialog {
         totalLabel.setText("Discarding: " + totalSelected + " / " + discardCount);
         discardButton.setDisable(totalSelected != discardCount);
 
-        // Re-evaluate all + buttons: disable when limit reached, re-enable when below
         Map<ResourceType, Integer> resources = player.getResources();
         for (ResourceType r : TRADE_RESOURCES) {
             Button plus = plusButtons.get(r);
