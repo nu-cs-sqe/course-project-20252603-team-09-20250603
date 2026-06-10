@@ -204,6 +204,27 @@ public class GameRobberTests {
 
     }
 
+    @Test
+    void handleMoveRobber_VictimIdZero_StealsFromPlayerZero() {
+        Board board = new Board(new Random(0));
+        Player active = new Player(1, "Bob", PlayerColor.RED);
+        Player victim = new Player(0, "Ann", PlayerColor.BLUE); // victim id is exactly 0
+
+        board.getNode(0).buildSettlement(victim); // node 0 borders hex 0
+        Map<ResourceType, Integer> hand = new HashMap<>();
+        hand.put(ResourceType.ORE, 2);
+        victim.addResources(hand);
+
+        Game game = new Game(board, List.of(active, victim), new Dice(new Random()), new TurnManager(2));
+
+        // victimId == 0 must be treated as a real victim (boundary: < 0, not <= 0).
+        game.handleMoveRobber(7, 0, active.getId(), victim.getId());
+
+        assertEquals(1, victim.getResources().getOrDefault(ResourceType.ORE, 0));
+        assertEquals(1, active.getResources().getOrDefault(ResourceType.ORE, 0));
+        assertTrue(board.getHex(0).getHasRobber());
+    }
+
     private int countRobberHexes(Board board) {
         int robberCount = 0;
 

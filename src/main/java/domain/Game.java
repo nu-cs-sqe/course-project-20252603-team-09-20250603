@@ -259,18 +259,14 @@ public class Game {
     public void drawDevCard(int currentPlayerId) {
         Player player = findPlayerById(currentPlayerId);
 
-        // A dev card costs 1 Ore + 1 Wool (Sheep) + 1 Grain (Wheat).
         Map<ResourceType, Integer> cost = getDevCardCost();
         if (!player.hasResources(cost)) {
             throw new IllegalStateException("Player does not have enough resources to draw a dev card.");
         }
 
-        // Draw first so an empty deck throws before the player is charged.
         DevCard randomCard = devCardDeck.drawCard();
         player.setDevCardHand(randomCard);
         player.useResources(cost);
-
-        System.out.println("Player " + currentPlayerId + " drew a " + randomCard.getType());
     }
 
     private Map<ResourceType, Integer> getDevCardCost() {

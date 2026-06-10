@@ -49,6 +49,17 @@ public class GameTests {
         assertThrows(IllegalArgumentException.class, () -> game.getPlayer(99));
     }
 
+    @Test
+    public void findPlayerByName_MatchesCaseInsensitively_ReturnsThatPlayer() {
+        // Searches for a non-first player by a differently-cased name.
+        assertEquals(player1, game.findPlayerByName("benny"));
+    }
+
+    @Test
+    public void findPlayerByName_UnknownName_ThrowsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> game.findPlayerByName("Nobody"));
+    }
+
 
     @Test
     public void phaseSetupCheck_WhenSetup_ReturnsTrue() {
