@@ -71,6 +71,12 @@ public class GameStatsView extends VBox {
                 playerBox.getChildren().add(longestRoadBadge);
             }
 
+            if (p.isHasLargestArmy()) {
+                Label largestArmyBadge = new Label(I18n.text("stats.largestArmy"));
+                largestArmyBadge.getStyleClass().add("player-vp");
+                playerBox.getChildren().add(largestArmyBadge);
+            }
+
             getChildren().add(playerBox);
         }
 

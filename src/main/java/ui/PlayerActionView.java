@@ -1,6 +1,8 @@
 package ui;
 
+import domain.DevCard;
 import domain.DevCardType;
+import domain.DomainErrorKey;
 import domain.InfraType;
 import domain.Player;
 import domain.PlayerAction;
@@ -16,7 +18,6 @@ import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class PlayerActionView extends VBox {
@@ -173,7 +174,7 @@ public class PlayerActionView extends VBox {
         );
     }
 
-    public void renderUseDevCardMenu(Player player, Map<DevCardType, Integer> cardCounts) {
+    public void renderUseDevCardMenu(Player player, List<DevCard> devCards) {
         getChildren().clear();
         selectedInfraButton = null;
         selectedDevCardButton = null;
@@ -191,11 +192,8 @@ public class PlayerActionView extends VBox {
 
         getChildren().addAll(title, playerTurn, prompt);
 
-        for (DevCardType type : DevCardType.values()) {
-            int count = cardCounts.getOrDefault(type, 0);
-            if (count > 0) {
-                getChildren().add(createDevCardButton(type, count));
-            }
+        for (DevCard card : devCards) {
+            getChildren().add(createDevCardButton(player, card));
         }
 
         Button useButton = new Button(I18n.text("button.use"));
@@ -357,17 +355,34 @@ public class PlayerActionView extends VBox {
         }
     }
 
-    private Button createDevCardButton(DevCardType type, int count) {
-        Button button = new Button(I18n.text("playerAction.devCardCount", UiText.devCard(type), count));
+    private Button createDevCardButton(Player player, DevCard card) {
+        boolean isPlayableNow = isDevCardPlayableNow(player, card);
+        String statusKey = isPlayableNow
+                ? "playerAction.devCardStatus.active"
+                : "playerAction.devCardStatus.inactive";
+        Button button = new Button(I18n.text("playerAction.devCardEntry",
+                UiText.devCard(card.getType()),
+                I18n.text(statusKey)));
         button.getStyleClass().add("action-button");
         button.setMaxWidth(Double.MAX_VALUE);
         button.setOnAction(e -> {
             if (controller != null) {
+                if (!isDevCardPlayableNow(player, card)) {
+                    String errorKey = player.getHasPlayedDevCardThisTurn()
+                            ? DomainErrorKey.DEV_CARD_ALREADY_PLAYED_THIS_TURN.key()
+                            : DomainErrorKey.DEV_CARD_NOT_PLAYABLE_ON_PURCHASE_TURN.key();
+                    showError(I18n.text(errorKey));
+                    return;
+                }
                 selectDevCardButton(button);
-                controller.onDevCardTypeSelected(type);
+                controller.onDevCardSelected(card);
             }
         });
         return button;
+    }
+
+    private boolean isDevCardPlayableNow(Player player, DevCard card) {
+        return card.getIsActive() && !player.getHasPlayedDevCardThisTurn();
     }
 
     private void selectDevCardButton(Button button) {
