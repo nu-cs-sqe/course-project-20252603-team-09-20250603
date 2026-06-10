@@ -1,11 +1,14 @@
 package ui;
 
+import domain.IllegalActionException;
 import domain.Player;
 import domain.ResourceType;
+import domain.TradeManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -32,14 +35,17 @@ public class TradeWithPlayerDialog {
 
     private final Stage stage;
     private final Player activePlayer;
+    private final TradeManager tradeManager;
     private final List<Player> otherPlayers;
+    private boolean tradeExecuted;
 
     private Player opponent;
     private final Map<ResourceType, Integer> offer = new EnumMap<>(ResourceType.class);
     private final Map<ResourceType, Integer> request = new EnumMap<>(ResourceType.class);
 
-    public TradeWithPlayerDialog(Window owner, Player activePlayer, List<Player> allPlayers) {
+    public TradeWithPlayerDialog(Window owner, Player activePlayer, List<Player> allPlayers, TradeManager tradeManager) {
         this.activePlayer = activePlayer;
+        this.tradeManager = tradeManager;
         this.otherPlayers = new ArrayList<>();
         for (Player p : allPlayers) {
             if (p.getId() != activePlayer.getId()) {
@@ -59,6 +65,10 @@ public class TradeWithPlayerDialog {
 
         showPlayerSelectScreen();
         stage.showAndWait();
+    }
+
+    public boolean wasTradeExecuted() {
+        return tradeExecuted;
     }
 
     private void showPlayerSelectScreen() {
@@ -102,7 +112,7 @@ public class TradeWithPlayerDialog {
         root.setAlignment(Pos.TOP_CENTER);
         root.getStyleClass().add("trade-dialog-root");
 
-        Label title = new Label(activePlayer.getName() + " ↔ " + opponent.getName());
+        Label title = new Label(activePlayer.getName() + " <-> " + opponent.getName());
         title.getStyleClass().add("action-title");
 
         VBox offerPanel = buildResourcePanel(
@@ -224,8 +234,10 @@ public class TradeWithPlayerDialog {
         Button acceptBtn = new Button("Accept");
         acceptBtn.getStyleClass().addAll("action-button", "confirm-button");
         acceptBtn.setOnAction(e -> {
-            executeTrade();
-            stage.close();
+            if (executeTrade()) {
+                tradeExecuted = true;
+                stage.close();
+            }
         });
 
         Button declineBtn = new Button("Decline");
@@ -239,13 +251,25 @@ public class TradeWithPlayerDialog {
         stage.setScene(buildScene(root, 440, 260));
     }
 
-    private void executeTrade() {
+    private boolean executeTrade() {
         Map<ResourceType, Integer> activeOffer = nonZero(offer);
         Map<ResourceType, Integer> activeRequest = nonZero(request);
-        activePlayer.useResources(activeOffer);
-        activePlayer.addResources(activeRequest);
-        opponent.useResources(activeRequest);
-        opponent.addResources(activeOffer);
+        try {
+            tradeManager.tradeWithPlayer(activePlayer, opponent, activeOffer, activeRequest);
+            return true;
+        } catch (IllegalActionException | IllegalArgumentException e) {
+            showError(e.getMessage());
+            return false;
+        }
+    }
+
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.initOwner(stage);
+        alert.setTitle("Trade Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     private Map<ResourceType, Integer> nonZero(Map<ResourceType, Integer> map) {

@@ -1,7 +1,9 @@
 package ui;
 
+import domain.IllegalActionException;
 import domain.Player;
 import domain.ResourceType;
+import domain.TradeManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -32,6 +34,8 @@ public class TradeWithBankDialog {
 
     private final Stage stage;
     private final Player player;
+    private final TradeManager tradeManager;
+    private boolean tradeExecuted;
 
     private ResourceType selectedGive = null;
     private ResourceType selectedReceive = null;
@@ -43,8 +47,9 @@ public class TradeWithBankDialog {
     private final Map<ResourceType, Button> receiveMinusButtons = new EnumMap<>(ResourceType.class);
     private final Map<ResourceType, Label> receiveSelectedLabels = new EnumMap<>(ResourceType.class);
 
-    public TradeWithBankDialog(Window owner, Player player) {
+    public TradeWithBankDialog(Window owner, Player player, TradeManager tradeManager) {
         this.player = player;
+        this.tradeManager = tradeManager;
 
         stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
@@ -56,13 +61,17 @@ public class TradeWithBankDialog {
         stage.showAndWait();
     }
 
+    public boolean wasTradeExecuted() {
+        return tradeExecuted;
+    }
+
     private void buildScene() {
         VBox root = new VBox(14);
         root.setPadding(new Insets(20));
         root.setAlignment(Pos.TOP_CENTER);
         root.getStyleClass().add("trade-dialog-root");
 
-        Label title = new Label(player.getName() + " — Trade With Bank  (4 : 1)");
+        Label title = new Label(player.getName() + " - Trade With Bank  (4 : 1)");
         title.getStyleClass().add("action-title");
 
         VBox givePanel = buildGivePanel();
@@ -78,6 +87,7 @@ public class TradeWithBankDialog {
         confirmBtn.getStyleClass().addAll("action-button", "confirm-button");
         confirmBtn.setOnAction(e -> {
             if (executeTrade()) {
+                tradeExecuted = true;
                 stage.close();
             }
         });
@@ -256,18 +266,18 @@ public class TradeWithBankDialog {
             return false;
         }
 
-        Map<ResourceType, Integer> cost = new EnumMap<>(ResourceType.class);
-        cost.put(selectedGive, BANK_RATE);
-        Map<ResourceType, Integer> gain = new EnumMap<>(ResourceType.class);
-        gain.put(selectedReceive, 1);
-
-        player.useResources(cost);
-        player.addResources(gain);
-        return true;
+        try {
+            tradeManager.tradeWithBank(player, selectedGive, selectedReceive);
+            return true;
+        } catch (IllegalActionException | IllegalArgumentException e) {
+            showError(e.getMessage());
+            return false;
+        }
     }
 
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.initOwner(stage);
         alert.setTitle("Trade Error");
         alert.setHeaderText(null);
         alert.setContentText(message);

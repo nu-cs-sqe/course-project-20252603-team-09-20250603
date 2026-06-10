@@ -5,6 +5,7 @@ import domain.InfraType;
 import domain.Player;
 import domain.PlayerAction;
 import domain.ResourceType;
+import domain.TradeManager;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceDialog;
@@ -262,12 +263,14 @@ public class PlayerActionView extends VBox {
         MessageDialog.showInfo(this, message);
     }
 
-    public void showTradeWithPlayerDialog(Player activePlayer, List<Player> allPlayers) {
-        new TradeWithPlayerDialog(getScene().getWindow(), activePlayer, allPlayers);
+    public boolean showTradeWithPlayerDialog(Player activePlayer, List<Player> allPlayers, TradeManager tradeManager) {
+        return new TradeWithPlayerDialog(getScene().getWindow(), activePlayer, allPlayers, tradeManager)
+                .wasTradeExecuted();
     }
 
-    public void showTradeWithBankDialog(Player activePlayer) {
-        new TradeWithBankDialog(getScene().getWindow(), activePlayer);
+    public boolean showTradeWithBankDialog(Player activePlayer, TradeManager tradeManager) {
+        return new TradeWithBankDialog(getScene().getWindow(), activePlayer, tradeManager)
+                .wasTradeExecuted();
     }
 
     public void showDiscardDialog(Player player, int discardCount) {
