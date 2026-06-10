@@ -351,7 +351,7 @@ public class GameTests {
         assertEquals(player0, connected.getEdgeOccupant());
     }
 
-    @Test ç
+    @Test 
     public void build_setupSecondRoadWithoutNewSettlement_Rejected() {
         game.build(player0, InfraType.SETTLEMENT, 0);
 
