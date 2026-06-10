@@ -1,8 +1,14 @@
 package ui;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Locale;
 
 public class WelcomeController {
+    private static final String RULES_URL =
+            "https://www.catan.com/sites/default/files/2021-06/catan_base_rules_2020_200707.pdf";
     private WelcomeView view;
     private final MainView mainView;
 
@@ -32,6 +38,19 @@ public class WelcomeController {
     }
 
     public void handleRules() {
-        view.setStatusMessage(I18n.text("welcome.rulesSoon"));
+        if (!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+            if (view != null) {
+                view.setStatusMessage(RULES_URL);
+            }
+            return;
+        }
+
+        try {
+            Desktop.getDesktop().browse(new URI(RULES_URL));
+        } catch (IOException | URISyntaxException exception) {
+            if (view != null) {
+                view.setStatusMessage(RULES_URL);
+            }
+        }
     }
 }
