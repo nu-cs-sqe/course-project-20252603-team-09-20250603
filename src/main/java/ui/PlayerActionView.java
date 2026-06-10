@@ -5,15 +5,16 @@ import domain.InfraType;
 import domain.Player;
 import domain.PlayerAction;
 import domain.ResourceType;
+import domain.TradeManager;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -221,33 +222,54 @@ public class PlayerActionView extends VBox {
     /** Prompts for a single non-desert resource. Empty if the player cancels. */
     public Optional<ResourceType> promptResource(String header) {
         List<ResourceType> choices = playableResources();
-        Map<String, ResourceType> byLabel = new LinkedHashMap<>();
-        for (ResourceType choice : choices) {
-            byLabel.put(UiText.resource(choice), choice);
-        }
-
-        List<String> labels = new ArrayList<>(byLabel.keySet());
-        ChoiceDialog<String> dialog = new ChoiceDialog<>(labels.get(0), labels);
-        dialog.setTitle(I18n.text("playerAction.chooseResourceTitle"));
-        dialog.setHeaderText(header);
-        dialog.setContentText(I18n.text("playerAction.chooseResourceContent"));
-        return dialog.showAndWait().map(byLabel::get);
+        return promptChoice(I18n.text("playerAction.chooseResourceTitle"), header, choices, UiText::resource);
     }
 
     /** Prompts for which player to steal from. Empty if the player cancels. */
     public Optional<Player> promptVictim(List<Player> candidates) {
-        Map<String, Player> byLabel = new LinkedHashMap<>();
-        for (Player candidate : candidates) {
-            byLabel.put(UiText.playerLabel(candidate), candidate);
+        return promptChoice(
+                I18n.text("playerAction.stealFromTitle"),
+                I18n.text("playerAction.stealFromHeader"),
+                candidates,
+                UiText::playerLabel
+        );
+    }
+
+    private <T> Optional<T> promptChoice(String title, String header, List<T> options,
+                                         java.util.function.Function<T, String> labeler) {
+        OverlayModal<Optional<T>> modal = new OverlayModal<>(this);
+
+        VBox root = new VBox(12);
+        root.setPadding(new Insets(24));
+        root.setAlignment(Pos.TOP_CENTER);
+        root.getStyleClass().addAll("trade-dialog-root", "message-dialog");
+        root.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+
+        Label titleLabel = new Label(title);
+        titleLabel.getStyleClass().add("action-title");
+
+        Label headerLabel = new Label(header);
+        headerLabel.getStyleClass().add("build-prompt-label");
+        headerLabel.setWrapText(true);
+
+        root.getChildren().addAll(titleLabel, headerLabel);
+
+        for (T option : options) {
+            Button button = new Button(labeler.apply(option));
+            button.setMaxWidth(Double.MAX_VALUE);
+            button.getStyleClass().add("action-button");
+            button.setOnAction(e -> modal.close(Optional.of(option)));
+            root.getChildren().add(button);
         }
 
-        List<String> labels = new ArrayList<>(byLabel.keySet());
-        ChoiceDialog<String> dialog = new ChoiceDialog<>(labels.get(0), labels);
-        dialog.setTitle(I18n.text("playerAction.stealFromTitle"));
-        dialog.setHeaderText(I18n.text("playerAction.stealFromHeader"));
-        dialog.setContentText(I18n.text("playerAction.stealFromContent"));
+        Button cancelButton = new Button(I18n.text("button.cancel"));
+        cancelButton.setMaxWidth(Double.MAX_VALUE);
+        cancelButton.getStyleClass().addAll("action-button", "cancel-button");
+        cancelButton.setOnAction(e -> modal.close(Optional.empty()));
+        root.getChildren().add(cancelButton);
 
-        return dialog.showAndWait().map(byLabel::get);
+        modal.setContent(root);
+        return modal.show();
     }
 
     private List<ResourceType> playableResources() {
@@ -272,6 +294,20 @@ public class PlayerActionView extends VBox {
 
     public void showSuccess(String message) {
         MessageDialog.showInfo(this, message);
+    }
+
+    public boolean showTradeWithPlayerDialog(Player activePlayer, List<Player> allPlayers, TradeManager tradeManager) {
+        return new TradeWithPlayerDialog(this, activePlayer, allPlayers, tradeManager)
+                .wasTradeExecuted();
+    }
+
+    public boolean showTradeWithBankDialog(Player activePlayer, TradeManager tradeManager) {
+        return new TradeWithBankDialog(this, activePlayer, tradeManager)
+                .wasTradeExecuted();
+    }
+
+    public void showDiscardDialog(Player player, int discardCount) {
+        new DiscardResourcesDialog(this, player, discardCount);
     }
 
     private Player getCurrentPlayer() {

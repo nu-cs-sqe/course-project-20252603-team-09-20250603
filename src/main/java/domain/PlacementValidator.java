@@ -39,8 +39,36 @@ public class PlacementValidator {
 
     public void validateInitialRoad(int edgeId, Node settlementNode) throws IllegalPlacementException {
         Edge edge = board.getEdge(edgeId);
+        if (edge.getEdgeOccupant() != null) {
+            throw new IllegalPlacementException(DomainErrorKey.PLACEMENT_EDGE_ALREADY_OCCUPIED);
+        }
         if (!edge.getNodeA().equals(settlementNode) && !edge.getNodeB().equals(settlementNode)) {
             throw new IllegalPlacementException(DomainErrorKey.PLACEMENT_ROAD_MUST_CONNECT_TO_SETTLEMENT);
         }
+    }
+
+    public void validateRegularRoad(int edgeId, Player player) throws IllegalPlacementException {
+        Edge edge = board.getEdge(edgeId);
+
+        if (edge.getEdgeOccupant() != null) {
+            throw new IllegalPlacementException(DomainErrorKey.PLACEMENT_EDGE_ALREADY_OCCUPIED);
+        }
+
+        boolean touchesRoad = connectsToOwnRoad(edge.getNodeA(), player) || connectsToOwnRoad(edge.getNodeB(), player);
+        boolean touchesBuilding =
+                player.equals(edge.getNodeA().getNodeOccupant()) || player.equals(edge.getNodeB().getNodeOccupant());
+
+        if (!touchesRoad && !touchesBuilding) {
+            throw new IllegalPlacementException(DomainErrorKey.PLACEMENT_ROAD_MUST_CONNECT_TO_OWN_NETWORK);
+        }
+    }
+
+    private boolean connectsToOwnRoad(Node node, Player player) {
+        for (Edge neighbour : board.getEdgesConnectedToNode(node)) {
+            if (player.equals(neighbour.getEdgeOccupant())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
