@@ -646,6 +646,17 @@ public class PlayerTests {
     }
 
     @Test
+    void removeVictoryPoints_RemoveOneMoreThanPlayerHas_PointsBecomeZero() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.addVictoryPoints(2);
+
+        player.removeVictoryPoints(3);
+
+        assertEquals(0, player.getVictoryPoints());
+    }
+
+    @Test
     public void removeRandomCard_emptyHand_throwsIllegalStateException() {
         Player player = new Player(1, "Alice", PlayerColor.RED);
 
