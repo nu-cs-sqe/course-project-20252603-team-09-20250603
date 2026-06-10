@@ -74,6 +74,7 @@ behavior is exercised by JUnit tests (pitest does not run the cucumber suite).
 | **TC-GB-06** | Normal-play road not connected to the player's road/building       | Rejected (`IllegalStateException`); edge stays empty        | :white_check_mark: |
 | **TC-GB-07** | Settlement violates the distance rule (neighbor occupied)          | Rejected (`IllegalStateException`); target node stays empty | :white_check_mark: |
 | **TC-GB-08** | Setup-phase road, unconnected vs. connected to the new settlement  | Unconnected rejected; connected road is placed              | :white_check_mark: |
+| **TC-GB-09** | Setup-phase: a 2nd road placed without a new settlement in between  | Rejected (`IllegalStateException`); recent settlement is cleared after its road | :white_check_mark: |
 
 ## Method under test: `calculateLongestRoad(Player player)`
 

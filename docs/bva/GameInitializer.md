@@ -44,3 +44,9 @@ Handles new game player setup, including player count validation, player name va
 | Test Case 21 | Player index = 3    | Assigns just fourth player with white  | :white_check_mark:  |
 | Test Case 22 | Player index = 4    | Invalid, no fifth player should exist  | :white_check_mark:  |
 | Test Case 23 | Total of 4 players  | All players are assigned unique colors | :white_check_mark:  |
+
+### Method under test: `setupGame()`
+
+|              | State of the System          | Expected output                                                                       | Implemented?       |
+|--------------|------------------------------|---------------------------------------------------------------------------------------|--------------------|
+| Test Case 24 | Valid list of 3 player names | Returns a non-null `Game` in `SETUP` phase with 3 players, a board, and a turn manager | :white_check_mark:  |
