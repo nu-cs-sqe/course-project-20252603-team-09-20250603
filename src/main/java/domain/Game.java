@@ -450,9 +450,11 @@ public class Game {
 
         if (longestRoadPlayer != null) {
             longestRoadPlayer.removeVictoryPoints(2);
+            longestRoadPlayer.setHasLongestRoad(false);
         }
 
         candidate.addVictoryPoints(2);
+        candidate.setHasLongestRoad(true);
         longestRoadPlayer = candidate;
     }
 }

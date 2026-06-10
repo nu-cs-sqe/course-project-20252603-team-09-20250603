@@ -15,6 +15,7 @@ public class Player {
     private int victoryPoints;
     private final List<DevCard> devHand;
     private boolean hasLargestArmy;
+    private boolean hasLongestRoad;
     private int playedKnightCount = 0;
     private boolean hasPlayedDevCardThisTurn = false;
     private final Random random;
@@ -61,6 +62,14 @@ public class Player {
 
     public boolean isHasLargestArmy() {
         return this.hasLargestArmy;
+    }
+
+    public void setHasLongestRoad(boolean hasLongestRoad) {
+        this.hasLongestRoad = hasLongestRoad;
+    }
+
+    public boolean isHasLongestRoad() {
+        return this.hasLongestRoad;
     }
 
     public void useInventoryItem(String item) {

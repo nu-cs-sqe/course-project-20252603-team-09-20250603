@@ -426,6 +426,7 @@ public class PlayerActionController {
 
         try {
             game.build(currentPlayer, selectedBuildType, selectedLocationId);
+            game.updateLongestRoadBonus();
             if (boardController != null) {
                 boardController.refreshBoard();
                 boardController.setStatusMessage(
