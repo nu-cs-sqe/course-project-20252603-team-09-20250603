@@ -7,14 +7,18 @@ import domain.Node;
 import domain.Player;
 
 import javafx.geometry.Insets;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
@@ -78,18 +82,28 @@ public final class BoardView extends BorderPane {
         this.edgeShapes = new HashMap<>();
         this.nodeShapes = new HashMap<>();
         this.settlementShapes = new HashMap<>();
-        this.statusLabel = new Label("Board ready. Select a node or edge.");
+        this.statusLabel = new Label(I18n.text("board.ready"));
 
         getStyleClass().add("board-view");
-        URL stylesheetUrl = getClass().getResource(STYLESHEET);
-        if (stylesheetUrl != null) {
-            getStylesheets().add(stylesheetUrl.toExternalForm());
+        URL stylesheet = getClass().getResource(STYLESHEET);
+        if (stylesheet != null) {
+            getStylesheets().add(stylesheet.toExternalForm());
         }
         setPadding(new Insets(12.0));
 
-        Label titleLabel = new Label("Catan Board");
+        Label titleLabel = new Label(I18n.text("board.title"));
         titleLabel.getStyleClass().add("board-title");
-        setTop(titleLabel);
+        Button exitButton = new Button(I18n.text("board.exit"));
+        exitButton.getStyleClass().add("secondary-button");
+        exitButton.setOnAction(e -> controller.handleExitToWelcome());
+
+        // build a top bar with a spacer so the exit button is right aligned
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        HBox topBar = new HBox(titleLabel, spacer, exitButton);
+        topBar.setSpacing(12);
+        topBar.setPadding(new Insets(4));
+        setTop(topBar);
 
         ScrollPane scrollPane = new ScrollPane(buildBoardPane(controller.getBoard()));
         scrollPane.getStyleClass().add("board-scroll");
@@ -157,11 +171,11 @@ public final class BoardView extends BorderPane {
         boardPane.setPrefSize(BOARD_WIDTH, BOARD_HEIGHT);
         boardPane.setMaxSize(BOARD_WIDTH, BOARD_HEIGHT);
 
-        URL boardImageUrl = getClass().getResource(BOARD_IMAGE);
-        if (boardImageUrl == null) {
+        URL imageUrl = getClass().getResource(BOARD_IMAGE);
+        if (imageUrl == null) {
             throw new IllegalStateException("Missing board image resource: " + BOARD_IMAGE);
         }
-        Image boardImage = new Image(boardImageUrl.toExternalForm());
+        Image boardImage = new Image(imageUrl.toExternalForm());
         ImageView imageView = new ImageView(boardImage);
         imageView.setFitWidth(BOARD_WIDTH);
         imageView.setFitHeight(BOARD_HEIGHT);
@@ -180,7 +194,7 @@ public final class BoardView extends BorderPane {
         for (Hex hex : board.getHexes()) {
             Polygon hexShape = createHexShape(hex.getId());
             hexShape.getStyleClass().add("hex-overlay");
-            Tooltip.install(hexShape, new Tooltip("Hex " + hex.getId() + " (" + hex.getResourceType() + ")"));
+            Tooltip.install(hexShape, new Tooltip(I18n.text("board.tooltip.hex", hex.getId(), hex.getResourceType())));
             hexShape.setOnMouseClicked(event -> {
                 selectHex(hexShape);
                 controller.handleHexSelected(hex.getId());
@@ -197,11 +211,12 @@ public final class BoardView extends BorderPane {
 
             Line line = new Line(start.x, start.y, end.x, end.y);
             line.getStyleClass().add("edge-overlay");
-            Tooltip.install(line, new Tooltip(
-                    "Edge " + edge.getId()
-                            + " (" + edge.getNodeA().getId()
-                            + "-" + edge.getNodeB().getId() + ")"
-            ));
+            Tooltip.install(line, new Tooltip(I18n.text(
+                    "board.tooltip.edge",
+                    edge.getId(),
+                    edge.getNodeA().getId(),
+                    edge.getNodeB().getId()
+            )));
             edgeShapes.put(edge.getId(), line);
             line.setOnMouseClicked(event -> {
                 selectEdge(line);
@@ -217,7 +232,7 @@ public final class BoardView extends BorderPane {
             BoardPoint point = nodePositions.get(node.getId());
             Circle circle = new Circle(point.x, point.y, NODE_RADIUS);
             circle.getStyleClass().add("node-overlay");
-            Tooltip.install(circle, new Tooltip("Node " + node.getId()));
+            Tooltip.install(circle, new Tooltip(I18n.text("board.tooltip.node", node.getId())));
             circle.setOnMouseClicked(event -> {
                 selectNode(node.getId());
                 controller.handleNodeSelected(node.getId());

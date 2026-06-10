@@ -22,12 +22,18 @@ public class BoardController {
     private BoardView view;
     private LocationSelectionHandler actionSelectionHandler;
     private java.util.function.IntConsumer hexSelectionHandler;
+    private final MainView mainView;
 
-    public BoardController(List<Player> players) {
-        this(new Board(), players);
+    public BoardController(MainView mainView, List<Player> players) {
+        this(mainView, new Board(), players);
     }
 
     public BoardController(Board board, List<Player> players) {
+        this(null, board, players);
+    }
+
+    public BoardController(MainView mainView, Board board, List<Player> players) {
+        this.mainView = mainView;
         this.board = board;
         this.players = List.copyOf(players);
     }
@@ -63,7 +69,7 @@ public class BoardController {
         }
 
         Map<ResourceType, Integer> resources = board.getAdjacentResources(node);
-        view.setStatusMessage("Selected node " + node.getId() + " | adjacent resources: " + resources);
+        view.setStatusMessage(I18n.text("board.status.node", node.getId(), resources));
 
         if (actionSelectionHandler != null) {
             actionSelectionHandler.onLocationSelected(nodeId, PlayerActionController.LocationType.NODE);
@@ -79,11 +85,7 @@ public class BoardController {
             return;
         }
 
-        view.setStatusMessage(
-                "Selected edge " + edge.getId()
-                        + " | nodes " + edge.getNodeA().getId()
-                        + " and " + edge.getNodeB().getId()
-        );
+        view.setStatusMessage(I18n.text("board.status.edge", edge.getId(), edge.getNodeA().getId(), edge.getNodeB().getId()));
 
         if (actionSelectionHandler != null) {
             actionSelectionHandler.onLocationSelected(edgeId, PlayerActionController.LocationType.EDGE);
@@ -92,7 +94,7 @@ public class BoardController {
 
     public void handleHexSelected(int hexId) {
         Hex hex = getHexById(hexId);
-        view.setStatusMessage("Selected hex " + hex.getId() + " | resource: " + hex.getResourceType());
+        view.setStatusMessage(I18n.text("board.status.hex", hex.getId(), hex.getResourceType()));
 
         if (hexSelectionHandler != null) {
             hexSelectionHandler.accept(hexId);
@@ -114,6 +116,12 @@ public class BoardController {
     public void setStatusMessage(String message) {
         if (view != null) {
             view.setStatusMessage(message);
+        }
+    }
+
+    public void handleExitToWelcome() {
+        if (mainView != null) {
+            mainView.showWelcomeView();
         }
     }
 

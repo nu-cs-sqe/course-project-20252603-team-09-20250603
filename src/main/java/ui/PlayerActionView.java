@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 public class PlayerActionView extends VBox {
     private final List<Player> players;
     private PlayerActionController controller;
@@ -31,9 +32,9 @@ public class PlayerActionView extends VBox {
         setSpacing(10);
         getStyleClass().add("player-action-view");
 
-        URL stylesheetUrl = getClass().getResource("/ui/player-action.css");
-        if (stylesheetUrl != null) {
-            getStylesheets().add(stylesheetUrl.toExternalForm());
+        URL stylesheet = getClass().getResource("/ui/player-action.css");
+        if (stylesheet != null) {
+            getStylesheets().add(stylesheet.toExternalForm());
         }
     }
 
@@ -45,11 +46,12 @@ public class PlayerActionView extends VBox {
     public void renderSetupTurn(Player player, boolean waitingForRoad) {
         getChildren().clear();
         selectedInfraButton = null;
+        selectedDevCardButton = null;
 
-        Label title = new Label("Setup Phase");
+        Label title = new Label(I18n.text("playerAction.setupPhaseActive"));
         title.getStyleClass().add("action-title");
 
-        Label playerTurn = new Label(player.getName() + "'s Turn");
+        Label playerTurn = new Label(I18n.text("playerAction.playerTurn", player.getName()));
         playerTurn.getStyleClass().add("player-turn-label");
         playerTurn.setStyle("-fx-text-fill: " + mapColorToHex(player.getColor().name()) + ";");
 
@@ -60,8 +62,11 @@ public class PlayerActionView extends VBox {
         instructionLabel.getStyleClass().add("setup-instruction");
         instructionLabel.setWrapText(true);
 
-        Label invLabel = new Label("Settlements left: " + player.getInventory().get("settlements")
-                + "\nRoads left: " + player.getInventory().get("roads"));
+        Label invLabel = new Label(
+                I18n.text("playerAction.settlementsLeft", player.getInventory().get("settlements"))
+                        + "\n"
+                        + I18n.text("playerAction.roadsLeft", player.getInventory().get("roads"))
+        );
         invLabel.getStyleClass().add("resources-label");
 
         getChildren().addAll(title, playerTurn, instructionLabel, invLabel);
@@ -70,6 +75,7 @@ public class PlayerActionView extends VBox {
     public void renderActionMenu() {
         getChildren().clear();
         selectedInfraButton = null;
+        selectedDevCardButton = null;
 
         Player currentPlayer = getCurrentPlayer();
         if (currentPlayer == null) {
