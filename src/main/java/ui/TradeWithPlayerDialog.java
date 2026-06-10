@@ -41,6 +41,7 @@ public class TradeWithPlayerDialog {
     private final Map<ResourceType, Integer> offer = new EnumMap<>(ResourceType.class);
     private final Map<ResourceType, Integer> request = new EnumMap<>(ResourceType.class);
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public TradeWithPlayerDialog(Node owner, Player activePlayer, List<Player> allPlayers, TradeManager tradeManager) {
         this.owner = owner;
         this.modal = new OverlayModal<>(owner);

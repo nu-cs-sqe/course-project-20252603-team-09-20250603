@@ -45,6 +45,7 @@ public class TradeWithBankDialog {
     private final Map<ResourceType, Button> receiveMinusButtons = new EnumMap<>(ResourceType.class);
     private final Map<ResourceType, Label> receiveSelectedLabels = new EnumMap<>(ResourceType.class);
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public TradeWithBankDialog(Node owner, Player player, TradeManager tradeManager) {
         this.owner = owner;
         this.modal = new OverlayModal<>(owner);

@@ -34,6 +34,7 @@ public class DiscardResourcesDialog {
     private Button discardButton;
     private int totalSelected = 0;
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public DiscardResourcesDialog(Node owner, Player player, int discardCount) {
         this.modal = new OverlayModal<>(owner);
         this.player = player;
