@@ -2,10 +2,14 @@ package domain;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -19,6 +23,26 @@ public class DevCardDeckTests {
             counts.merge(deck.drawCard().getType(), 1, Integer::sum);
         }
         return counts;
+    }
+
+    private List<DevCardType> initializationOrder() {
+        List<DevCardType> order = new ArrayList<>();
+        for (int i = 0; i < 14; i++) {
+            order.add(DevCardType.KNIGHT);
+        }
+        for (int i = 0; i < 5; i++) {
+            order.add(DevCardType.VICTORY_POINT);
+        }
+        for (int i = 0; i < 2; i++) {
+            order.add(DevCardType.ROAD_BUILDING);
+        }
+        for (int i = 0; i < 2; i++) {
+            order.add(DevCardType.YEAR_OF_PLENTY);
+        }
+        for (int i = 0; i < 2; i++) {
+            order.add(DevCardType.MONOPOLY);
+        }
+        return order;
     }
 
     @Test // TC-DD-01
@@ -106,5 +130,18 @@ public class DevCardDeckTests {
         assertEquals(2, counts.getOrDefault(DevCardType.YEAR_OF_PLENTY, 0));
         assertEquals(2, counts.getOrDefault(DevCardType.MONOPOLY, 0));
         assertThrows(IllegalStateException.class, deck::drawCard);
+    }
+
+    @Test // TC-DD-09
+    void shuffleDeck_ReordersAwayFromInitializationOrder() {
+        DevCardDeck deck = new DevCardDeck(new Random(0)); // seeded for a deterministic shuffle
+
+        List<DevCardType> drawnOrder = new ArrayList<>();
+        for (int i = 0; i < DECK_SIZE; i++) {
+            drawnOrder.add(deck.drawCard().getType());
+        }
+
+        // A deck that was shuffled must not come out in the original build order.
+        assertNotEquals(initializationOrder(), drawnOrder);
     }
 }
