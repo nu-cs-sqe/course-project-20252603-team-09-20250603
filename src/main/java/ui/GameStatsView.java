@@ -15,6 +15,7 @@ import java.util.Map;
 
 public class GameStatsView extends VBox {
     private static final String BUILDING_COSTS_IMAGE = "/ui/building-costs.jpg";
+    private static final String BUILDING_COSTS_IMAGE_CHINESE = "/ui/building-costs-chinese.png";
     private static final String RESOURCE_ICON_DIR = "/ui/resource-icons/";
 
     public GameStatsView(GameStatsController controller) {
@@ -67,7 +68,7 @@ public class GameStatsView extends VBox {
         }
 
         ImageView buildingCostsImage = new ImageView(
-                new Image(getClass().getResource(BUILDING_COSTS_IMAGE).toExternalForm())
+                new Image(getClass().getResource(getBuildingCostsImagePath()).toExternalForm())
         );
         buildingCostsImage.getStyleClass().add("building-costs-image");
         buildingCostsImage.setFitWidth(190.0);
@@ -75,6 +76,12 @@ public class GameStatsView extends VBox {
 
         VBox.setMargin(buildingCostsImage, new Insets(12, 0, 0, 0));
         getChildren().add(buildingCostsImage);
+    }
+
+    private String getBuildingCostsImagePath() {
+        return java.util.Locale.SIMPLIFIED_CHINESE.getLanguage().equals(I18n.getLocale().getLanguage())
+                ? BUILDING_COSTS_IMAGE_CHINESE
+                : BUILDING_COSTS_IMAGE;
     }
 
     // Snake draft placeholder
