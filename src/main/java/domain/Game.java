@@ -20,6 +20,7 @@ public class Game {
     private GamePhase currPhase;
     private final Map<Integer, Node> setupSettlements;
     private final Map<Integer, Node> secondSetupSettlements;
+    private static final int pointsNeededToWin = 10;
 
     public Game(Board board, List<Player> players, Dice dice, TurnManager turnManager) {
         this.board = board;
@@ -70,6 +71,29 @@ public class Game {
         else if (this.currPhase == GamePhase.NORMAL_PLAY){
             this.currPhase = GamePhase.GAME_OVER;
         }
+    }
+
+    public boolean isGameOver() {
+        return this.currPhase == GamePhase.GAME_OVER;
+    }
+
+    public Player getWinner() {
+        Player pointsLeader = null;
+        for (Player player : players) {
+            if (player.getVictoryPoints() >= pointsNeededToWin
+                    && (pointsLeader == null || player.getVictoryPoints() > pointsLeader.getVictoryPoints())) {
+                pointsLeader = player;
+            }
+        }
+        return pointsLeader;
+    }
+
+    public Player checkForWinner() {
+        Player winner = getWinner();
+        if (winner != null) {
+            this.currPhase = GamePhase.GAME_OVER;
+        }
+        return winner;
     }
 
     public void distributeSetupResources() {
