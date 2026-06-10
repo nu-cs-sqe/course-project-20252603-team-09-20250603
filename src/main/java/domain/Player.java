@@ -198,7 +198,7 @@ public class Player {
         this.devHand.add(devCard);
 
         if (devCard.getType() == DevCardType.VICTORY_POINT) {
-            this.addVictoryPoints(1); // Scoreboard updates immediately upon drawing!
+            this.addVictoryPoints(1); 
         }
     }
 
