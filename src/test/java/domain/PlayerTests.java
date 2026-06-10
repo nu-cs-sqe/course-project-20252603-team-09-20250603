@@ -840,6 +840,55 @@ public class PlayerTests {
         assertTrue(player.hasMoreThanSevenResources());
     }
 
+    @Test
+    void isHasLargestArmy_NewPlayer_ReturnsFalse() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        assertFalse(player.isHasLargestArmy());
+    }
+
+    @Test
+    void setHasLargestArmy_PlayerGainsLargestArmy_AddsTwoVictoryPoints() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.setHasLargestArmy(true);
+
+        assertTrue(player.isHasLargestArmy());
+        assertEquals(2, player.getVictoryPoints());
+    }
+
+    @Test
+    void setHasLargestArmy_PlayerAlreadyHasLargestArmy_DoesNotAddPointsAgain() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.setHasLargestArmy(true);
+        player.setHasLargestArmy(true);
+
+        assertTrue(player.isHasLargestArmy());
+        assertEquals(2, player.getVictoryPoints());
+    }
+
+    @Test
+    void setHasLargestArmy_PlayerLosesLargestArmy_RemovesTwoVictoryPoints() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.setHasLargestArmy(true);
+        player.setHasLargestArmy(false);
+
+        assertFalse(player.isHasLargestArmy());
+        assertEquals(0, player.getVictoryPoints());
+    }
+
+    @Test
+    void setHasLargestArmy_PlayerAlreadyDoesNotHaveLargestArmy_DoesNotRemovePoints() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.setHasLargestArmy(false);
+
+        assertFalse(player.isHasLargestArmy());
+        assertEquals(0, player.getVictoryPoints());
+    }
+
 
 
 
