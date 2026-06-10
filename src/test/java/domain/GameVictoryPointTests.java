@@ -18,6 +18,7 @@ public class GameVictoryPointTests {
         Game game = createGame(board, player);
 
         player.addResources(roadCost());
+        board.getEdge(1).getNodeA().buildSettlement(player); // give the road something to connect to
 
         game.build(player, InfraType.ROAD, 1);
 

@@ -646,6 +646,17 @@ public class PlayerTests {
     }
 
     @Test
+    void removeVictoryPoints_RemoveOneMoreThanPlayerHas_PointsBecomeZero() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.addVictoryPoints(2);
+
+        player.removeVictoryPoints(3);
+
+        assertEquals(0, player.getVictoryPoints());
+    }
+
+    @Test
     public void removeRandomCard_emptyHand_throwsIllegalStateException() {
         Player player = new Player(1, "Alice", PlayerColor.RED);
 
@@ -793,6 +804,25 @@ public class PlayerTests {
     }
 
     @Test
+    void removeRandomCard_ValidResourceWithZeroCount_DoesNotRemoveThatResource() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WOOD, 1);
+        player.addResources(resources);
+
+        Map<ResourceType, Integer> cost = new HashMap<>();
+        cost.put(ResourceType.WOOD, 1);
+        player.useResources(cost);
+
+        assertEquals(0, player.getResources().get(ResourceType.WOOD));
+
+        assertThrows(IllegalStateException.class, () -> {
+            player.removeRandomCard();
+        });
+    }
+
+    @Test
     public void hasMoreThanSevenResources_emptyHand_returnsFalse() {
         Player player = new Player(1, "Alice", PlayerColor.RED);
 
@@ -840,7 +870,90 @@ public class PlayerTests {
         assertTrue(player.hasMoreThanSevenResources());
     }
 
+    @Test
+    void isHasLargestArmy_NewPlayer_ReturnsFalse() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
 
+        assertFalse(player.isHasLargestArmy());
+    }
 
+    @Test
+    void setHasLargestArmy_PlayerGainsLargestArmy_AddsTwoVictoryPoints() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
 
+        player.setHasLargestArmy(true);
+
+        assertTrue(player.isHasLargestArmy());
+        assertEquals(2, player.getVictoryPoints());
+    }
+
+    @Test
+    void setHasLargestArmy_PlayerAlreadyHasLargestArmy_DoesNotAddPointsAgain() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.setHasLargestArmy(true);
+        player.setHasLargestArmy(true);
+
+        assertTrue(player.isHasLargestArmy());
+        assertEquals(2, player.getVictoryPoints());
+    }
+
+    @Test
+    void setHasLargestArmy_PlayerLosesLargestArmy_RemovesTwoVictoryPoints() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.setHasLargestArmy(true);
+        player.setHasLargestArmy(false);
+
+        assertFalse(player.isHasLargestArmy());
+        assertEquals(0, player.getVictoryPoints());
+    }
+
+    @Test
+    void setHasLargestArmy_PlayerAlreadyDoesNotHaveLargestArmy_DoesNotRemovePoints() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.setHasLargestArmy(false);
+
+        assertFalse(player.isHasLargestArmy());
+        assertEquals(0, player.getVictoryPoints());
+    }
+
+    @Test
+    void deductRoads_PlayerHasMoreThanCount_DecreasesRoadCount() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.deductRoads(1);
+
+        assertEquals(14, player.getInventory().get("roads"));
+    }
+
+    @Test
+    void deductRoads_PlayerHasExactlyCount_DecreasesRoadCountToZero() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.deductRoads(15);
+
+        assertEquals(0, player.getInventory().get("roads"));
+    }
+
+    @Test
+    void deductRoads_CountIsZero_RoadCountStaysSame() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.deductRoads(0);
+
+        assertEquals(15, player.getInventory().get("roads"));
+    }
+
+    @Test
+    void deductRoads_CountGreaterThanCurrentRoads_ThrowsExceptionAndRoadCountUnchanged() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        assertThrows(IllegalStateException.class, () -> {
+            player.deductRoads(16);
+        });
+
+        assertEquals(15, player.getInventory().get("roads"));
+    }
 }

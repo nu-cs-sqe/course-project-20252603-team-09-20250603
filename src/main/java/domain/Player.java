@@ -15,6 +15,7 @@ public class Player {
     private int victoryPoints;
     private final List<DevCard> devHand;
     private boolean hasLargestArmy;
+    private boolean hasLongestRoad;
     private int playedKnightCount = 0;
     private boolean hasPlayedDevCardThisTurn = false;
     private final Random random;
@@ -63,6 +64,14 @@ public class Player {
         return this.hasLargestArmy;
     }
 
+    public void setHasLongestRoad(boolean hasLongestRoad) {
+        this.hasLongestRoad = hasLongestRoad;
+    }
+
+    public boolean getHasLongestRoad() {
+        return this.hasLongestRoad;
+    }
+
     public void useInventoryItem(String item) {
         int currentAmount = inventory.getOrDefault(item, 0);
 
@@ -89,10 +98,8 @@ public class Player {
         if (points < 0) {
             throw new IllegalArgumentException("Points to remove cannot be negative.");
         }
-        if (this.victoryPoints - points < 0) {
-            this.victoryPoints = 0;
-        } else {
-            this.victoryPoints -= points;
+        else {
+            this.victoryPoints = Math.max(0, this.victoryPoints - points);
         }
     }
 
@@ -198,7 +205,7 @@ public class Player {
         this.devHand.add(devCard);
 
         if (devCard.getType() == DevCardType.VICTORY_POINT) {
-            this.addVictoryPoints(1); // Scoreboard updates immediately upon drawing!
+            this.addVictoryPoints(1); 
         }
     }
 

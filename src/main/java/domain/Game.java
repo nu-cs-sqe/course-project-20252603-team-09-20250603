@@ -20,6 +20,7 @@ public class Game {
     private GamePhase currPhase;
     private final Map<Integer, Node> setupSettlements;
     private final Map<Integer, Node> secondSetupSettlements;
+    private static final int pointsNeededToWin = 10;
 
     public Game(Board board, List<Player> players, Dice dice, TurnManager turnManager) {
         this.board = board;
@@ -72,6 +73,29 @@ public class Game {
         }
     }
 
+    public boolean isGameOver() {
+        return this.currPhase == GamePhase.GAME_OVER;
+    }
+
+    public Player getWinner() {
+        Player currWinner = null;
+        for (Player player : players) {
+            if (player.getVictoryPoints() >= pointsNeededToWin
+                    && (currWinner == null || player.getVictoryPoints() > currWinner.getVictoryPoints())) {
+                currWinner = player;
+            }
+        }
+        return currWinner;
+    }
+
+    public Player checkForWinner() {
+        Player winner = getWinner();
+        if (winner != null) {
+            this.currPhase = GamePhase.GAME_OVER;
+        }
+        return winner;
+    }
+
     public void distributeSetupResources() {
         for (Player player : players) {
             Node settlement = secondSetupSettlements.get(player.getId());
@@ -79,10 +103,6 @@ public class Game {
                 player.addResources(board.getAdjacentResources(settlement));
             }
         }
-    }
-
-    public boolean start(){
-        return true;
     }
 
     public void setNextDevCardType(DevCardType type) {
@@ -131,8 +151,8 @@ public class Game {
 
                     placementValidator.validateInitialRoad(locationId, recentSettlement);
                 } else {
-                    // TODO placement validator for a regular raod
-                    }
+                    placementValidator.validateRegularRoad(locationId, currentPlayer);
+                }
                     edge.buildRoad(currentPlayer);
                     if (currPhase == GamePhase.SETUP) {
                         setupSettlements.remove(currentPlayer.getId());
@@ -426,9 +446,11 @@ public class Game {
 
         if (longestRoadPlayer != null) {
             longestRoadPlayer.removeVictoryPoints(2);
+            longestRoadPlayer.setHasLongestRoad(false);
         }
 
         candidate.addVictoryPoints(2);
+        candidate.setHasLongestRoad(true);
         longestRoadPlayer = candidate;
     }
 }
