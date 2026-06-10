@@ -72,9 +72,9 @@
 # Week 10 (06/02/2026-06/08/2026)
 1. [Done] All: weekly meeting
 3. [90%] Alicia: finish all robber logic - stealing random card, cutting resources in half when >=7, updating Crystal moveRobber function - EOD Monday
-4. [90%] Crystal: review handleInitialPlacement PR and merge to main - by EOD Monday
-6. [0%] Chloe: game end condition + integrate longest road to UI (add badge to player state card for the person w/ the longest road) - Tuesday
-7. [80%] Ben: finalize PlacementValidator - Tuesday
+4. [100%] Crystal: review handleInitialPlacement PR and merge to main - by EOD Monday
+6. [100%] Chloe: game end condition + integrate longest road to UI (add badge to player state card for the person w/ the longest road) - Tuesday
+7. [90%] Ben: finalize PlacementValidator - Tuesday
 8. [0%] Aria: finish i18n once UI finalized - Tuesday
 9. [0%] Alicia: clean up the codebase - delete extraneous comments if any - Tuesday
 10. [90%] Ben: update build integration testing to be linked to PlayerActionController GUI instead of GameController scanner - Tuesday
@@ -93,3 +93,8 @@
 23. [100%] Aria: add cities to UI
 24. [100%] Ben: merge devCard PR - Monday
 25. [100%] Crystal: post on EdStem to Prof. Yiji/TAs about the TDD stuff w/ ss of her notes - EOD Monday
+26. [0%] Alicia: review chloe end game branch
+27. [0%] Ben: fix game, game initializer mutants
+28. [0%] Aria: board mutants
+29. [0%] Chloe: Dev card, dev card deck, and game mutants
+30. [100%] Crystal, Alicia: Fix player and trade manager, fix node mutants

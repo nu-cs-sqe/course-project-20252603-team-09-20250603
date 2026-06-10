@@ -89,10 +89,8 @@ public class Player {
         if (points < 0) {
             throw new IllegalArgumentException("Points to remove cannot be negative.");
         }
-        if (this.victoryPoints - points < 0) {
-            this.victoryPoints = 0;
-        } else {
-            this.victoryPoints -= points;
+        else {
+            this.victoryPoints = Math.max(0, this.victoryPoints - points);
         }
     }
 
@@ -198,7 +196,7 @@ public class Player {
         this.devHand.add(devCard);
 
         if (devCard.getType() == DevCardType.VICTORY_POINT) {
-            this.addVictoryPoints(1); // Scoreboard updates immediately upon drawing!
+            this.addVictoryPoints(1); 
         }
     }
 

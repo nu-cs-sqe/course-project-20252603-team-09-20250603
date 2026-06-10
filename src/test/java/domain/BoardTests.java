@@ -4,6 +4,7 @@ import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -376,11 +377,40 @@ public class BoardTests {
     @Test
     void getNode_LastValidNodeId_ReturnsNode() {
         Board board = new Board();
-        int lastValidNodeId = board.getNodes().size() - 1;
+        int lastValidNodeId = 53;
 
         Node node = board.getNode(lastValidNodeId);
 
         assertEquals(lastValidNodeId, node.getId());
+    }
+
+    @Test
+    void getNodes_BoardContainsAllFiftyFourNodes() {
+        Board board = new Board();
+
+        List<Node> nodes = board.getNodes();
+
+        assertEquals(54, nodes.size());
+        assertEquals(0, nodes.get(0).getId());
+        assertEquals(53, nodes.get(53).getId());
+    }
+
+    @Test
+    void getRobberHexId_defaultBoard_ReturnsDesertHexId() {
+        Board board = new Board();
+
+        assertEquals(9, board.getRobberHexId());
+    }
+
+    @Test
+    void getRobberHexId_noHexHasRobber_ReturnsNegativeOne() {
+        Board board = new Board();
+
+        for (Hex hex : board.getHexes()) {
+            hex.setHasRobber(false);
+        }
+
+        assertEquals(-1, board.getRobberHexId());
     }
 
     @Test
@@ -569,6 +599,55 @@ public class BoardTests {
 
         assertEquals(expectedOne, playerOne.getResources());
         assertEquals(expectedTwo, playerTwo.getResources());
+    }
+
+    @Test
+    public void distributeResourcesOnRoll_occupiedNodeWithoutInfrastructure_doesNotAddZeroCountResource() throws Exception {
+        Board board = new Board();
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+        Node node = board.getNode(0);
+
+        Field occupantField = Node.class.getDeclaredField("occupant");
+        occupantField.setAccessible(true);
+        occupantField.set(node, player);
+
+        board.distributeResourcesOnRoll(9);
+
+        assertTrue(player.getResources().isEmpty());
+    }
+
+    @Test
+    void moveRobberAndSteal_victimHasOnlyZeroCountResourceEntries_stealsNothing() {
+        Board board = new Board(new java.util.Random(0));
+        Player active = new Player(1, "Alice", PlayerColor.RED);
+        Player victim = new Player(2, "Bob", PlayerColor.BLUE);
+
+        board.getNode(0).buildSettlement(victim);
+
+        Map<ResourceType, Integer> oneOre = new HashMap<>();
+        oneOre.put(ResourceType.ORE, 1);
+        victim.addResources(oneOre);
+        victim.useResources(oneOre);
+
+        board.moveRobberAndSteal(active, 0, victim);
+
+        assertEquals(0, victim.getResources().getOrDefault(ResourceType.ORE, 0));
+        assertTrue(active.getResources().isEmpty());
+        assertEquals(0, board.getRobberHexId());
+    }
+
+    @Test
+    void moveRobberAndSteal_victimIsActivePlayer_ThrowsAndDoesNotMoveRobber() {
+        Board board = new Board();
+        Player active = new Player(1, "Alice", PlayerColor.RED);
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> board.moveRobberAndSteal(active, 0, active)
+        );
+
+        assertEquals("A player cannot steal from themselves.", exception.getMessage());
+        assertEquals(9, board.getRobberHexId());
     }
 
     @Test

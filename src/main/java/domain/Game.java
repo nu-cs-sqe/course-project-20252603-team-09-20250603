@@ -81,10 +81,6 @@ public class Game {
         }
     }
 
-    public boolean start(){
-        return true;
-    }
-
     public void setNextDevCardType(DevCardType type) {
         this.devCardDeck.setNextCardType(type);
     }
