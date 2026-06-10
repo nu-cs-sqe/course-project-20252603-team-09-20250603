@@ -7,23 +7,38 @@ Feature: Build through the player action menu (GUI)
     Given a game with a current player
     And an initialized board
 
-  Scenario Outline: Player builds a road or settlement through the action menu
-    Given the player has the resources to build <infraType>
-    And the player has at least one <infraType> in their inventory
+  Scenario Outline: Player builds a settlement through the action menu
+    Given the player has the resources to build settlement
+    And the player has at least one settlement in their inventory
     When the player clicks Build
-    And the player selects <infraType>
-    And the player clicks <locationType> <locationId>
+    And the player selects settlement
+    And the player clicks node <locationId>
     And the player confirms the build
-    Then <locationType> <locationId> should be occupied by the player's <infraType>
-    And the player's inventory should decrease by one <infraType>
-    And the player's resources should decrease by the cost of building <infraType>
+    Then node <locationId> should be occupied by the player's settlement
+    And the player's inventory should decrease by one settlement
+    And the player's resources should decrease by the cost of building settlement
 
     Examples:
-      | infraType  | locationType | locationId |
-      | road       | edge         | 1          |
-      | road       | edge         | 10         |
-      | settlement | node         | 1          |
-      | settlement | node         | 10         |
+      | locationId |
+      | 1          |
+      | 10         |
+
+  Scenario Outline: Player builds a road connected to their settlement through the action menu
+    Given the player has a settlement at an endpoint of edge <locationId>
+    And the player has the resources to build road
+    And the player has at least one road in their inventory
+    When the player clicks Build
+    And the player selects road
+    And the player clicks edge <locationId>
+    And the player confirms the build
+    Then edge <locationId> should be occupied by the player's road
+    And the player's inventory should decrease by one road
+    And the player's resources should decrease by the cost of building road
+
+    Examples:
+      | locationId |
+      | 1          |
+      | 10         |
 
   Scenario Outline: Player upgrades their settlement to a city through the action menu
     Given node <locationId> already has the player's settlement

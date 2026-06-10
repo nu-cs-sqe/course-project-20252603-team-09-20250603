@@ -112,8 +112,8 @@ public class Game {
 
                     placementValidator.validateInitialRoad(locationId, recentSettlement);
                 } else {
-                    // TODO placement validator for a regular raod
-                    }
+                    placementValidator.validateRegularRoad(locationId, currentPlayer);
+                }
                     edge.buildRoad(currentPlayer);
                     if (currPhase == GamePhase.SETUP) {
                         setupSettlements.remove(currentPlayer.getId());

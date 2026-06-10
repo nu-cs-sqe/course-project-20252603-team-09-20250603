@@ -106,6 +106,13 @@ public class HandleBuildStepDefinitions {
         assertEquals(InfraType.CITY, node.getInfraType());
     }
 
+    @Given("the player has a settlement at an endpoint of edge {int}")
+    public void the_player_has_a_settlement_at_an_endpoint_of_edge(Integer edgeId) {
+        Node endpoint = board.getEdge(edgeId).getNodeA();
+        endpoint.buildSettlement(currentPlayer);
+        assertEquals(currentPlayer, endpoint.getNodeOccupant());
+    }
+
     @Given("node {int} is empty")
     public void node_is_empty(Integer locationId) {
         Node node = board.getNode(locationId);
