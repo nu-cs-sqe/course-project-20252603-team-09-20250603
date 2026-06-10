@@ -78,14 +78,14 @@ public class Game {
     }
 
     public Player getWinner() {
-        Player pointsLeader = null;
+        Player currWinner = null;
         for (Player player : players) {
             if (player.getVictoryPoints() >= pointsNeededToWin
-                    && (pointsLeader == null || player.getVictoryPoints() > pointsLeader.getVictoryPoints())) {
-                pointsLeader = player;
+                    && (currWinner == null || player.getVictoryPoints() > currWinner.getVictoryPoints())) {
+                currWinner = player;
             }
         }
-        return pointsLeader;
+        return currWinner;
     }
 
     public Player checkForWinner() {

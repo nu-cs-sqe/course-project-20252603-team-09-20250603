@@ -61,7 +61,7 @@ public class GameStatsView extends VBox {
 
             playerBox.getChildren().addAll(nameLabel, vpLabel, devCardLabel, resourcesRow);
 
-            if (p.isHasLongestRoad()) {
+            if (p.getHasLongestRoad()) {
                 Label longestRoadBadge = new Label("🛣 Longest Road");
                 longestRoadBadge.getStyleClass().add("player-vp");
                 playerBox.getChildren().add(longestRoadBadge);

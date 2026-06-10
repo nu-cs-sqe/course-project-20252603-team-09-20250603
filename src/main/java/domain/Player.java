@@ -68,7 +68,7 @@ public class Player {
         this.hasLongestRoad = hasLongestRoad;
     }
 
-    public boolean isHasLongestRoad() {
+    public boolean getHasLongestRoad() {
         return this.hasLongestRoad;
     }
 
