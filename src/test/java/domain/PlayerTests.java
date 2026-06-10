@@ -908,5 +908,41 @@ public class PlayerTests {
         assertEquals(0, player.getVictoryPoints());
     }
 
-    
+    @Test
+    void deductRoads_PlayerHasMoreThanCount_DecreasesRoadCount() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.deductRoads(1);
+
+        assertEquals(14, player.getInventory().get("roads"));
+    }
+
+    @Test
+    void deductRoads_PlayerHasExactlyCount_DecreasesRoadCountToZero() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.deductRoads(15);
+
+        assertEquals(0, player.getInventory().get("roads"));
+    }
+
+    @Test
+    void deductRoads_CountIsZero_RoadCountStaysSame() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.deductRoads(0);
+
+        assertEquals(15, player.getInventory().get("roads"));
+    }
+
+    @Test
+    void deductRoads_CountGreaterThanCurrentRoads_ThrowsExceptionAndRoadCountUnchanged() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        assertThrows(IllegalStateException.class, () -> {
+            player.deductRoads(16);
+        });
+
+        assertEquals(15, player.getInventory().get("roads"));
+    }
 }
