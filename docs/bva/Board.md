@@ -92,8 +92,8 @@
 
 ### Method under test: `getNode(int nodeId)`
 
-|              | State of the System                  | Expected output / behavior        | Implemented? |
-|--------------|--------------------------------------|-----------------------------------|----------|
+|              | State of the System                  | Expected output / behavior        | Implemented?       |
+|--------------|--------------------------------------|-----------------------------------|--------------------|
 | Test Case 9  | Node ID is 0                         | Returns node with ID 0            | :white_check_mark: |
 | Test Case 10 | Node ID is the last valid node ID    | Returns node with that ID         | :white_check_mark: |
 | Test Case 11 | Node ID is -1                        | Throws `IllegalArgumentException` | :white_check_mark: |
@@ -107,3 +107,19 @@
 | Test Case 10 | Node ID is the last valid node ID    | Returns node with that ID         | :white_check_mark: |
 | Test Case 11 | Node ID is -1                        | Throws `IllegalArgumentException` | :white_check_mark: |
 | Test Case 12 | Node ID is equal to number of nodes  | Throws `IllegalArgumentException` | :white_check_mark: |
+
+
+### Method under test: `distributeResourcesOnRoll(int diceRoll)`
+|              | State of the System                                                          | Expected output / behavior                                                | Implemented?       |
+|--------------|------------------------------------------------------------------------------|---------------------------------------------------------------------------|--------------------|
+| Test Case 1  | Dice roll is 2 (minimum valid value) and matching hex has a settlement       | Settlement owner receives 1 resource                                      | :white_check_mark: |
+| Test Case 2  | Dice roll is 12 (maximum valid value) and matching hex has a city            | City owner receives 2 resources                                           | :white_check_mark: |
+| Test Case 3  | Dice roll is 1                                                               | Throws `IllegalArgumentException`                                         | :white_check_mark: |
+| Test Case 4  | Dice roll is 13                                                              | Throws `IllegalArgumentException`                                         | :white_check_mark: |
+| Test Case 5  | Dice roll matches no hex token numbers                                       | No resources distributed                                                  | :white_check_mark: |
+| Test Case 6  | Dice roll matches a hex with no occupied adjacent nodes                      | No resources distributed                                                  | :white_check_mark: |
+| Test Case 7  | Dice roll matches multiple producing hexes                                   | Resources distributed from all matching hexes                             | :white_check_mark: |
+| Test Case 8  | Dice roll matches a hex adjacent to multiple occupied nodes                  | All eligible players receive resources                                    | :white_check_mark: |
+| Test Case 9  | Dice roll matches a hex containing the robber                                | No resources distributed from that hex                                    | :white_check_mark: |
+| Test Case 10 | Dice roll matches a hex containing the robber and other hex with settlements | No resources distributed from robber hex, other hex distributes as normal | :white_check_mark: |
+| Test Case 11 | Dice roll matches a multiple hexes with multiple occupied nodes each         | All eligible players receive resources                                    | :white_check_mark: |

@@ -1,13 +1,21 @@
 package ui;
 
 import domain.Player;
+import domain.ResourceType;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.util.List;
+import java.util.Map;
 
 public class GameStatsView extends VBox {
+    private static final String BUILDING_COSTS_IMAGE = "/ui/building-costs.jpg";
+    private static final String RESOURCE_ICON_DIR = "/ui/resource-icons/";
 
     public GameStatsView(GameStatsController controller) {
 
@@ -46,9 +54,24 @@ public class GameStatsView extends VBox {
             Label vpLabel = new Label("Victory Points: " + p.getVictoryPoints());
             vpLabel.getStyleClass().add("player-vp");
 
-            playerBox.getChildren().addAll(nameLabel, vpLabel);
+            Label devCardLabel = new Label("Development Cards: " + p.getDevCardHand().size());
+            devCardLabel.getStyleClass().add("player-vp");
+
+            HBox resourcesRow = buildResourcesRow(p);
+
+            playerBox.getChildren().addAll(nameLabel, vpLabel, devCardLabel, resourcesRow);
             getChildren().add(playerBox);
         }
+
+        ImageView buildingCostsImage = new ImageView(
+                new Image(getClass().getResource(BUILDING_COSTS_IMAGE).toExternalForm())
+        );
+        buildingCostsImage.getStyleClass().add("building-costs-image");
+        buildingCostsImage.setFitWidth(190.0);
+        buildingCostsImage.setPreserveRatio(true);
+
+        VBox.setMargin(buildingCostsImage, new Insets(12, 0, 0, 0));
+        getChildren().add(buildingCostsImage);
     }
 
     // Snake draft placeholder
@@ -68,5 +91,35 @@ public class GameStatsView extends VBox {
             default: return "#95A5A6";
         }
     }
-}
 
+    private HBox buildResourcesRow(Player player) {
+        Map<ResourceType, Integer> resources = player.getResources();
+        HBox row = new HBox(8);
+        row.setAlignment(Pos.CENTER_LEFT);
+        row.getStyleClass().add("resource-row");
+        row.getChildren().addAll(
+                createResourceChip("wood.png", resources.getOrDefault(ResourceType.WOOD, 0)),
+                createResourceChip("brick.png", resources.getOrDefault(ResourceType.BRICK, 0)),
+                createResourceChip("ore.png", resources.getOrDefault(ResourceType.ORE, 0)),
+                createResourceChip("sheep.png", resources.getOrDefault(ResourceType.SHEEP, 0)),
+                createResourceChip("wheat.png", resources.getOrDefault(ResourceType.WHEAT, 0))
+        );
+        return row;
+    }
+
+    private HBox createResourceChip(String iconName, int count) {
+        ImageView iconView = new ImageView(new Image(getClass().getResource(RESOURCE_ICON_DIR + iconName).toExternalForm()));
+        iconView.setFitWidth(18.0);
+        iconView.setFitHeight(18.0);
+        iconView.setPreserveRatio(true);
+        iconView.getStyleClass().add("resource-icon");
+
+        Label countLabel = new Label("x" + count);
+        countLabel.getStyleClass().add("player-resources");
+
+        HBox chip = new HBox(3, iconView, countLabel);
+        chip.setAlignment(Pos.CENTER_LEFT);
+        chip.getStyleClass().add("resource-chip");
+        return chip;
+    }
+}

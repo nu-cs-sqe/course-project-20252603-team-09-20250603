@@ -33,3 +33,24 @@
     -fx-font-size: 12px;
     -fx-text-fill: #555555;
 }
+
+.player-resources {
+    -fx-font-size: 12px;
+    -fx-text-fill: #2c3e50;
+}
+
+.resource-row {
+    -fx-padding: 2 0 0 0;
+}
+
+.resource-chip {
+    -fx-alignment: center-left;
+}
+
+.resource-icon {
+    -fx-smooth: true;
+}
+
+.building-costs-image {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.10), 6, 0.2, 0, 1);
+}
