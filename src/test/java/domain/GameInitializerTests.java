@@ -206,4 +206,17 @@ public class GameInitializerTests {
         assertThrows(IllegalArgumentException.class, () -> initializer.setupPlayers(names));
     }
 
+    @Test
+    void setupGame_ValidNames_ReturnsConfiguredGameInSetupPhase(){
+        GameInitializer initializer = new GameInitializer();
+
+        Game game = initializer.setupGame(List.of("Alice", "Bob", "Carol"));
+
+        assertNotNull(game);
+        assertTrue(game.phaseSetupCheck());
+        assertEquals(3, game.getPlayers().size());
+        assertNotNull(game.getBoard());
+        assertNotNull(game.getTurnManager());
+    }
+
 }

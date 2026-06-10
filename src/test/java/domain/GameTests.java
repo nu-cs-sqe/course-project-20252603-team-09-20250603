@@ -351,6 +351,21 @@ public class GameTests {
         assertEquals(player0, connected.getEdgeOccupant());
     }
 
+    @Test 
+    public void build_setupSecondRoadWithoutNewSettlement_Rejected() {
+        game.build(player0, InfraType.SETTLEMENT, 0);
+
+        List<Edge> connectedEdges = game.getBoard().getEdgesConnectedToNode(game.getBoard().getNode(0));
+        int firstEdge = connectedEdges.get(0).getId();
+        int secondEdge = connectedEdges.get(1).getId();
+
+        game.build(player0, InfraType.ROAD, firstEdge); // clears setupSettlements for player0
+
+        assertThrows(IllegalStateException.class,
+                () -> game.build(player0, InfraType.ROAD, secondEdge));
+        assertNull(game.getBoard().getEdge(secondEdge).getEdgeOccupant());
+    }
+
     private int[] placeSetupSettlements(Player player) {
         int firstNodeId = findValidSettlementNode();
         game.build(player, InfraType.SETTLEMENT, firstNodeId);
