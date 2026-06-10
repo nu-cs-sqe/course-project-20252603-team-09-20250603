@@ -3,7 +3,9 @@ package domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -183,6 +185,99 @@ public class GameTests {
         assertFalse(player0.getResources().containsKey(ResourceType.DESERT));
     }
 
+    // --- build() placement, inventory & resource rules ---
+    // (mirrors handle_build.feature, as JUnit so pitest can see it and kill the build() mutants)
+
+    @Test // TC-GB-01: a valid, connected road is actually placed (kills removed Edge::buildRoad)
+    public void build_validConnectedRoad_placesRoadForPlayer() {
+        game.setCurrPhase(GamePhase.NORMAL_PLAY);
+        player0.addResources(roadCost());
+        game.getBoard().getEdge(1).getNodeA().buildSettlement(player0);
+
+        game.build(player0, InfraType.ROAD, 1);
+
+        assertEquals(player0, game.getBoard().getEdge(1).getEdgeOccupant());
+    }
+
+    @Test // TC-GB-02: a successful build consumes one inventory item (kills removed useInventoryItem)
+    public void build_validRoad_decrementsRoadInventory() {
+        game.setCurrPhase(GamePhase.NORMAL_PLAY);
+        player0.addResources(roadCost());
+        game.getBoard().getEdge(1).getNodeA().buildSettlement(player0);
+        int before = player0.getInventory().get("roads");
+
+        game.build(player0, InfraType.ROAD, 1);
+
+        assertEquals(before - 1, (int) player0.getInventory().get("roads"));
+    }
+
+    @Test // TC-GB-03: a successful build deducts the resource cost (kills removed useResources)
+    public void build_validRoad_deductsResourceCost() {
+        game.setCurrPhase(GamePhase.NORMAL_PLAY);
+        player0.addResources(roadCost());
+        game.getBoard().getEdge(1).getNodeA().buildSettlement(player0);
+
+        game.build(player0, InfraType.ROAD, 1);
+
+        Map<ResourceType, Integer> resources = player0.getResources();
+        assertEquals(0, (int) resources.getOrDefault(ResourceType.BRICK, 0));
+        assertEquals(0, (int) resources.getOrDefault(ResourceType.WOOD, 0));
+    }
+
+    @Test // TC-GB-04: zero inventory is rejected before placement (kills the "<= 0" boundary)
+    public void build_zeroRoadInventory_rejectedBeforePlacement() {
+        game.setCurrPhase(GamePhase.NORMAL_PLAY);
+        player0.addResources(roadCost());
+        game.getBoard().getEdge(1).getNodeA().buildSettlement(player0);
+        drainInventory(player0, "roads");
+
+        assertThrows(IllegalStateException.class, () -> game.build(player0, InfraType.ROAD, 1));
+        assertNull(game.getBoard().getEdge(1).getEdgeOccupant());
+    }
+
+    @Test // TC-GB-05: insufficient resources rejected before placement (kills resource conditional)
+    public void build_noResources_rejectedBeforePlacement() {
+        game.setCurrPhase(GamePhase.NORMAL_PLAY);
+        game.getBoard().getEdge(1).getNodeA().buildSettlement(player0); // connected, but no resources
+
+        assertThrows(IllegalStateException.class, () -> game.build(player0, InfraType.ROAD, 1));
+        assertNull(game.getBoard().getEdge(1).getEdgeOccupant());
+    }
+
+    @Test // TC-GB-06: regular road not connected to own network is rejected (kills removed validateRegularRoad)
+    public void build_roadNotConnectedToOwnNetwork_rejected() {
+        game.setCurrPhase(GamePhase.NORMAL_PLAY);
+        player0.addResources(roadCost());
+
+        assertThrows(IllegalStateException.class, () -> game.build(player0, InfraType.ROAD, 1));
+        assertNull(game.getBoard().getEdge(1).getEdgeOccupant());
+    }
+
+    @Test // TC-GB-07: settlement violating the distance rule is rejected (kills removed validateSettlementPlacement)
+    public void build_settlementViolatesDistanceRule_rejectedAndNotPlaced() {
+        game.setCurrPhase(GamePhase.NORMAL_PLAY);
+        player0.addResources(settlementCost());
+        Node target = game.getBoard().getNode(0);
+        adjacentNode(game.getBoard(), target).buildSettlement(player1);
+
+        assertThrows(IllegalStateException.class, () -> game.build(player0, InfraType.SETTLEMENT, 0));
+        assertNull(target.getNodeOccupant());
+    }
+
+    @Test // TC-GB-08: setup road must connect to the just-placed settlement (kills removed validateInitialRoad)
+    public void build_setupInitialRoad_unconnectedRejected_connectedSucceeds() {
+        // game defaults to GamePhase.SETUP
+        game.build(player0, InfraType.SETTLEMENT, 0);
+
+        int unconnected = edgeNotTouchingNode(game.getBoard(), 0);
+        assertThrows(IllegalStateException.class, () -> game.build(player0, InfraType.ROAD, unconnected));
+        assertNull(game.getBoard().getEdge(unconnected).getEdgeOccupant());
+
+        Edge connected = game.getBoard().getEdgesConnectedToNode(game.getBoard().getNode(0)).get(0);
+        game.build(player0, InfraType.ROAD, connected.getId());
+        assertEquals(player0, connected.getEdgeOccupant());
+    }
+
     private int[] placeSetupSettlements(Player player) {
         int firstNodeId = findValidSettlementNode();
         game.build(player, InfraType.SETTLEMENT, firstNodeId);
@@ -230,5 +325,41 @@ public class GameTests {
             }
         }
         throw new IllegalStateException("No valid desert-adjacent settlement node found.");
+    }
+
+    private void drainInventory(Player player, String inventoryKey) {
+        while (player.getInventory().get(inventoryKey) > 0) {
+            player.useInventoryItem(inventoryKey);
+        }
+    }
+
+    private Node adjacentNode(Board board, Node node) {
+        Edge edge = board.getEdgesConnectedToNode(node).get(0);
+        return edge.getNodeA().equals(node) ? edge.getNodeB() : edge.getNodeA();
+    }
+
+    private int edgeNotTouchingNode(Board board, int nodeId) {
+        for (Edge edge : board.getEdges()) {
+            if (edge.getNodeA().getId() != nodeId && edge.getNodeB().getId() != nodeId) {
+                return edge.getId();
+            }
+        }
+        throw new IllegalStateException("No edge disconnected from node " + nodeId);
+    }
+
+    private Map<ResourceType, Integer> roadCost() {
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.BRICK, 1);
+        resources.put(ResourceType.WOOD, 1);
+        return resources;
+    }
+
+    private Map<ResourceType, Integer> settlementCost() {
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.BRICK, 1);
+        resources.put(ResourceType.WOOD, 1);
+        resources.put(ResourceType.SHEEP, 1);
+        resources.put(ResourceType.WHEAT, 1);
+        return resources;
     }
 }

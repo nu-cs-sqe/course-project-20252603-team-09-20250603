@@ -59,6 +59,22 @@ Handles the progression of game
 | Test Case 10 | Player tries to build a settlement without resources | Build fails and player victory points stay the same          | :white_check_mark: |
 | Test Case 11 | Player tries to build a city on an empty node        | Build fails and player victory points stay the same          | :white_check_mark: |
 
+## Method under test: `build(...)` placement, inventory & resource rules
+
+Validates the placement/cost side of `build()` (separate from the victory-point cases above), so the
+behavior is exercised by JUnit tests (pitest does not run the cucumber suite).
+
+| Test Case ID | State of the System                                                | Expected output / behavior                                  | Implemented?       |
+|--------------|--------------------------------------------------------------------|-------------------------------------------------------------|--------------------|
+| **TC-GB-01** | Valid, connected road in normal play                               | Edge becomes occupied by the player                         | :white_check_mark: |
+| **TC-GB-02** | Successful build                                                   | Player's infrastructure inventory decreases by one          | :white_check_mark: |
+| **TC-GB-03** | Successful build                                                   | Player's resources decrease by the build cost               | :white_check_mark: |
+| **TC-GB-04** | Player has zero of that infrastructure in inventory                | Rejected (`IllegalStateException`); nothing is placed       | :white_check_mark: |
+| **TC-GB-05** | Player lacks the required resources (normal play)                  | Rejected (`IllegalStateException`); nothing is placed       | :white_check_mark: |
+| **TC-GB-06** | Normal-play road not connected to the player's road/building       | Rejected (`IllegalStateException`); edge stays empty        | :white_check_mark: |
+| **TC-GB-07** | Settlement violates the distance rule (neighbor occupied)          | Rejected (`IllegalStateException`); target node stays empty | :white_check_mark: |
+| **TC-GB-08** | Setup-phase road, unconnected vs. connected to the new settlement  | Unconnected rejected; connected road is placed              | :white_check_mark: |
+
 ## Method under test: `calculateLongestRoad(Player player)`
 
 |              | State of the System                            | Expected output / behavior                         | Implemented? |
