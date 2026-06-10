@@ -15,8 +15,8 @@
 - Gradle 8.10
  
 ## Acknowledgements
-REFERENCES, SOURCE OF HELP ETC
-
+Catan Game Manual: Used as reference to check game mechanics/rules
+Generative AI (Claude, Copilot): Used for UI generation
 
 ## Special Decisions or Exceptions
 **Code coverage**: Falls just short of 100% (98%???) because (as discussed with Prof. Yiji in office hours) simple getters and setters are assumed to function correctly and do not require unit tests. For example, certain functions in Game.java.
