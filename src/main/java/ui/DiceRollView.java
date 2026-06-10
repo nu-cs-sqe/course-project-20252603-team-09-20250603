@@ -40,15 +40,15 @@ public class DiceRollView extends StackPane {
             getStylesheets().add(stylesheetUrl.toExternalForm());
         }
 
-        turnLabel = new Label("Setup Phase");
+        turnLabel = new Label(I18n.text("dice.setupPhase"));
         turnLabel.getStyleClass().add("dice-turn-label");
 
-        resultLabel = new Label("Dice will roll automatically when normal play starts.");
+        resultLabel = new Label(I18n.text("dice.autoRollInfo"));
         resultLabel.getStyleClass().add("dice-result-label");
 
         dieOneLabel = createDieLabel();
         dieTwoLabel = createDieLabel();
-        closeButton = new Button("X");
+        closeButton = new Button(I18n.text("dice.close"));
         closeButton.getStyleClass().add("dice-close-button");
         closeButton.setOnAction(event -> hideOverlay());
 
@@ -76,8 +76,8 @@ public class DiceRollView extends StackPane {
 
     public void showSetupMessage() {
         stopActiveTimeline();
-        turnLabel.setText("Setup Phase");
-        resultLabel.setText("Dice rolling begins once normal play starts.");
+        turnLabel.setText(I18n.text("dice.setupPhase"));
+        resultLabel.setText(I18n.text("dice.beginsAfterSetup"));
         setDiceFaces(1, 1);
         setCloseEnabled(false);
         hideOverlay();
@@ -86,8 +86,8 @@ public class DiceRollView extends StackPane {
     public void showTurnReady(Player player) {
         stopActiveTimeline();
         showOverlay();
-        turnLabel.setText(player.getName() + "'s Turn");
-        resultLabel.setText("Preparing dice roll...");
+        turnLabel.setText(I18n.text("dice.turnLabel", player.getName()));
+        resultLabel.setText(I18n.text("dice.preparing"));
         setDiceFaces(1, 1);
         setCloseEnabled(false);
     }
@@ -95,8 +95,8 @@ public class DiceRollView extends StackPane {
     public void playRollAnimation(Player player, int finalDieOne, int finalDieTwo, Runnable onFinished) {
         stopActiveTimeline();
         showOverlay();
-        turnLabel.setText(player.getName() + "'s Turn");
-        resultLabel.setText("Rolling dice...");
+        turnLabel.setText(I18n.text("dice.turnLabel", player.getName()));
+        resultLabel.setText(I18n.text("dice.rolling"));
         setCloseEnabled(false);
 
         activeTimeline = new Timeline();
@@ -108,7 +108,7 @@ public class DiceRollView extends StackPane {
 
         activeTimeline.setOnFinished(event -> {
             setDiceFaces(finalDieOne, finalDieTwo);
-            resultLabel.setText("Rolled " + finalDieOne + " + " + finalDieTwo + " = " + (finalDieOne + finalDieTwo));
+            resultLabel.setText(I18n.text("dice.rolled", finalDieOne, finalDieTwo, finalDieOne + finalDieTwo));
             activeTimeline = null;
             if (onFinished != null) {
                 onFinished.run();
@@ -120,7 +120,7 @@ public class DiceRollView extends StackPane {
     public void showRollResult(Player player, int dieOne, int dieTwo, String message) {
         stopActiveTimeline();
         showOverlay();
-        turnLabel.setText(player.getName() + "'s Turn");
+        turnLabel.setText(I18n.text("dice.turnLabel", player.getName()));
         resultLabel.setText(message);
         setDiceFaces(dieOne, dieTwo);
         setCloseEnabled(true);

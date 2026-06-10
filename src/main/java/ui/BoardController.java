@@ -73,7 +73,7 @@ public class BoardController {
         }
 
         Map<ResourceType, Integer> resources = board.getAdjacentResources(node);
-        view.setStatusMessage(I18n.text("board.status.node", node.getId(), resources));
+        view.setStatusMessage(I18n.text("board.status.node", node.getId(), formatResources(resources)));
 
         if (actionSelectionHandler != null) {
             actionSelectionHandler.onLocationSelected(nodeId, PlayerActionController.LocationType.NODE);
@@ -98,7 +98,7 @@ public class BoardController {
 
     public void handleHexSelected(int hexId) {
         Hex hex = getHexById(hexId);
-        view.setStatusMessage(I18n.text("board.status.hex", hex.getId(), hex.getResourceType()));
+        view.setStatusMessage(I18n.text("board.status.hex", hex.getId(), UiText.resource(hex.getResourceType())));
 
         if (hexSelectionHandler != null) {
             hexSelectionHandler.accept(hexId);
@@ -137,5 +137,18 @@ public class BoardController {
         }
 
         throw new IllegalArgumentException("Invalid hex ID.");
+    }
+
+    private String formatResources(Map<ResourceType, Integer> resources) {
+        StringBuilder builder = new StringBuilder();
+        boolean first = true;
+        for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
+            if (!first) {
+                builder.append(", ");
+            }
+            builder.append(UiText.resource(entry.getKey())).append(" x").append(entry.getValue());
+            first = false;
+        }
+        return builder.toString();
     }
 }

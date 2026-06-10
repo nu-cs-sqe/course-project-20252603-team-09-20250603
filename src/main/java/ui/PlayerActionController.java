@@ -99,7 +99,7 @@ public class PlayerActionController {
     public void onActionClicked(PlayerAction action) {
         if (!canTakeNormalPlayActions()) {
             if (view != null) {
-                view.showError("Wait for the dice roll to finish before taking actions.");
+                view.showError(I18n.text("playerAction.error.waitDiceActions"));
             }
             return;
         }
@@ -143,10 +143,10 @@ public class PlayerActionController {
 
             if (boardController != null) {
                 boardController.setStatusMessage(
-                        currentPlayer.getName() + " bought a development card.");
+                        I18n.text("playerAction.status.devCardBought", currentPlayer.getName()));
             }
             if (view != null) {
-                view.showSuccess("You drew a " + formatDevCardType(drawn.getType()) + " card!");
+                view.showSuccess(I18n.text("playerAction.success.devCardDrawn", UiText.devCard(drawn.getType())));
             }
             if (statsController != null) {
                 statsController.updateStats();
@@ -154,25 +154,8 @@ public class PlayerActionController {
             update();
         } catch (IllegalStateException | IllegalArgumentException e) {
             if (view != null) {
-                view.showError(e.getMessage());
+                view.showError(UiText.exceptionMessage(e));
             }
-        }
-    }
-
-    private String formatDevCardType(DevCardType type) {
-        switch (type) {
-            case KNIGHT:
-                return "Knight";
-            case ROAD_BUILDING:
-                return "Road Building";
-            case YEAR_OF_PLENTY:
-                return "Year of Plenty";
-            case MONOPOLY:
-                return "Monopoly";
-            case VICTORY_POINT:
-                return "Victory Point";
-            default:
-                return type.name();
         }
     }
 
@@ -185,7 +168,7 @@ public class PlayerActionController {
         Map<DevCardType, Integer> counts = countDevCards(currentPlayer);
         if (counts.isEmpty()) {
             if (view != null) {
-                view.showError("You have no development cards to use.");
+                view.showError(I18n.text("playerAction.error.noDevCards"));
             }
             return;
         }
@@ -218,14 +201,14 @@ public class PlayerActionController {
     public void onUseDevCardConfirmed() {
         if (selectedDevCardType == null) {
             if (view != null) {
-                view.showError("Select a development card to use first.");
+                view.showError(I18n.text("playerAction.error.selectDevCardFirst"));
             }
             return;
         }
 
         switch (selectedDevCardType) {
             case ROAD_BUILDING:
-                executeUseDevCard(DevCardType.ROAD_BUILDING, -1, -1, null, null, null, "Road Building played.");
+                executeUseDevCard(DevCardType.ROAD_BUILDING, -1, -1, null, null, null, I18n.text("playerAction.success.roadBuildingPlayed"));
                 break;
             case YEAR_OF_PLENTY:
                 playYearOfPlenty();
@@ -238,7 +221,7 @@ public class PlayerActionController {
                 break;
             case VICTORY_POINT:
                 if (view != null) {
-                    view.showSuccess("Victory Point cards are scored automatically and cannot be played.");
+                    view.showSuccess(I18n.text("playerAction.success.victoryPointAuto"));
                 }
                 break;
             default:
@@ -251,20 +234,20 @@ public class PlayerActionController {
             return;
         }
 
-        Optional<ResourceType> first = view.promptResource("Year of Plenty: choose the first resource");
+        Optional<ResourceType> first = view.promptResource(I18n.text("playerAction.yearOfPlenty.firstChoice"));
         if (first.isEmpty()) {
             update();
             return;
         }
 
-        Optional<ResourceType> second = view.promptResource("Year of Plenty: choose the second resource");
+        Optional<ResourceType> second = view.promptResource(I18n.text("playerAction.yearOfPlenty.secondChoice"));
         if (second.isEmpty()) {
             update();
             return;
         }
 
         executeUseDevCard(DevCardType.YEAR_OF_PLENTY, -1, -1, first.get(), second.get(), null,
-                "Year of Plenty played.");
+                I18n.text("playerAction.success.yearOfPlentyPlayed"));
     }
 
     private void playMonopoly() {
@@ -272,19 +255,19 @@ public class PlayerActionController {
             return;
         }
 
-        Optional<ResourceType> choice = view.promptResource("Monopoly: choose a resource to take from all opponents");
+        Optional<ResourceType> choice = view.promptResource(I18n.text("playerAction.monopoly.choice"));
         if (choice.isEmpty()) {
             update();
             return;
         }
 
-        executeUseDevCard(DevCardType.MONOPOLY, -1, -1, null, null, choice.get(), "Monopoly played.");
+        executeUseDevCard(DevCardType.MONOPOLY, -1, -1, null, null, choice.get(), I18n.text("playerAction.success.monopolyPlayed"));
     }
 
     private void startKnightTargeting() {
         awaitingKnightHex = true;
         if (boardController != null) {
-            boardController.setStatusMessage("Knight: click a hex on the board to move the robber.");
+            boardController.setStatusMessage(I18n.text("playerAction.status.knightSelectHex"));
         }
         update();
     }
@@ -314,7 +297,7 @@ public class PlayerActionController {
             Optional<Player> chosen = view.promptVictim(candidates);
             if (chosen.isEmpty()) {
                 if (boardController != null) {
-                    boardController.setStatusMessage("Knight canceled.");
+                    boardController.setStatusMessage(I18n.text("playerAction.status.knightCanceled"));
                 }
                 update();
                 return;
@@ -322,7 +305,7 @@ public class PlayerActionController {
             victimId = chosen.get().getId();
         }
 
-        executeUseDevCard(DevCardType.KNIGHT, hexId, victimId, null, null, null, "Knight played.");
+        executeUseDevCard(DevCardType.KNIGHT, hexId, victimId, null, null, null, I18n.text("playerAction.success.knightPlayed"));
     }
 
     private void executeUseDevCard(DevCardType type, int hexId, int victimId,
@@ -337,7 +320,7 @@ public class PlayerActionController {
             game.useDevCard(currentPlayer.getId(), type, hexId, victimId, choice1, choice2, targetType);
             if (boardController != null) {
                 boardController.refreshBoard();
-                boardController.setStatusMessage(currentPlayer.getName() + " played " + formatDevCardType(type) + ".");
+                boardController.setStatusMessage(I18n.text("playerAction.status.devCardPlayed", currentPlayer.getName(), UiText.devCard(type)));
             }
             if (view != null) {
                 view.showSuccess(successMessage);
@@ -347,7 +330,7 @@ public class PlayerActionController {
             }
         } catch (IllegalActionException | IllegalArgumentException | IllegalStateException e) {
             if (view != null) {
-                view.showError(e.getMessage());
+                view.showError(UiText.exceptionMessage(e));
             }
         }
 
@@ -359,7 +342,7 @@ public class PlayerActionController {
     public void onBuildTypeSelected(InfraType infraType) {
         if (!canTakeNormalPlayActions()) {
             if (view != null) {
-                view.showError("Wait for the dice roll to finish before taking actions.");
+                view.showError(I18n.text("playerAction.error.waitDiceActions"));
             }
             return;
         }
@@ -379,23 +362,24 @@ public class PlayerActionController {
     public void onLocationSelected(int locationId, LocationType locationType) {
         if (!canTakeNormalPlayActions()) {
             if (view != null) {
-                view.showError("Wait for the dice roll to finish before selecting a build location.");
+                view.showError(I18n.text("playerAction.error.waitDiceSelection"));
             }
             return;
         }
 
         if (selectedBuildType == null) {
             if (view != null) {
-                view.showError("Select infrastructure type to build first!");
+                view.showError(I18n.text("playerAction.error.selectInfraFirst"));
             }
             return;
         }
 
         if (!isLocationTypeValidForInfra(locationType)) {
-            String infraName = selectedBuildType.name().toLowerCase();
-            String allowed = (selectedBuildType == InfraType.ROAD) ? "edges" : "nodes";
             if (view != null) {
-                view.showError(infraName + " must be placed on " + allowed + "!");
+                String allowed = (selectedBuildType == InfraType.ROAD)
+                        ? I18n.text("location.edges")
+                        : I18n.text("location.nodes");
+                view.showError(I18n.text("playerAction.error.invalidBuildLocation", UiText.infra(selectedBuildType), allowed));
             }
             return;
         }
@@ -407,14 +391,14 @@ public class PlayerActionController {
     public void onBuildConfirmed() {
         if (!canTakeNormalPlayActions()) {
             if (view != null) {
-                view.showError("Wait for the dice roll to finish before building.");
+                view.showError(I18n.text("playerAction.error.waitDiceBuilding"));
             }
             return;
         }
 
         if (selectedBuildType == null || selectedLocationId < 0 || selectedLocationType == null) {
             if (view != null) {
-                view.showError("must select both infrastructure type and location in order to build");
+                view.showError(I18n.text("playerAction.error.buildMissingSelection"));
             }
             return;
         }
@@ -429,17 +413,17 @@ public class PlayerActionController {
             if (boardController != null) {
                 boardController.refreshBoard();
                 boardController.setStatusMessage(
-                        currentPlayer.getName()
-                                + " built a "
-                                + selectedBuildType.name().toLowerCase()
-                                + " at "
-                                + selectedLocationType.name().toLowerCase()
-                                + " "
-                                + selectedLocationId + "."
+                        I18n.text(
+                                "playerAction.status.buildComplete",
+                                currentPlayer.getName(),
+                                UiText.infra(selectedBuildType),
+                                locationTypeLabel(selectedLocationType),
+                                selectedLocationId
+                        )
                 );
             }
             if (view != null) {
-                view.showSuccess("Successful build");
+                view.showSuccess(I18n.text("playerAction.success.build"));
             }
             if (statsController != null) {
                 statsController.updateStats();
@@ -448,7 +432,7 @@ public class PlayerActionController {
             update();
         } catch (IllegalStateException | IllegalArgumentException e) {
             if (view != null) {
-                view.showError(e.getMessage());
+                view.showError(UiText.exceptionMessage(e));
             }
             clearBuildState();
             update();
@@ -491,14 +475,14 @@ public class PlayerActionController {
         }
 
         if (rollingForTurn) {
-            return "Dice are rolling for this turn.";
+            return I18n.text("playerAction.prompt.rolling");
         }
 
         if (!turnRollResolved) {
-            return "Waiting for dice roll.";
+            return I18n.text("playerAction.prompt.waitingForRoll");
         }
 
-        return "Choose an action for this turn.";
+        return I18n.text("playerAction.prompt.chooseAction");
     }
 
     private boolean isLocationTypeValidForInfra(LocationType locationType) {
@@ -541,7 +525,7 @@ public class PlayerActionController {
         currentPlayer.manageDevCardActivation(currentPlayer.getId());
 
         if (boardController != null) {
-            boardController.setStatusMessage(currentPlayer.getName() + "'s turn. Rolling dice...");
+            boardController.setStatusMessage(I18n.text("playerAction.status.turnRolling", currentPlayer.getName()));
         }
         if (diceRollView != null) {
             diceRollView.showTurnReady(currentPlayer);
@@ -578,15 +562,15 @@ public class PlayerActionController {
 
         if (diceRollView != null) {
             String message = (rollTotal == 7)
-                    ? "Rolled 7. Robber handling is not wired yet."
-                    : "Rolled " + lastDieOne + " + " + lastDieTwo + " = " + rollTotal + ". Resources distributed.";
+                    ? I18n.text("playerAction.roll.seven")
+                    : I18n.text("playerAction.roll.distributed", lastDieOne, lastDieTwo, rollTotal);
             diceRollView.showRollResult(currentPlayer, lastDieOne, lastDieTwo, message);
         }
 
         if (boardController != null) {
             String message = (rollTotal == 7)
-                    ? currentPlayer.getName() + " rolled 7. Robber handling is not wired yet."
-                    : currentPlayer.getName() + " rolled " + rollTotal + ". Resources distributed.";
+                    ? I18n.text("playerAction.status.rollSeven", currentPlayer.getName())
+                    : I18n.text("playerAction.status.rollDistributed", currentPlayer.getName(), rollTotal);
             boardController.setStatusMessage(message);
             boardController.refreshBoard();
         }
@@ -596,5 +580,11 @@ public class PlayerActionController {
         }
 
         update();
+    }
+
+    private String locationTypeLabel(LocationType locationType) {
+        return locationType == LocationType.EDGE
+                ? I18n.text("location.edge")
+                : I18n.text("location.node");
     }
 }

@@ -28,9 +28,9 @@ public class SetupController {
             Game game = gameInitializer.setupGame(enteredNames);
             mainView.showBoardView(game);
         } catch (IllegalArgumentException e) {
-            view.setStatusMessage(I18n.text("setup.error", e.getMessage()));
+            view.setStatusMessage(I18n.text("setup.error", UiText.exceptionMessage(e)));
         } catch (Exception e) {
-            MessageDialog.showError(view, "System Error: " + e.getMessage());
+            MessageDialog.showError(view, I18n.text("error.system", e.getMessage()));
         }
     }
 

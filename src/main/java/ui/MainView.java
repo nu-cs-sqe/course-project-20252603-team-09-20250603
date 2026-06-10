@@ -60,7 +60,7 @@ public class MainView extends BorderPane {
 
         BoardView boardView = new BoardView(boardController);
         setupGameController.setBoardView(boardView);
-        boardView.setStatusMessage("Setup Phase: Waiting for Player 1 to place a Settlement.");
+        boardView.setStatusMessage(I18n.text("setupGame.waitingForFirstSettlement"));
 
         DiceRollView diceRollView = new DiceRollView();
         diceRollView.showSetupMessage();

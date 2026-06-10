@@ -194,7 +194,7 @@ public final class BoardView extends BorderPane {
         for (Hex hex : board.getHexes()) {
             Polygon hexShape = createHexShape(hex.getId());
             hexShape.getStyleClass().add("hex-overlay");
-            Tooltip.install(hexShape, new Tooltip(I18n.text("board.tooltip.hex", hex.getId(), hex.getResourceType())));
+            Tooltip.install(hexShape, new Tooltip(I18n.text("board.tooltip.hex", hex.getId(), UiText.resource(hex.getResourceType()))));
             hexShape.setOnMouseClicked(event -> {
                 selectHex(hexShape);
                 controller.handleHexSelected(hex.getId());
@@ -244,7 +244,7 @@ public final class BoardView extends BorderPane {
             Polygon settlement = createSettlementShape(point);
             settlement.getStyleClass().add("building-overlay");
             settlement.setVisible(false);
-            Tooltip.install(settlement, new Tooltip("Node " + node.getId()));
+            Tooltip.install(settlement, new Tooltip(I18n.text("board.tooltip.node", node.getId())));
             settlement.setOnMouseClicked(event -> {
                 selectNode(node.getId());
                 controller.handleNodeSelected(node.getId());

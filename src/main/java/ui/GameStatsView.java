@@ -51,13 +51,13 @@ public class GameStatsView extends VBox {
             String colorHex = mapColorToHex(p.getColor().name());
             playerBox.setStyle("-fx-border-color: " + colorHex + "; -fx-border-width: 2px;");
 
-            Label nameLabel = new Label(p.getName() + " (" + p.getColor() + ")");
+            Label nameLabel = new Label(UiText.playerLabel(p));
             nameLabel.getStyleClass().add("player-name");
 
             Label vpLabel = new Label(I18n.text("stats.victoryPoints", p.getVictoryPoints()));
             vpLabel.getStyleClass().add("player-vp");
 
-            Label devCardLabel = new Label("Development Cards: " + p.getDevCardHand().size());
+            Label devCardLabel = new Label(I18n.text("stats.devCards", p.getDevCardHand().size()));
             devCardLabel.getStyleClass().add("player-vp");
 
             HBox resourcesRow = buildResourcesRow(p);
@@ -80,9 +80,9 @@ public class GameStatsView extends VBox {
     // Snake draft placeholder
     private String getPlacementOrderString(int numPlayers) {
         if (numPlayers == 3) {
-            return "1, 2, 3, 3, 2, 1";
+            return I18n.text("stats.order.threePlayers");
         }
-        return "1, 2, 3, 4, 4, 3, 2, 1";
+        return I18n.text("stats.order.fourPlayers");
     }
 
     private String mapColorToHex(String color) {
@@ -117,7 +117,7 @@ public class GameStatsView extends VBox {
         iconView.setPreserveRatio(true);
         iconView.getStyleClass().add("resource-icon");
 
-        Label countLabel = new Label("x" + count);
+        Label countLabel = new Label(I18n.text("stats.resourceCount", count));
         countLabel.getStyleClass().add("player-resources");
 
         HBox chip = new HBox(3, iconView, countLabel);
