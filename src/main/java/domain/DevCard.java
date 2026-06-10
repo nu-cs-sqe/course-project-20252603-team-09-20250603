@@ -43,7 +43,7 @@ public class DevCard {
 
     public void doYearOfPlentyAction(Player player, Board board, ResourceType choice1, ResourceType choice2) {
         if (!this.isActive) {
-            throw new IllegalActionException("Cannot play a Dev Card on the turn it was bought!");
+            throw new IllegalActionException(DomainErrorKey.DEV_CARD_NOT_PLAYABLE_ON_PURCHASE_TURN);
         }
         if (this.type != DevCardType.YEAR_OF_PLENTY) {
             throw new IllegalStateException("This card is not a Year of Plenty card!");
@@ -60,7 +60,7 @@ public class DevCard {
 
     public void doMonopolyAction(Player player, java.util.List<Player> gamePlayers, Board board, ResourceType targetType) {
         if (!this.isActive) {
-            throw new IllegalActionException("Cannot play a Dev Card on the turn it was bought!");
+            throw new IllegalActionException(DomainErrorKey.DEV_CARD_NOT_PLAYABLE_ON_PURCHASE_TURN);
         }
         if (this.type != DevCardType.MONOPOLY) {
             throw new IllegalStateException("Card structural mismatch error: Card is not a Monopoly card.");
@@ -93,7 +93,7 @@ public class DevCard {
 
     private void verifyCardIsPlayable(DevCardType expectedType) {
         if (!this.isActive) {
-            throw new IllegalActionException("Development cards cannot be played on the turn they were bought.");
+            throw new IllegalActionException(DomainErrorKey.DEV_CARD_NOT_PLAYABLE_ON_PURCHASE_TURN);
         }
         if (this.type != expectedType) {
             throw new IllegalStateException("Card type structural mismatch error.");

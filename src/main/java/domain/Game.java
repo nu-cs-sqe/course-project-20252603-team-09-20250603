@@ -134,7 +134,7 @@ public class Game {
                         setupSettlements.remove(currentPlayer.getId());
                     }
            }catch (IllegalPlacementException exception) {
-                throw new IllegalStateException(exception.getMessage(), exception);
+                throw new IllegalStateException(exception.getMessageKey(), exception);
             }
         } else if (infraType == InfraType.SETTLEMENT){
             Node node = board.getNode(locationId);
@@ -142,7 +142,7 @@ public class Game {
             try {
                 placementValidator.validateSettlementPlacement(node);
             }catch (IllegalPlacementException exception) {
-                throw new IllegalStateException(exception.getMessage(), exception);
+                throw new IllegalStateException(exception.getMessageKey(), exception);
             }
             boolean isSecondSetupSettlement = currPhase == GamePhase.SETUP
                     && countPlayerSettlements(currentPlayer) == 1;
@@ -158,7 +158,7 @@ public class Game {
                 Node node = board.getNode(locationId);
                 node.buildCity(currentPlayer);
             }catch (IllegalPlacementException exception) {
-                throw new IllegalStateException(exception.getMessage(), exception);
+                throw new IllegalStateException(exception.getMessageKey(), exception);
             }
         } else {
             throw new IllegalArgumentException("Invalid build type.");
@@ -283,7 +283,7 @@ public class Game {
         Player player = findPlayerById(currentPlayerId);
 
         if (player.getHasPlayedDevCardThisTurn()) {
-            throw new IllegalActionException("Player has already played a development card this turn.");
+            throw new IllegalActionException(DomainErrorKey.DEV_CARD_ALREADY_PLAYED_THIS_TURN);
         }
 
         DevCard cardToPlay = player.getDevCardHand().stream()

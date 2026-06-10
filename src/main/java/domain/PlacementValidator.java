@@ -15,7 +15,7 @@ public class PlacementValidator {
     public void validateSettlementPlacement(Node targetNode) throws IllegalPlacementException {
 
         if (targetNode.getNodeOccupant() != null) {
-            throw new IllegalPlacementException("Node already occupied.");
+            throw new IllegalPlacementException(DomainErrorKey.PLACEMENT_NODE_ALREADY_OCCUPIED);
         }
 
         List<Edge> allEdges = board.getEdges();
@@ -24,12 +24,12 @@ public class PlacementValidator {
 
                 if (edge.getNodeA().equals(targetNode)){
                     if (edge.getNodeB().getNodeOccupant() != null) {
-                        throw new IllegalPlacementException("Distance Rule Violated: Adjacent Node occupied");
+                        throw new IllegalPlacementException(DomainErrorKey.PLACEMENT_ADJACENT_NODE_OCCUPIED);
                     }
                 }
                 if (edge.getNodeB().equals(targetNode)){
                     if (edge.getNodeA().getNodeOccupant() != null) {
-                        throw new IllegalPlacementException("Distance Rule Violated: Adjacent Node occupied");
+                        throw new IllegalPlacementException(DomainErrorKey.PLACEMENT_ADJACENT_NODE_OCCUPIED);
                     }
                 }
             }
@@ -40,7 +40,7 @@ public class PlacementValidator {
     public void validateInitialRoad(int edgeId, Node settlementNode) throws IllegalPlacementException {
         Edge edge = board.getEdge(edgeId);
         if (!edge.getNodeA().equals(settlementNode) && !edge.getNodeB().equals(settlementNode)) {
-            throw new IllegalPlacementException("Road must connect to your settlement.");
+            throw new IllegalPlacementException(DomainErrorKey.PLACEMENT_ROAD_MUST_CONNECT_TO_SETTLEMENT);
         }
     }
 }
