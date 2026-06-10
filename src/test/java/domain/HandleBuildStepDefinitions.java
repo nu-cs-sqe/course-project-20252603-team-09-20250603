@@ -39,12 +39,12 @@ public class HandleBuildStepDefinitions {
         game = new Game(board, List.of(currentPlayer), dice, turnManager);
         game.setCurrPhase(GamePhase.NORMAL_PLAY);
 
-        // Drive the real GUI controller headlessly: no view/board/stats controllers are set,
-        // so every view call is null-guarded and no JavaFX class is loaded.
         controller = new PlayerActionController(List.of(currentPlayer), game, turnManager);
+
+
+        controller.onSetupFinished();
     }
 
-    // --- Domain setup -------------------------------------------------------
 
     @Given("the player has the resources to build {word}")
     public void the_player_has_the_resources_to_build(String infraTypeText) {
@@ -120,7 +120,6 @@ public class HandleBuildStepDefinitions {
         assertNull(node.getInfraType());
     }
 
-    // --- GUI actions (simulate the action-menu button clicks) ---------------
 
     @When("the player clicks Build")
     public void the_player_clicks_build() {
@@ -144,7 +143,6 @@ public class HandleBuildStepDefinitions {
         controller.onBuildConfirmed();
     }
 
-    // --- Outcomes -----------------------------------------------------------
 
     @Then("{word} {int} should be occupied by the player's {word}")
     public void location_should_be_occupied_by_the_players(
@@ -222,7 +220,6 @@ public class HandleBuildStepDefinitions {
         assertEquals(startingResources, currentPlayer.getResources());
     }
 
-    // --- Helpers ------------------------------------------------------------
 
     private LocationType toLocationType(String locationType) {
         if (locationType.equalsIgnoreCase("edge")) {
