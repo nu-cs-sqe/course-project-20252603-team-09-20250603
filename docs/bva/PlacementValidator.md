@@ -28,3 +28,17 @@ Ensures that a road placement connects to a owned settlement (node).
 |--------------|--------------------------------------------------|-------------------------------------------|--------------|
 | **TC-PV-04** | Edge ID matches settlement node's hash code      | No exception thrown                       | ✅            | 
 | **TC-PV-05** | Edge ID does not match settlement node's hash code | Throws `IllegalPlacementException`      |   ✅          |
+
+
+
+## Method under test: `validateRegularRoad(int edgeId, Player player)`
+Ensures that a play for normal road road is placed on an empty edge that connects to the building
+player's own road, settlement, or city (not an opponent's, and not in open water).
+
+| Test Case ID | State of the System                                              | Expected Output                    | Implemented? |
+|--------------|-----------------------------------------------------------------|------------------------------------|--------------|
+| **TC-PV-06** | Target edge is already occupied                                 | Throws `IllegalPlacementException` | :check_mark           |
+| **TC-PV-07** | An endpoint of the edge holds the player's own settlement       | No exception thrown                |  :check_mark            |
+| **TC-PV-08** | An edge sharing an endpoint holds one of the player's own roads | No exception thrown                |  :check_mark         |
+| **TC-PV-09** | The edge connects to none of the player's roads or buildings    | Throws `IllegalPlacementException` |  :check_mark            |
+| **TC-PV-10** | The edge connects only to another player's road or building     | Throws `IllegalPlacementException` |  :check_mark            |
