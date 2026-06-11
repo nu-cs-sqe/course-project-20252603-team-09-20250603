@@ -70,12 +70,12 @@ public class TradeWithPlayerDialog {
     private void showPlayerSelectScreen() {
         VBox root = createDialogRoot();
 
-        Label title = new Label("Who do you want to trade with?");
+        Label title = new Label(I18n.text("trade.player.selectOpponent"));
         title.getStyleClass().add("action-title");
         root.getChildren().add(title);
 
         for (Player p : otherPlayers) {
-            Button btn = new Button(p.getName() + " (" + p.getColor() + ")");
+            Button btn = new Button(UiText.playerLabel(p));
             btn.setMaxWidth(Double.MAX_VALUE);
             btn.getStyleClass().add("action-button");
             btn.setOnAction(e -> {
@@ -85,7 +85,7 @@ public class TradeWithPlayerDialog {
             root.getChildren().add(btn);
         }
 
-        Button cancelBtn = new Button("Cancel");
+        Button cancelBtn = new Button(I18n.text("button.cancel"));
         cancelBtn.setMaxWidth(Double.MAX_VALUE);
         cancelBtn.getStyleClass().addAll("action-button", "cancel-button");
         cancelBtn.setOnAction(e -> modal.close(false));
@@ -102,11 +102,11 @@ public class TradeWithPlayerDialog {
 
         VBox root = createDialogRoot();
 
-        Label title = new Label(activePlayer.getName() + " <-> " + opponent.getName());
+        Label title = new Label(I18n.text("trade.player.title", activePlayer.getName(), opponent.getName()));
         title.getStyleClass().add("action-title");
 
-        VBox offerPanel = buildResourcePanel(activePlayer.getName() + " offers:", activePlayer, offer);
-        VBox requestPanel = buildResourcePanel(activePlayer.getName() + " receives:", opponent, request);
+        VBox offerPanel = buildResourcePanel(I18n.text("trade.player.offers", activePlayer.getName()), activePlayer, offer);
+        VBox requestPanel = buildResourcePanel(I18n.text("trade.player.receives", activePlayer.getName()), opponent, request);
 
         Separator sep = new Separator(Orientation.VERTICAL);
         sep.getStyleClass().add("trade-separator");
@@ -114,15 +114,15 @@ public class TradeWithPlayerDialog {
         HBox panels = new HBox(20, offerPanel, sep, requestPanel);
         panels.setAlignment(Pos.TOP_CENTER);
 
-        Button continueBtn = new Button("Continue");
+        Button continueBtn = new Button(I18n.text("button.continue"));
         continueBtn.getStyleClass().addAll("action-button", "confirm-button");
         continueBtn.setOnAction(e -> showConfirmScreen());
 
-        Button backBtn = new Button("Back");
+        Button backBtn = new Button(I18n.text("button.back"));
         backBtn.getStyleClass().add("action-button");
         backBtn.setOnAction(e -> showPlayerSelectScreen());
 
-        Button cancelBtn = new Button("Cancel");
+        Button cancelBtn = new Button(I18n.text("button.cancel"));
         cancelBtn.getStyleClass().addAll("action-button", "cancel-button");
         cancelBtn.setOnAction(e -> modal.close(false));
 
@@ -162,7 +162,7 @@ public class TradeWithPlayerDialog {
 
         ImageView icon = loadIcon(resource);
 
-        Label availLabel = new Label("x" + available);
+        Label availLabel = new Label(I18n.text("stats.resourceCount", available));
         availLabel.getStyleClass().add("trade-avail-count");
 
         Label selectedLabel = new Label("0");
@@ -205,16 +205,16 @@ public class TradeWithPlayerDialog {
     private void showConfirmScreen() {
         VBox root = createDialogRoot();
 
-        Label title = new Label(opponent.getName() + ": Accept this trade?");
+        Label title = new Label(I18n.text("trade.player.confirmTitle", opponent.getName()));
         title.getStyleClass().add("action-title");
 
-        Label offerLine = new Label(activePlayer.getName() + " offers:  " + summarize(offer));
+        Label offerLine = new Label(I18n.text("trade.player.confirmOffers", activePlayer.getName(), summarize(offer)));
         offerLine.getStyleClass().add("trade-summary-label");
 
-        Label requestLine = new Label(activePlayer.getName() + " wants:   " + summarize(request));
+        Label requestLine = new Label(I18n.text("trade.player.confirmWants", activePlayer.getName(), summarize(request)));
         requestLine.getStyleClass().add("trade-summary-label");
 
-        Button acceptBtn = new Button("Accept");
+        Button acceptBtn = new Button(I18n.text("button.accept"));
         acceptBtn.getStyleClass().addAll("action-button", "confirm-button");
         acceptBtn.setOnAction(e -> {
             if (executeTrade()) {
@@ -222,7 +222,7 @@ public class TradeWithPlayerDialog {
             }
         });
 
-        Button declineBtn = new Button("Decline");
+        Button declineBtn = new Button(I18n.text("button.decline"));
         declineBtn.getStyleClass().addAll("action-button", "cancel-button");
         declineBtn.setOnAction(e -> modal.close(false));
 
@@ -240,7 +240,7 @@ public class TradeWithPlayerDialog {
             tradeManager.tradeWithPlayer(activePlayer, opponent, activeOffer, activeRequest);
             return true;
         } catch (IllegalActionException | IllegalArgumentException e) {
-            MessageDialog.showError(owner, e.getMessage());
+            MessageDialog.showError(owner, UiText.exceptionMessage(e));
             return false;
         }
     }
@@ -263,10 +263,10 @@ public class TradeWithPlayerDialog {
                 if (sb.length() > 0) {
                     sb.append(", ");
                 }
-                sb.append(count).append(" ").append(r.name().toLowerCase());
+                sb.append(count).append(" ").append(UiText.resource(r));
             }
         }
-        return sb.length() > 0 ? sb.toString() : "nothing";
+        return sb.length() > 0 ? sb.toString() : I18n.text("trade.nothing");
     }
 
     private ImageView loadIcon(ResourceType resource) {

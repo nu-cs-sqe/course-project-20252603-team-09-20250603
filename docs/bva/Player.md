@@ -57,6 +57,14 @@ Getter to pass to controller - untested as simply acts as a simple getter
 | Test Case 6 | New player is created                  | Return 0        | :white_check_mark: |
 
 ---
+### Method under test: `getHasLongestRoad()`
+
+|              | State of the System                              | Expected output / behavior                    | Implemented? |
+|--------------|--------------------------------------------------|-----------------------------------------------|--------------|
+| Test Case 17 | New player has not been granted longest road     | Returns `false`                               | :white_check_mark: |
+| Test Case 18 | Player is set to `true` and then back to `false` | Getter reflects both state transitions correctly | :white_check_mark: |
+
+---
 ## Method under test: `public void addResources(Map<ResourceType, Integer>)`
 
 |          | Step 1                              | Step 2     | Step 3                                                                                                                                                                                                                      |

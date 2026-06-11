@@ -68,7 +68,7 @@ public class TradeWithBankDialog {
         root.getStyleClass().addAll("trade-dialog-root", "message-dialog");
         root.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
-        Label title = new Label(player.getName() + " - Trade With Bank  (4 : 1)");
+        Label title = new Label(I18n.text("trade.bank.title", player.getName(), BANK_RATE));
         title.getStyleClass().add("action-title");
 
         VBox givePanel = buildGivePanel();
@@ -80,7 +80,7 @@ public class TradeWithBankDialog {
         HBox panels = new HBox(20, givePanel, sep, receivePanel);
         panels.setAlignment(Pos.TOP_CENTER);
 
-        Button confirmBtn = new Button("Confirm");
+        Button confirmBtn = new Button(I18n.text("button.confirm"));
         confirmBtn.getStyleClass().addAll("action-button", "confirm-button");
         confirmBtn.setOnAction(e -> {
             if (executeTrade()) {
@@ -88,7 +88,7 @@ public class TradeWithBankDialog {
             }
         });
 
-        Button cancelBtn = new Button("Cancel");
+        Button cancelBtn = new Button(I18n.text("button.cancel"));
         cancelBtn.getStyleClass().addAll("action-button", "cancel-button");
         cancelBtn.setOnAction(e -> modal.close(false));
 
@@ -105,7 +105,7 @@ public class TradeWithBankDialog {
         panel.getStyleClass().add("trade-panel");
         panel.setPadding(new Insets(12));
 
-        Label header = new Label("You give  (select one):");
+        Label header = new Label(I18n.text("trade.bank.give"));
         header.getStyleClass().add("resources-title");
 
         HBox row = new HBox(12);
@@ -127,7 +127,7 @@ public class TradeWithBankDialog {
         panel.getStyleClass().add("trade-panel");
         panel.setPadding(new Insets(12));
 
-        Label header = new Label("You receive  (select one):");
+        Label header = new Label(I18n.text("trade.bank.receive"));
         header.getStyleClass().add("resources-title");
 
         HBox row = new HBox(12);
@@ -148,7 +148,7 @@ public class TradeWithBankDialog {
 
         ImageView icon = loadIcon(resource);
 
-        Label availLabel = new Label("x" + available);
+        Label availLabel = new Label(I18n.text("stats.resourceCount", available));
         availLabel.getStyleClass().add("trade-avail-count");
 
         Label selectedLabel = new Label("0");
@@ -179,7 +179,7 @@ public class TradeWithBankDialog {
 
         ImageView icon = loadIcon(resource);
 
-        Label bankLabel = new Label("bank");
+        Label bankLabel = new Label(I18n.text("trade.bank.bank"));
         bankLabel.getStyleClass().add("trade-avail-count");
 
         Label selectedLabel = new Label("0");
@@ -244,15 +244,15 @@ public class TradeWithBankDialog {
 
     private boolean executeTrade() {
         if (selectedGive == null) {
-            showError("Select a resource to give.");
+            showError(I18n.text("trade.bank.error.selectGive"));
             return false;
         }
         if (selectedReceive == null) {
-            showError("Select a resource to receive.");
+            showError(I18n.text("trade.bank.error.selectReceive"));
             return false;
         }
         if (selectedGive == selectedReceive) {
-            showError("Cannot trade a resource for itself.");
+            showError(I18n.text("trade.bank.error.sameResource"));
             return false;
         }
 
@@ -260,7 +260,7 @@ public class TradeWithBankDialog {
             tradeManager.tradeWithBank(player, selectedGive, selectedReceive);
             return true;
         } catch (IllegalActionException | IllegalArgumentException e) {
-            showError(e.getMessage());
+            showError(UiText.exceptionMessage(e));
             return false;
         }
     }

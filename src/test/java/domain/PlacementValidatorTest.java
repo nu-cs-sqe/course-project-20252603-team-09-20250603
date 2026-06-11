@@ -171,7 +171,7 @@ public class PlacementValidatorTest {
 
         IllegalPlacementException exception = assertThrows(IllegalPlacementException.class,
                 () -> validator.validateInitialRoad(0, edge.getNodeA()));
-        assertEquals("Edge already occupied.", exception.getMessage());
+        assertEquals(DomainErrorKey.PLACEMENT_EDGE_ALREADY_OCCUPIED, exception.getErrorKey());
     }
 
     @Test // TC-PV-06

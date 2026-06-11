@@ -94,9 +94,9 @@ behavior is exercised by JUnit tests (pitest does not run the cucumber suite).
 |              | State of the System                              | Expected output / behavior                         | Implemented? |
 |--------------|--------------------------------------------------|-----------------------------------------------------|----------|
 | Test Case 17 | No player has a road of length at least 5        | No victory points are awarded                       | :white_check_mark:       |
-| Test Case 18 | One player reaches a road length of 5            | That player gains 2 victory points                  | :white_check_mark:       |
+| Test Case 18 | One player reaches a road length of 5            | That player gains 2 victory points and `hasLongestRoad` becomes `true` | :white_check_mark:       |
 | Test Case 19 | Same player still has longest road               | Victory points do not change again                  | :white_check_mark:       |
-| Test Case 20 | Another player exceeds the current longest road  | Old player loses 2 points; new player gains 2       | :white_check_mark:       |
+| Test Case 20 | Another player exceeds the current longest road  | Old player loses 2 points and `hasLongestRoad`; new player gains both | :white_check_mark:       |
 
 ## Method under test: `useDevCard(...)`
 
@@ -156,7 +156,8 @@ The Largest Army threshold starts at 2 (a player needs 3+ knights), and the titl
 | Test Case 2 | A player has exactly 10 victory points                    | Returns that player                     | :white_check_mark: |
 | Test Case 3 | A player has more than 10 victory points                  | Returns that player                     | :white_check_mark: |
 | Test Case 4 | Multiple players are at or above 10 victory points        | Returns the player with the most points | :white_check_mark: |
-| Test Case 5 | A player has reached 10 points but `getWinner` is called  | Game is **not** ended (no side effect)  | :white_check_mark: |
+| Test Case 5 | Multiple players are tied at the highest winning total    | Returns the first matching player in iteration order | :white_check_mark: |
+| Test Case 6 | A player has reached 10 points but `getWinner` is called  | Game is **not** ended (no side effect)  | :white_check_mark: |
 
 ## Method under test: `checkForWinner()`
 
@@ -165,3 +166,15 @@ The Largest Army threshold starts at 2 (a player needs 3+ knights), and the titl
 | Test Case 1 | No player has reached 10 victory points      | Returns `null`; phase stays unchanged (game not over)   | :white_check_mark: |
 | Test Case 2 | A player has reached 10 victory points       | Returns that player; phase becomes `GAME_OVER`          | :white_check_mark: |
 | Test Case 3 | A player jumps from 8 to 11 points (skips 10) | Returns that player; phase becomes `GAME_OVER`         | :white_check_mark: |
+
+## Method under test: `setNextDevCardType(DevCardType type)`
+
+| Test Case   | State of the System                                            | Expected output / behavior                               | Implemented?       |
+|-------------|----------------------------------------------------------------|----------------------------------------------------------|--------------------|
+| Test Case 1 | Three dev card types are rigged in sequence before any draws   | The next three draws return those exact types in LIFO insertion order | :white_check_mark: |
+
+## Method under test: `rollDice()`, `getDie1()`, `getDie2()`, `getDieSum()`
+
+| Test Case   | State of the System                                      | Expected output / behavior                   | Implemented?       |
+|-------------|----------------------------------------------------------|----------------------------------------------|--------------------|
+| Test Case 1 | Dice rolls values 3 and 4 through the game's `Dice` object | `getDie1()` returns 3, `getDie2()` returns 4, and `getDieSum()` returns 7 | :white_check_mark: |

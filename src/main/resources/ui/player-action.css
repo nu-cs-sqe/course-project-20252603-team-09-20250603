@@ -51,6 +51,13 @@
     -fx-background-color: #ded8c7;
 }
 
+.action-button:disabled {
+    -fx-background-color: #d7d2c4;
+    -fx-border-color: #bbb4a3;
+    -fx-text-fill: #7b766b;
+    -fx-opacity: 1.0;
+}
+
 .selected-infra-button {
     -fx-border-color: #2e5044;
     -fx-border-width: 3;
@@ -69,6 +76,11 @@
     -fx-background-color: #244137;
 }
 
+.confirm-button:disabled {
+    -fx-background-color: #7f948b;
+    -fx-text-fill: #e8ece9;
+}
+
 .cancel-button {
     -fx-background-color: #9c9c9c;
     -fx-text-fill: #ffffff;
@@ -81,6 +93,11 @@
 
 .cancel-button:armed {
     -fx-background-color: #7f8c8d;
+}
+
+.cancel-button:disabled {
+    -fx-background-color: #b9b9b9;
+    -fx-text-fill: #ececec;
 }
 
 .build-prompt-label {

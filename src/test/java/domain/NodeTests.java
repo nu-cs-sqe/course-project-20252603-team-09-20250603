@@ -75,7 +75,7 @@ public class NodeTests {
 
         assertEquals(InfraType.CITY, n.getInfraType());
         assertSame(mockPlayer, n.getNodeOccupant());
-        assertEquals("Cannot upgrade a city further.", exception.getMessage());
+        assertEquals(DomainErrorKey.PLACEMENT_CITY_ALREADY_UPGRADED, exception.getErrorKey());
     }
 
     @Test public void buildCity_GetInfraType_UnsuccessfulUpdateEmptyNodeToCity() {
@@ -91,7 +91,7 @@ public class NodeTests {
 
         assertNull(n.getInfraType());
         assertNull(n.getNodeOccupant());
-        assertEquals("Cannot upgrade an unsettled node to city.", exception.getMessage());
+        assertEquals(DomainErrorKey.PLACEMENT_CITY_REQUIRES_SETTLEMENT, exception.getErrorKey());
     }
 
     @Test public void buildCity_UnsuccessfulUpgradeOpponentToCity() {
@@ -111,7 +111,7 @@ public class NodeTests {
         );
 
         assertEquals(mockPlayer1, n.getNodeOccupant());
-        assertEquals("Cannot build a city on an already-settled node.", exception.getMessage());
+        assertEquals(DomainErrorKey.PLACEMENT_CITY_ON_OPPONENT_NODE, exception.getErrorKey());
     }
 
     @Test

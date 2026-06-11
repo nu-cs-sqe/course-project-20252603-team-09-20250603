@@ -6,7 +6,7 @@ import java.util.Map;
 public class TradeManager {
     public void tradeWithBank(Player player, ResourceType giveResource, ResourceType receiveResource) {
         if (giveResource == receiveResource) {
-            throw new IllegalActionException("Cannot trade a resource for itself.");
+            throw new IllegalActionException(DomainErrorKey.TRADE_BANK_SAME_RESOURCE);
         }
 
         if (giveResource == null || receiveResource == null) {
@@ -17,7 +17,7 @@ public class TradeManager {
         cost.put(giveResource, 4);
 
         if (!player.hasResources(cost)) {
-            throw new IllegalActionException("Player does not have enough resources to trade with the bank.");
+            throw new IllegalActionException(DomainErrorKey.TRADE_BANK_INSUFFICIENT_RESOURCES);
         }
 
         player.useResources(cost);
@@ -34,11 +34,11 @@ public class TradeManager {
             Map<ResourceType, Integer> requestedResources
     ) {
         if (offeredResources == null || offeredResources.isEmpty()) {
-            throw new IllegalActionException("Cannot offer nothing for trade.");
+            throw new IllegalActionException(DomainErrorKey.TRADE_PLAYER_NOTHING_OFFERED);
         }
 
         if (requestedResources == null || requestedResources.isEmpty()) {
-            throw new IllegalActionException("Cannot request nothing for trade.");
+            throw new IllegalActionException(DomainErrorKey.TRADE_PLAYER_NOTHING_REQUESTED);
         }
 
         for (Integer amount : offeredResources.values()) {
@@ -54,12 +54,12 @@ public class TradeManager {
         }
 
         if (offeringPlayer == receivingPlayer) {
-            throw new IllegalActionException("Cannot trade with yourself.");
+            throw new IllegalActionException(DomainErrorKey.TRADE_PLAYER_SELF);
         }
 
         if (!offeringPlayer.hasResources(offeredResources)
                 || !receivingPlayer.hasResources(requestedResources)) {
-            throw new IllegalActionException("One or both players do not have the required resources.");
+            throw new IllegalActionException(DomainErrorKey.TRADE_PLAYER_INSUFFICIENT_RESOURCES);
         }
 
         offeringPlayer.useResources(offeredResources);

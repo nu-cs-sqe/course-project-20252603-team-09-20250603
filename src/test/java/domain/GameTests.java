@@ -1,5 +1,6 @@
 package domain;
 
+import org.easymock.EasyMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -97,10 +98,12 @@ public class GameTests {
     @Test
     public void advancePhase_WhenNormalPlay_BecomesGameOver() {
         game.setCurrPhase(GamePhase.NORMAL_PLAY);
+
         game.advancePhase();
-        assertFalse(game.phaseSetupCheck());
+
+        assertTrue(game.isGameOver());
         assertDoesNotThrow(() -> game.advancePhase());
-        assertFalse(game.phaseSetupCheck());
+        assertTrue(game.isGameOver());
     }
 
     @Test
@@ -143,6 +146,14 @@ public class GameTests {
         player2.addVictoryPoints(11);
 
         assertEquals(player2, game.getWinner());
+    }
+
+    @Test
+    public void getWinner_MultiplePlayersTieAtHighest_ReturnsFirstMatchingPlayer() {
+        player0.addVictoryPoints(10);
+        player1.addVictoryPoints(10);
+
+        assertEquals(player0, game.getWinner());
     }
 
     @Test
@@ -268,6 +279,47 @@ public class GameTests {
         assertFalse(player0.getResources().containsKey(ResourceType.DESERT));
     }
 
+    @Test
+    public void setNextDevCardType_MultipleRiggedCards_AreDrawnInLifoOrder() {
+        giveResourcesForDevCardDraws(player0, 3);
+
+        game.setNextDevCardType(DevCardType.ROAD_BUILDING);
+        game.setNextDevCardType(DevCardType.YEAR_OF_PLENTY);
+        game.setNextDevCardType(DevCardType.MONOPOLY);
+
+        game.drawDevCard(player0.getId());
+        game.drawDevCard(player0.getId());
+        game.drawDevCard(player0.getId());
+
+        assertEquals(3, player0.getDevCardHand().size());
+        assertEquals(DevCardType.MONOPOLY, player0.getDevCardHand().get(0).getType());
+        assertEquals(DevCardType.YEAR_OF_PLENTY, player0.getDevCardHand().get(1).getType());
+        assertEquals(DevCardType.ROAD_BUILDING, player0.getDevCardHand().get(2).getType());
+    }
+
+    @Test
+    public void rollDice_AndGetters_ExposeRolledValues() {
+        Random mockRandom = EasyMock.createMock(Random.class);
+        EasyMock.expect(mockRandom.nextInt(6)).andReturn(2);
+        EasyMock.expect(mockRandom.nextInt(6)).andReturn(3);
+        EasyMock.replay(mockRandom);
+
+        game = new Game(
+                new Board(),
+                List.of(player0, player1, player2),
+                new Dice(mockRandom),
+                new TurnManager(3)
+        );
+
+        game.rollDice();
+
+        assertEquals(3, game.getDie1());
+        assertEquals(4, game.getDie2());
+        assertEquals(7, game.getDieSum());
+
+        EasyMock.verify(mockRandom);
+    }
+
     @Test // TC-GB-01
     public void build_validConnectedRoad_placesRoadForPlayer() {
         game.setCurrPhase(GamePhase.NORMAL_PLAY);
@@ -383,7 +435,8 @@ public class GameTests {
         IllegalStateException ex = assertThrows(IllegalStateException.class,
                 () -> game.build(player0, InfraType.CITY, 0));
 
-        assertEquals("Cannot upgrade an unsettled node to city.", ex.getMessage());
+        assertEquals(DomainErrorKey.PLACEMENT_CITY_REQUIRES_SETTLEMENT.key(), ex.getMessage());
+        assertInstanceOf(IllegalPlacementException.class, ex.getCause());
         assertNull(game.getBoard().getNode(0).getInfraType());
     }
 
@@ -518,6 +571,14 @@ public class GameTests {
         resources.put(ResourceType.BRICK, 1);
         resources.put(ResourceType.WOOD, 1);
         return resources;
+    }
+
+    private void giveResourcesForDevCardDraws(Player player, int drawCount) {
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.ORE, drawCount);
+        resources.put(ResourceType.SHEEP, drawCount);
+        resources.put(ResourceType.WHEAT, drawCount);
+        player.addResources(resources);
     }
 
     private Map<ResourceType, Integer> settlementCost() {

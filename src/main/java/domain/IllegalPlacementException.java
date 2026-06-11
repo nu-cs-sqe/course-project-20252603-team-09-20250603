@@ -1,8 +1,8 @@
 package domain;
 
-public class IllegalPlacementException extends RuntimeException {
+public class IllegalPlacementException extends LocalizedDomainException {
 
-    public IllegalPlacementException(String message) {
-        super(message);
+    public IllegalPlacementException(DomainErrorKey errorKey, Object... messageArgs) {
+        super(errorKey, messageArgs);
     }
 }
