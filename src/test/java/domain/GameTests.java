@@ -499,6 +499,20 @@ public class GameTests {
         assertNull(game.getBoard().getEdge(secondEdge).getEdgeOccupant());
     }
 
+    @Test
+    public void build_setupSettlement_DoesNotCountPlayerOwnedCityAsSettlement() {
+        game.setCurrPhase(GamePhase.SETUP);
+
+        game.build(player0, InfraType.SETTLEMENT, 0);
+        game.getBoard().getNode(0).buildCity(player0);
+
+        int settlementNode = findValidSettlementNode();
+        game.build(player0, InfraType.SETTLEMENT, settlementNode);
+
+        assertEquals(InfraType.CITY, game.getBoard().getNode(0).getInfraType());
+        assertEquals(player0, game.getBoard().getNode(settlementNode).getNodeOccupant());
+    }
+
     private int[] placeSetupSettlements(Player player) {
         int firstNodeId = findValidSettlementNode();
         game.build(player, InfraType.SETTLEMENT, firstNodeId);
