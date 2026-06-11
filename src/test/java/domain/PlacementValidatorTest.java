@@ -160,6 +160,20 @@ public class PlacementValidatorTest {
         });
     }
 
+    @Test // TC-PV-11
+    void test_InitialRoadFailsWhenEdgeOccupied() {
+        board = new Board();
+        validator = new PlacementValidator(board);
+        Player player = new Player(0, "Player", PlayerColor.RED);
+
+        Edge edge = board.getEdge(0);
+        edge.buildRoad(player);
+
+        IllegalPlacementException exception = assertThrows(IllegalPlacementException.class,
+                () -> validator.validateInitialRoad(0, edge.getNodeA()));
+        assertEquals("Edge already occupied.", exception.getMessage());
+    }
+
     @Test // TC-PV-06
     void test_RegularRoadFailsWhenEdgeOccupied() {
         board = new Board();

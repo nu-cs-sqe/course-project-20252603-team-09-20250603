@@ -177,15 +177,13 @@ public class Game {
                     secondSetupSettlements.put(currentPlayer.getId(), node);
                 }
             }
-        } else if(infraType == InfraType.CITY){
+        } else {
             try {
                 Node node = board.getNode(locationId);
                 node.buildCity(currentPlayer);
             }catch (IllegalPlacementException exception) {
                 throw new IllegalStateException(exception.getMessage(), exception);
             }
-        } else {
-            throw new IllegalArgumentException("Invalid build type.");
         }
 
         currentPlayer.useInventoryItem(inventoryKey);
@@ -203,9 +201,6 @@ public class Game {
 
         Hex newHex = board.getHex(newHexId);
 
-        if (newHex == null){
-            throw new IllegalArgumentException("Selected hex does not exist.");
-        }
 
         if (newHex.getHasRobber()) {
             throw new IllegalStateException("Selected hex already has the robber.");
@@ -244,10 +239,8 @@ public class Game {
                 return "roads";
             case SETTLEMENT:
                 return "settlements";
-            case CITY:
+            default: // city
                 return "cities";
-            default:
-                throw new IllegalArgumentException("Invalid build type.");
         }
     }
 
@@ -265,12 +258,10 @@ public class Game {
                 cost.put(ResourceType.SHEEP, 1);
                 cost.put(ResourceType.WHEAT, 1);
                 break;
-            case CITY:
+            default: // city
                 cost.put(ResourceType.WHEAT, 2);
                 cost.put(ResourceType.ORE, 3);
                 break;
-            default:
-                throw new IllegalArgumentException("Invalid build type.");
         }
 
         return cost;

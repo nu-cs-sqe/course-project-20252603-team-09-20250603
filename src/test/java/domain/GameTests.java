@@ -357,7 +357,81 @@ public class GameTests {
         assertEquals(player0, connected.getEdgeOccupant());
     }
 
-    @Test 
+    @Test
+    public void build_NullInfraType_ThrowsIllegalArgumentException() {
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> game.build(player0, null, 0));
+        assertEquals("Build type cannot be null", ex.getMessage());
+    }
+
+    @Test
+    public void build_SetupRoadBeforeAnySettlement_ThrowsIllegalStateException() {
+        int someEdge = 0;
+
+        IllegalStateException ex = assertThrows(IllegalStateException.class,
+                () -> game.build(player0, InfraType.ROAD, someEdge));
+
+        assertEquals("You must build a settlement before building a road during setup.", ex.getMessage());
+        assertNull(game.getBoard().getEdge(someEdge).getEdgeOccupant());
+    }
+
+    @Test
+    public void build_CityOnEmptyNode_ThrowsIllegalStateException() {
+        game.setCurrPhase(GamePhase.NORMAL_PLAY);
+        player0.addResources(cityCost());
+
+        IllegalStateException ex = assertThrows(IllegalStateException.class,
+                () -> game.build(player0, InfraType.CITY, 0));
+
+        assertEquals("Cannot upgrade an unsettled node to city.", ex.getMessage());
+        assertNull(game.getBoard().getNode(0).getInfraType());
+    }
+
+    @Test
+    public void useDevCard_VictoryPointCard_ThrowsUnsupportedOperationException() {
+        player0.setDevCardHand(new DevCard(DevCardType.KNIGHT));
+        player0.setDevCardHand(new DevCard(DevCardType.VICTORY_POINT));
+
+        UnsupportedOperationException ex = assertThrows(UnsupportedOperationException.class,
+                () -> game.useDevCard(0, DevCardType.VICTORY_POINT, -1, -1, null, null, null));
+
+        assertEquals("This development card type cannot be manually played.", ex.getMessage());
+    }
+
+    @Test
+    public void updateLargestArmyPlayer_NewLeaderOvertakesPrevious_RemovesFlagFromOldLeader() {
+        for (int i = 0; i < 3; i++) {
+            player0.incrementPlayedKnightCount();
+        }
+        game.updateLargestArmyPlayer();
+        assertTrue(player0.isHasLargestArmy());
+
+        for (int i = 0; i < 4; i++) {
+            player1.incrementPlayedKnightCount();
+        }
+        game.updateLargestArmyPlayer();
+
+        assertFalse(player0.isHasLargestArmy());
+        assertTrue(player1.isHasLargestArmy());
+    }
+
+    @Test
+    public void useDevCard_PlayerDoesNotHaveCardType_ThrowsIllegalArgumentException() {
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> game.useDevCard(0, DevCardType.KNIGHT, -1, -1, null, null, null));
+
+        assertEquals("Player doesn't have this card type", ex.getMessage());
+    }
+
+    @Test
+    public void useDevCard_InvalidPlayerId_ThrowsIllegalArgumentException() {
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> game.useDevCard(99, DevCardType.KNIGHT, -1, -1, null, null, null));
+
+        assertEquals("Player not found with ID: 99", ex.getMessage());
+    }
+
+    @Test
     public void build_setupSecondRoadWithoutNewSettlement_Rejected() {
         game.build(player0, InfraType.SETTLEMENT, 0);
 
@@ -452,6 +526,13 @@ public class GameTests {
         resources.put(ResourceType.WOOD, 1);
         resources.put(ResourceType.SHEEP, 1);
         resources.put(ResourceType.WHEAT, 1);
+        return resources;
+    }
+
+    private Map<ResourceType, Integer> cityCost() {
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WHEAT, 2);
+        resources.put(ResourceType.ORE, 3);
         return resources;
     }
 }
