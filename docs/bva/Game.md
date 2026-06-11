@@ -74,6 +74,9 @@ behavior is exercised by JUnit tests (pitest does not run the cucumber suite).
 | **TC-GB-06** | Normal-play road not connected to the player's road/building       | Rejected (`IllegalStateException`); edge stays empty        | :white_check_mark: |
 | **TC-GB-07** | Settlement violates the distance rule (neighbor occupied)          | Rejected (`IllegalStateException`); target node stays empty | :white_check_mark: |
 | **TC-GB-08** | Setup-phase road, unconnected vs. connected to the new settlement  | Unconnected rejected; connected road is placed              | :white_check_mark: |
+| **TC-GB-09** | `infraType` is `null`                                              | Rejected (`IllegalArgumentException`, "Build type cannot be null") | :white_check_mark: |
+| **TC-GB-10** | Setup-phase road placed before any settlement (no recent settlement) | Rejected (`IllegalStateException`, "...build a settlement before...road during setup."); edge stays empty | :white_check_mark: |
+| **TC-GB-11** | City built on an unsettled (empty) node                            | Rejected (`IllegalStateException`, "Cannot upgrade an unsettled node to city."); node stays empty | :white_check_mark: |
 
 ## Method under test: `calculateLongestRoad(Player player)`
 
