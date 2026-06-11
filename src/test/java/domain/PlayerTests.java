@@ -53,6 +53,24 @@ public class PlayerTests {
     }
 
     @Test
+    void getHasLongestRoad_NewPlayer_ReturnsFalse() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        assertFalse(player.getHasLongestRoad());
+    }
+
+    @Test
+    void getHasLongestRoad_AfterSetTrueThenFalse_ReturnsUpdatedState() {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        player.setHasLongestRoad(true);
+        assertTrue(player.getHasLongestRoad());
+
+        player.setHasLongestRoad(false);
+        assertFalse(player.getHasLongestRoad());
+    }
+
+    @Test
     void getInventory_AfterUsingRoad_ReturnsUpdatedRoadCount(){
         Player player = new Player(0, "Bob", PlayerColor.RED);
 
