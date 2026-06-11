@@ -124,12 +124,45 @@ public final class UiText {
             return I18n.text(message);
         }
 
+        String mappedDynamicMessage = mapLegacyDynamicMessage(message);
+        if (mappedDynamicMessage != null) {
+            return mappedDynamicMessage;
+        }
+
         String legacyKey = mapLegacyMessageToKey(message);
         return legacyKey == null ? message : I18n.text(legacyKey);
     }
 
+    private static String mapLegacyDynamicMessage(String message) {
+        if (message.startsWith("Player not found with ID: ")) {
+            return I18n.text("error.game.playerIdNotFound",
+                    message.substring("Player not found with ID: ".length()));
+        }
+
+        if (message.startsWith("Player not found with name: ")) {
+            return I18n.text("error.game.playerNameNotFound",
+                    message.substring("Player not found with name: ".length()));
+        }
+
+        return null;
+    }
+
     private static String mapLegacyMessageToKey(String message) {
         switch (message) {
+            case "No players entered":
+                return "error.setup.noPlayersEntered";
+            case "Player names must be unique":
+                return "error.setup.namesMustBeUnique";
+            case "Catan requires players of 3 or 4":
+                return "error.setup.invalidPlayerCount";
+            case "Player name invalid, please input a name":
+                return "error.setup.invalidPlayerName";
+            case "Invalid player index for color assignment":
+                return "error.setup.invalidColorIndex";
+            case "Player not found":
+                return "error.game.playerNotFound";
+            case "Build type cannot be null":
+                return "error.game.buildTypeRequired";
             case "Player does not have enough inventory":
                 return "error.game.insufficientInventory";
             case "Player does not have enough resources":
@@ -140,6 +173,26 @@ public final class UiText {
                 return "error.game.insufficientResourcesDevCard";
             case "Player doesn't have this card type":
                 return "error.game.playerCardMissing";
+            case "This development card type cannot be manually played.":
+                return "error.game.devCardManualPlayUnsupported";
+            case "Selected hex already has the robber.":
+                return "error.game.robberHexAlreadyOccupied";
+            case "No development cards left in the deck!":
+                return "error.game.devCardDeckEmpty";
+            case "Cannot trade a resource for null.":
+                return "error.trade.nullResource";
+            case "Offered resource quantities must be positive.":
+                return "error.trade.offerMustBePositive";
+            case "Requested resource quantities must be positive.":
+                return "error.trade.requestMustBePositive";
+            case "Cannot settle on an already-settled node.":
+                return "error.placement.nodeAlreadySettled";
+            case "Cannot build a road on an occupied edge.":
+                return "error.placement.roadOnOccupiedEdge";
+            case "Player has no resource cards.":
+                return "error.player.noResourceCards";
+            case "Not enough road pieces remaining in inventory!":
+                return "error.player.notEnoughRoadPieces";
             case "Invalid placement.":
                 return "error.setup.invalidPlacement";
             default:

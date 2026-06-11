@@ -19,8 +19,6 @@
 - Generative AI (Claude, Copilot): Used for UI generation
 
 ## Special Decisions or Exceptions
-**Code coverage**: Falls just short of 100% (98%???) because (as discussed with Prof. Yiji in office hours) simple getters and setters are assumed to function correctly and do not require unit tests. For example, certain functions in Game.java.
-
 **Missing Game Functionality**
 - No ports: we did not include ports (ports change the bank trading rate from 4:1 to 3:1 or 2:1) for time reasons, but bank trading is otherwise implemented, so the logic for implementing port functionality is mostly there already
 - No board randomization: we do not set up hexes and number tokens randomly; relations between hexes, numbers, nodes, edges, etc. are hardcoded (since this was not required for Catan)
