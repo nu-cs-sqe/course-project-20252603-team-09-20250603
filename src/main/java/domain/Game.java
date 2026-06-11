@@ -160,8 +160,6 @@ public class Game {
             }catch (IllegalPlacementException exception) {
                 throw new IllegalStateException(exception.getMessage(), exception);
             }
-        } else {
-            throw new IllegalArgumentException("Invalid build type.");
         }
 
         currentPlayer.useInventoryItem(inventoryKey);
