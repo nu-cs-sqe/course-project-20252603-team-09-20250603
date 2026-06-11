@@ -34,16 +34,18 @@ Handles new game player setup, including player count validation, player name va
 | Test Case 15 | Name = ""           | Invalid; blank name           | :white_check_mark:  |
 | Test Case 16 | Name = " "          | Invalid; whitespace only name | :white_check_mark:  |
 | Test Case 17 | Name = null         | Invalid; name cannot be null  | :white_check_mark:  |
-### Method under test: `assignColor()`
 
-|              | State of the System | Expected output                        | Implemented?       |
-|--------------|---------------------|----------------------------------------|--------------------|
-| Test Case 18 | Player index = 0    | Assigns just first player with red     | :white_check_mark:  |
-| Test Case 19 | Player index = 1    | Assigns just second player with blue   | :white_check_mark:  |
-| Test Case 20 | Player index = 2    | Assigns just third player with orange  | :white_check_mark:  |
-| Test Case 21 | Player index = 3    | Assigns just fourth player with white  | :white_check_mark:  |
-| Test Case 22 | Player index = 4    | Invalid, no fifth player should exist  | :white_check_mark:  |
-| Test Case 23 | Total of 4 players  | All players are assigned unique colors | :white_check_mark:  |
+### Method under test: `assignColor(int index)`
+
+|              | State of the System | Expected output                              | Implemented? |
+|--------------|---------------------|----------------------------------------------|--------------|
+| Test Case 18 | Player index = 0    | Returns `RED`                                | :white_check_mark: |
+| Test Case 19 | Player index = 1    | Returns `BLUE`                               | :white_check_mark: |
+| Test Case 20 | Player index = 2    | Returns `ORANGE`                             | :white_check_mark: |
+| Test Case 21 | Player index = 3    | Returns `WHITE`                              | :white_check_mark: |
+| Test Case 22 | Player index = -1   | Throws `IllegalArgumentException`            | :white_check_mark: |
+| Test Case 23 | Player index = 4    | Throws `IllegalArgumentException`            | :white_check_mark: |
+| Test Case 24 | Four players are created | All players receive unique colors       | :white_check_mark: |
 
 ### Method under test: `setupGame()`
 
