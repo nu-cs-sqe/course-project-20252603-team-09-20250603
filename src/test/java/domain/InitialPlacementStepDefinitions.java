@@ -17,7 +17,6 @@ public class InitialPlacementStepDefinitions {
     private static final String SETTLEMENTS = "settlements";
     private static final String ROADS = "roads";
 
-    // Snake-order placement spots: 6 mutually non-adjacent corner nodes (satisfy the distance rule).
     private static final int[] SNAKE_NODES = {0, 6, 27, 37, 47, 53};
 
     private Board board;
@@ -29,7 +28,6 @@ public class InitialPlacementStepDefinitions {
     private List<Player> players;
     private Player otherPlayer;
 
-    // The player that performed the most recent attempted action (the turn may advance after it).
     private Player actor;
     private int lastEdgeId;
 
@@ -37,7 +35,6 @@ public class InitialPlacementStepDefinitions {
     private Map<ResourceType, Integer> baselineResources;
     private int baselineVictoryPoints;
 
-    // Tracks the settlement nodes each player placed, in order, for the snake-order scenarios.
     private Map<Integer, List<Integer>> settlementNodesByPlayerId;
 
     @Given("a setup game with {int} players")
@@ -57,8 +54,8 @@ public class InitialPlacementStepDefinitions {
     @Given("an initialized setup board")
     public void an_initialized_setup_board() {
         board = new Board();
-        game = new Game(board, players, dice, turnManager); // defaults to GamePhase.SETUP
-        setupController = new SetupGameController(game, turnManager); // primes player 1
+        game = new Game(board, players, dice, turnManager);
+        setupController = new SetupGameController(game, turnManager);
     }
 
     @Given("it is the current player's turn to place a settlement")

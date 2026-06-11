@@ -91,7 +91,6 @@ public class DevCardTests {
         Player thief = new Player(0, "John", PlayerColor.RED);
         Player victim = new Player(1, "Alice", PlayerColor.BLUE);
 
-        // Victim owns a settlement on node 0, which borders hex 0.
         board.getNode(0).buildSettlement(victim);
         Map<ResourceType, Integer> hand = new HashMap<>();
         hand.put(ResourceType.WHEAT, 2);
@@ -427,7 +426,6 @@ public class DevCardTests {
         assertEquals(0, player.getDevCardHand().size());
     }
 
-    // ---- useDevCard dispatch: each card type actually has its effect through the Game ----
 
     @Test // TC-DC-USE-RB
     void test_UseDevCard_RoadBuilding_ThroughGame_DeductsTwoRoads() {
@@ -512,7 +510,6 @@ public class DevCardTests {
         assertEquals(1, thief.getResources().getOrDefault(ResourceType.WHEAT, 0));
     }
 
-    // ---- updateLargestArmyPlayer ----
 
     @Test // TC-DC-ARMY-2
     void test_UpdateLargestArmy_TwoKnights_DoesNotGrant() {
@@ -588,17 +585,15 @@ public class DevCardTests {
         assertEquals(0, playerB.getVictoryPoints());
     }
 
-    // ---- useDevCard card lookup ----
 
     @Test // TC-DC-USE-PICK-BY-TYPE
     void test_UseDevCard_SelectsRequestedTypeNotFirstInHand() {
         Player player = new Player(0, "John", PlayerColor.RED);
         Game game = newGameWith(player);
-        player.setDevCardHand(new DevCard(DevCardType.YEAR_OF_PLENTY)); // first in hand
-        player.setDevCardHand(new DevCard(DevCardType.ROAD_BUILDING));  // second in hand
+        player.setDevCardHand(new DevCard(DevCardType.YEAR_OF_PLENTY));
+        player.setDevCardHand(new DevCard(DevCardType.ROAD_BUILDING));
         player.manageDevCardActivation(0);
 
-        // Requesting the second card type must select by type, not by position.
         game.useDevCard(0, DevCardType.ROAD_BUILDING, -1, -1, null, null, null);
 
         List<DevCard> remaining = player.getDevCardHand();
@@ -609,7 +604,7 @@ public class DevCardTests {
     @Test // TC-DC-USE-MISSING
     void test_UseDevCard_PlayerDoesNotHaveCardType_ThrowsIllegalArgument() {
         Player player = new Player(0, "John", PlayerColor.RED);
-        Game game = newGameWith(player); // empty dev card hand
+        Game game = newGameWith(player);
 
         assertThrows(IllegalArgumentException.class,
                 () -> game.useDevCard(0, DevCardType.KNIGHT, 0, -1, null, null, null));
@@ -629,7 +624,6 @@ public class DevCardTests {
         Player player = new Player(0, "John", PlayerColor.RED);
         Board board = new Board();
 
-        // verifyCardIsPlayable must reject an inactive card before any roads are spent.
         assertThrows(IllegalActionException.class, () -> card.doRoadBuildingAction(player, board));
         assertEquals(15, player.getInventory().get("roads"));
     }
@@ -641,7 +635,6 @@ public class DevCardTests {
         player.setDevCardHand(new DevCard(DevCardType.VICTORY_POINT));
         player.manageDevCardActivation(0);
 
-        // Victory Point cards are scored passively and cannot be actively played.
         assertThrows(UnsupportedOperationException.class,
                 () -> game.useDevCard(0, DevCardType.VICTORY_POINT, -1, -1, null, null, null));
     }

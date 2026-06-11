@@ -34,10 +34,9 @@ public class NodeTests {
         EasyMock.replay(mockPlayer1);
         EasyMock.replay(mockPlayer2);
 
-        // player 1 builds a settlement
+
         n.buildSettlement(mockPlayer1);
 
-        // player 2 tries to build a settlement
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
                 () -> n.buildSettlement(mockPlayer2)
@@ -69,7 +68,6 @@ public class NodeTests {
         n.buildSettlement(mockPlayer);
         n.buildCity(mockPlayer);
 
-        // try to build a city on a city
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
                 () -> n.buildCity(mockPlayer)
@@ -86,7 +84,6 @@ public class NodeTests {
 
         EasyMock.replay(mockPlayer);
 
-        // try to build a city on an unoccupied node
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
                 () -> n.buildCity(mockPlayer)
