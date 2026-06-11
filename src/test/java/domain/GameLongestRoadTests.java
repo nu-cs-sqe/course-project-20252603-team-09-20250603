@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GameLongestRoadTests {
     @Test
@@ -70,6 +72,7 @@ public class GameLongestRoadTests {
         game.updateLongestRoadBonus();
 
         assertEquals(2, player.getVictoryPoints());
+        assertTrue(player.getHasLongestRoad());
     }
 
     @Test
@@ -131,6 +134,8 @@ public class GameLongestRoadTests {
 
         assertEquals(0, player.getVictoryPoints());
         assertEquals(2, otherPlayer.getVictoryPoints());
+        assertFalse(player.getHasLongestRoad());
+        assertTrue(otherPlayer.getHasLongestRoad());
     }
 
 
