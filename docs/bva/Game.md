@@ -96,3 +96,23 @@ behavior is exercised by JUnit tests (pitest does not run the cucumber suite).
 | Test Case 18 | One player reaches a road length of 5            | That player gains 2 victory points                  | :white_check_mark:       |
 | Test Case 19 | Same player still has longest road               | Victory points do not change again                  | :white_check_mark:       |
 | Test Case 20 | Another player exceeds the current longest road  | Old player loses 2 points; new player gains 2       | :white_check_mark:       |
+
+## Method under test: `useDevCard(...)`
+
+|              | State of the System                                            | Expected output / behavior                                                  | Implemented? |
+|--------------|----------------------------------------------------------------|-----------------------------------------------------------------------------|--------------|
+| Test Case 21 | Player attempts to manually play a `VICTORY_POINT` dev card     | Rejected (`UnsupportedOperationException`, "This development card type cannot be manually played.") | :white_check_mark: |
+| Test Case 23 | Player tries to play a card type they do not hold              | Rejected (`IllegalArgumentException`, "Player doesn't have this card type") | :white_check_mark: |
+| Test Case 24 | `currentPlayerId` does not match any player                     | Rejected (`IllegalArgumentException`, "Player not found with ID: ...") | :white_check_mark: |
+
+## Method under test: `updateLargestArmyPlayer()`
+
+|              | State of the System                                                  | Expected output / behavior                                       | Implemented? |
+|--------------|----------------------------------------------------------------------|------------------------------------------------------------------|--------------|
+| Test Case 22 | A new player's knight count overtakes the previous largest-army holder | Previous holder loses the largest-army flag; new holder gains it | :white_check_mark: |
+
+## Method under test: `findPlayerByName(String name)`
+
+|              | State of the System              | Expected output / behavior                                        | Implemented? |
+|--------------|----------------------------------|-------------------------------------------------------------------|--------------|
+| Test Case 25 | No player matches the given name | Throws `IllegalArgumentException` ("Player not found with name: ...") | :white_check_mark: |
