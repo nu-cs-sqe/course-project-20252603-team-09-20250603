@@ -54,13 +54,13 @@ public class Node {
 
     public void buildCity(Player player) {
         if (occupant != null && occupant != player) {
-            throw new IllegalStateException("Cannot build a city on an already-settled node.");
+            throw new IllegalPlacementException("Cannot build a city on an already-settled node.");
         }
 
         if (infraType == InfraType.CITY) {
-            throw new IllegalStateException("Cannot upgrade a city further.");
+            throw new IllegalPlacementException("Cannot upgrade a city further.");
         } else if (infraType == null) {
-            throw new IllegalStateException("Cannot upgrade an unsettled node to city.");
+            throw new IllegalPlacementException("Cannot upgrade an unsettled node to city.");
         }
 
         infraType = InfraType.CITY;

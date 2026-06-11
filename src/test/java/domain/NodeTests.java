@@ -70,8 +70,8 @@ public class NodeTests {
         n.buildCity(mockPlayer);
 
         // try to build a city on a city
-        IllegalStateException exception = assertThrows(
-                IllegalStateException.class,
+        IllegalPlacementException exception = assertThrows(
+                IllegalPlacementException.class,
                 () -> n.buildCity(mockPlayer)
         );
 
@@ -87,8 +87,8 @@ public class NodeTests {
         EasyMock.replay(mockPlayer);
 
         // try to build a city on an unoccupied node
-        IllegalStateException exception = assertThrows(
-                IllegalStateException.class,
+        IllegalPlacementException exception = assertThrows(
+                IllegalPlacementException.class,
                 () -> n.buildCity(mockPlayer)
         );
 
@@ -108,8 +108,8 @@ public class NodeTests {
         n.buildSettlement(mockPlayer1);
         n.buildCity(mockPlayer1);
 
-        IllegalStateException exception = assertThrows(
-                IllegalStateException.class,
+        IllegalPlacementException exception = assertThrows(
+                IllegalPlacementException.class,
                 () -> n.buildCity(mockPlayer2)
         );
 
