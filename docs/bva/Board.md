@@ -128,8 +128,8 @@
 
 |              | State of the System                                         | Expected output / behavior                          | Implemented? |
 |--------------|-------------------------------------------------------------|------------------------------------------------------|--------------|
-| Test Case 1  | No nodes around the hex are occupied                        | Returns an empty list                                | :x: |
-| Test Case 2  | One adjacent node is occupied by a player                   | Returns a list containing that player                | :x: |
-| Test Case 3  | Two adjacent nodes are occupied by the same player          | Returns that player only once                        | :x: |
-| Test Case 4  | Adjacent nodes are occupied by two different players        | Returns both players                                 | :x: |
-| Test Case 5  | Hex ID is invalid                                           | Throws `IllegalArgumentException`                    | :x: |
+| Test Case 1  | No nodes around the hex are occupied                        | Returns an empty list                                | :white_check_mark:  |
+| Test Case 2  | One adjacent node is occupied by a player                   | Returns a list containing that player                | :white_check_mark:  |
+| Test Case 3  | Two adjacent nodes are occupied by the same player          | Returns that player only once                        | :white_check_mark:  |
+| Test Case 4  | Adjacent nodes are occupied by two different players        | Returns both players                                 | :white_check_mark:  |
+| Test Case 5  | Hex ID is invalid                                           | Throws `IllegalArgumentException`                    | :white_check_mark:  |
