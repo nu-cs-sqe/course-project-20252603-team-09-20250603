@@ -158,6 +158,35 @@ public class DevCardTests {
         assertEquals(1, player1.getResources().getOrDefault(ResourceType.WHEAT, 0));
     }
 
+    @Test // TC-DC-YP-INACTIVE
+    void test_YearOfPlentyCard_WhenInactive_ThrowsIllegalActionException() {
+        DevCard card = new DevCard(DevCardType.YEAR_OF_PLENTY);
+        Player player = new Player(1, "John", PlayerColor.RED);
+        Board board = EasyMock.createMock(Board.class);
+
+        EasyMock.replay(board);
+
+        assertThrows(IllegalActionException.class, () ->
+                card.doYearOfPlentyAction(player, board, ResourceType.WOOD, ResourceType.WHEAT));
+
+        EasyMock.verify(board);
+    }
+
+    @Test // TC-DC-YP-WRONG-TYPE
+    void test_YearOfPlentyCard_WithWrongCardType_ThrowsIllegalStateException() {
+        DevCard card = new DevCard(DevCardType.KNIGHT);
+        Player player = new Player(1, "John", PlayerColor.RED);
+        Board board = EasyMock.createMock(Board.class);
+        card.activateCard();
+
+        EasyMock.replay(board);
+
+        assertThrows(IllegalStateException.class, () ->
+                card.doYearOfPlentyAction(player, board, ResourceType.WOOD, ResourceType.WHEAT));
+
+        EasyMock.verify(board);
+    }
+
     @Test // TC-DC-MO
     void test_MonopolyCard() {
         DevCard card = new DevCard(DevCardType.MONOPOLY);
@@ -193,6 +222,50 @@ public class DevCardTests {
         assertEquals(1, player2.getResources().getOrDefault(ResourceType.WOOD, 0));
         assertEquals(0, player3.getResources().getOrDefault(ResourceType.ORE, 0));
         assertEquals(5, player1.getResources().getOrDefault(ResourceType.ORE, 0));
+    }
+
+    @Test // TC-DC-MO-INACTIVE
+    void test_MonopolyCard_WhenInactive_ThrowsIllegalActionException() {
+        DevCard card = new DevCard(DevCardType.MONOPOLY);
+        Player player = new Player(1, "John", PlayerColor.RED);
+        Board board = EasyMock.createMock(Board.class);
+
+        EasyMock.replay(board);
+
+        assertThrows(IllegalActionException.class, () ->
+                card.doMonopolyAction(player, List.of(player), board, ResourceType.ORE));
+
+        EasyMock.verify(board);
+    }
+
+    @Test // TC-DC-MO-WRONG-TYPE
+    void test_MonopolyCard_WithWrongCardType_ThrowsIllegalStateException() {
+        DevCard card = new DevCard(DevCardType.YEAR_OF_PLENTY);
+        Player player = new Player(1, "John", PlayerColor.RED);
+        Board board = EasyMock.createMock(Board.class);
+        card.activateCard();
+
+        EasyMock.replay(board);
+
+        assertThrows(IllegalStateException.class, () ->
+                card.doMonopolyAction(player, List.of(player), board, ResourceType.ORE));
+
+        EasyMock.verify(board);
+    }
+
+    @Test // TC-DC-VERIFY-WRONG-TYPE
+    void test_RoadBuildingAction_WithWrongCardType_ThrowsIllegalStateException() {
+        DevCard card = new DevCard(DevCardType.KNIGHT);
+        Player player = new Player(1, "John", PlayerColor.RED);
+        Board board = EasyMock.createMock(Board.class);
+        card.activateCard();
+
+        EasyMock.replay(board);
+
+        assertThrows(IllegalStateException.class, () ->
+                card.doRoadBuildingAction(player, board));
+
+        EasyMock.verify(board);
     }
 
     @Test // TC-DC-VP
