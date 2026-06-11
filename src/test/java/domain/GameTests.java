@@ -278,6 +278,36 @@ public class GameTests {
         assertEquals(player0, connected.getEdgeOccupant());
     }
 
+    @Test
+    public void build_NullInfraType_ThrowsIllegalArgumentException() {
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> game.build(player0, null, 0));
+        assertEquals("Build type cannot be null", ex.getMessage());
+    }
+
+    @Test
+    public void build_SetupRoadBeforeAnySettlement_ThrowsIllegalStateException() {
+        int someEdge = 0;
+
+        IllegalStateException ex = assertThrows(IllegalStateException.class,
+                () -> game.build(player0, InfraType.ROAD, someEdge));
+
+        assertEquals("You must build a settlement before building a road during setup.", ex.getMessage());
+        assertNull(game.getBoard().getEdge(someEdge).getEdgeOccupant());
+    }
+
+    @Test
+    public void build_CityOnEmptyNode_ThrowsIllegalStateException() {
+        game.setCurrPhase(GamePhase.NORMAL_PLAY);
+        player0.addResources(cityCost());
+
+        IllegalStateException ex = assertThrows(IllegalStateException.class,
+                () -> game.build(player0, InfraType.CITY, 0));
+
+        assertEquals("Cannot upgrade an unsettled node to city.", ex.getMessage());
+        assertNull(game.getBoard().getNode(0).getInfraType());
+    }
+
     private int[] placeSetupSettlements(Player player) {
         int firstNodeId = findValidSettlementNode();
         game.build(player, InfraType.SETTLEMENT, firstNodeId);
@@ -360,6 +390,13 @@ public class GameTests {
         resources.put(ResourceType.WOOD, 1);
         resources.put(ResourceType.SHEEP, 1);
         resources.put(ResourceType.WHEAT, 1);
+        return resources;
+    }
+
+    private Map<ResourceType, Integer> cityCost() {
+        Map<ResourceType, Integer> resources = new HashMap<>();
+        resources.put(ResourceType.WHEAT, 2);
+        resources.put(ResourceType.ORE, 3);
         return resources;
     }
 }
