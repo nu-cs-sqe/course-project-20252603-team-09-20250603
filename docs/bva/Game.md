@@ -77,6 +77,7 @@ behavior is exercised by JUnit tests (pitest does not run the cucumber suite).
 | **TC-GB-09** | `infraType` is `null`                                              | Rejected (`IllegalArgumentException`, "Build type cannot be null") | :white_check_mark: |
 | **TC-GB-10** | Setup-phase road placed before any settlement (no recent settlement) | Rejected (`IllegalStateException`, "...build a settlement before...road during setup."); edge stays empty | :white_check_mark: |
 | **TC-GB-11** | City built on an unsettled (empty) node                            | Rejected (`IllegalStateException`, "Cannot upgrade an unsettled node to city."); node stays empty | :white_check_mark: |
+| **TC-GB-12** | Setup-phase: a 2nd road placed without a new settlement in between  | Rejected (`IllegalStateException`); recent settlement is cleared after its road | :white_check_mark: |
 
 ## Method under test: `calculateLongestRoad(Player player)`
 
@@ -116,3 +117,51 @@ behavior is exercised by JUnit tests (pitest does not run the cucumber suite).
 |              | State of the System              | Expected output / behavior                                        | Implemented? |
 |--------------|----------------------------------|-------------------------------------------------------------------|--------------|
 | Test Case 25 | No player matches the given name | Throws `IllegalArgumentException` ("Player not found with name: ...") | :white_check_mark: |
+## Method under test: `useDevCard(int currentPlayerId, DevCardType cardType, int targetHexId, int victimPlayerId, ResourceType choice1, ResourceType choice2, ResourceType targetType)`
+
+Each card type, when played through the `Game`, must produce its real effect (the dispatch actually
+runs the card action). The victim argument is interpreted as "no victim" only when negative.
+
+| Test Case      | State of the System                                              | Expected output / behavior                                              | Implemented?       |
+|----------------|------------------------------------------------------------------|-------------------------------------------------------------------------|--------------------|
+| TC-DC-USE-RB   | Active `ROAD_BUILDING` card played through the game              | Player's unbuilt road inventory decreases by exactly 2                   | :white_check_mark: |
+| TC-DC-USE-YP   | Active `YEAR_OF_PLENTY` card played, choosing Wood and Wheat     | Player gains exactly 1 Wood and 1 Wheat                                  | :white_check_mark: |
+| TC-DC-USE-MO   | Active `MONOPOLY` card played targeting Ore; opponent holds 3 Ore | All of the opponent's Ore is swept to the player (opponent 0, player +3) | :white_check_mark: |
+| TC-DC-USE-KN-ARMY | Player with 2 prior knights plays a 3rd `KNIGHT` through the game | Knight count becomes 3 and the player is granted Largest Army           | :white_check_mark: |
+| TC-DC-USE-KN-VICTIM0 | `KNIGHT` played with `victimPlayerId == 0`, a valid adjacent victim | Player 0 is treated as a real victim; exactly one card is stolen        | :white_check_mark: |
+
+## Method under test: `updateLargestArmyPlayer()`
+
+The Largest Army threshold starts at 2 (a player needs 3+ knights), and the title is only taken by a
+**strictly** higher knight count than the current holder.
+
+| Test Case        | State of the System                                            | Expected output / behavior                                          | Implemented?       |
+|------------------|----------------------------------------------------------------|---------------------------------------------------------------------|--------------------|
+| TC-DC-ARMY-2     | A player has exactly 2 played knights (lower boundary)         | No Largest Army awarded; no victory points gained                   | :white_check_mark: |
+| TC-DC-ARMY-3     | A player has exactly 3 played knights (upper boundary)        | Player is granted Largest Army and gains 2 victory points           | :white_check_mark: |
+| TC-DC-ARMY-STEAL | Holder has 3 knights; another player reaches 4 knights        | Old holder loses Largest Army and 2 points; new holder gains both   | :white_check_mark: |
+| TC-DC-ARMY-TIE   | Holder has 3 knights; another player ties at 3 knights        | Title is not transferred (strictly-greater rule); points unchanged  | :white_check_mark: |
+## Method under test: `isGameOver()`
+
+| Test Case   | State of the System                | Expected Output | Implemented?       |
+|-------------|------------------------------------|-----------------|--------------------|
+| Test Case 1 | New game (phase is not GAME_OVER)  | Returns `false` | :white_check_mark: |
+| Test Case 2 | A player has won (phase GAME_OVER) | Returns `true`  | :white_check_mark: |
+
+## Method under test: `getWinner()`
+
+|             | State of the System                                       | Expected output / behavior              | Implemented?       |
+|-------------|-----------------------------------------------------------|-----------------------------------------|--------------------|
+| Test Case 1 | No player has reached `pointsNeededToWin` (10)            | Returns `null`                          | :white_check_mark: |
+| Test Case 2 | A player has exactly 10 victory points                    | Returns that player                     | :white_check_mark: |
+| Test Case 3 | A player has more than 10 victory points                  | Returns that player                     | :white_check_mark: |
+| Test Case 4 | Multiple players are at or above 10 victory points        | Returns the player with the most points | :white_check_mark: |
+| Test Case 5 | A player has reached 10 points but `getWinner` is called  | Game is **not** ended (no side effect)  | :white_check_mark: |
+
+## Method under test: `checkForWinner()`
+
+|             | State of the System                          | Expected output / behavior                              | Implemented?       |
+|-------------|----------------------------------------------|---------------------------------------------------------|--------------------|
+| Test Case 1 | No player has reached 10 victory points      | Returns `null`; phase stays unchanged (game not over)   | :white_check_mark: |
+| Test Case 2 | A player has reached 10 victory points       | Returns that player; phase becomes `GAME_OVER`          | :white_check_mark: |
+| Test Case 3 | A player jumps from 8 to 11 points (skips 10) | Returns that player; phase becomes `GAME_OVER`         | :white_check_mark: |

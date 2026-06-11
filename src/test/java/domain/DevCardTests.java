@@ -158,6 +158,35 @@ public class DevCardTests {
         assertEquals(1, player1.getResources().getOrDefault(ResourceType.WHEAT, 0));
     }
 
+    @Test // TC-DC-YP-INACTIVE
+    void test_YearOfPlentyCard_WhenInactive_ThrowsIllegalActionException() {
+        DevCard card = new DevCard(DevCardType.YEAR_OF_PLENTY);
+        Player player = new Player(1, "John", PlayerColor.RED);
+        Board board = EasyMock.createMock(Board.class);
+
+        EasyMock.replay(board);
+
+        assertThrows(IllegalActionException.class, () ->
+                card.doYearOfPlentyAction(player, board, ResourceType.WOOD, ResourceType.WHEAT));
+
+        EasyMock.verify(board);
+    }
+
+    @Test // TC-DC-YP-WRONG-TYPE
+    void test_YearOfPlentyCard_WithWrongCardType_ThrowsIllegalStateException() {
+        DevCard card = new DevCard(DevCardType.KNIGHT);
+        Player player = new Player(1, "John", PlayerColor.RED);
+        Board board = EasyMock.createMock(Board.class);
+        card.activateCard();
+
+        EasyMock.replay(board);
+
+        assertThrows(IllegalStateException.class, () ->
+                card.doYearOfPlentyAction(player, board, ResourceType.WOOD, ResourceType.WHEAT));
+
+        EasyMock.verify(board);
+    }
+
     @Test // TC-DC-MO
     void test_MonopolyCard() {
         DevCard card = new DevCard(DevCardType.MONOPOLY);
@@ -193,6 +222,50 @@ public class DevCardTests {
         assertEquals(1, player2.getResources().getOrDefault(ResourceType.WOOD, 0));
         assertEquals(0, player3.getResources().getOrDefault(ResourceType.ORE, 0));
         assertEquals(5, player1.getResources().getOrDefault(ResourceType.ORE, 0));
+    }
+
+    @Test // TC-DC-MO-INACTIVE
+    void test_MonopolyCard_WhenInactive_ThrowsIllegalActionException() {
+        DevCard card = new DevCard(DevCardType.MONOPOLY);
+        Player player = new Player(1, "John", PlayerColor.RED);
+        Board board = EasyMock.createMock(Board.class);
+
+        EasyMock.replay(board);
+
+        assertThrows(IllegalActionException.class, () ->
+                card.doMonopolyAction(player, List.of(player), board, ResourceType.ORE));
+
+        EasyMock.verify(board);
+    }
+
+    @Test // TC-DC-MO-WRONG-TYPE
+    void test_MonopolyCard_WithWrongCardType_ThrowsIllegalStateException() {
+        DevCard card = new DevCard(DevCardType.YEAR_OF_PLENTY);
+        Player player = new Player(1, "John", PlayerColor.RED);
+        Board board = EasyMock.createMock(Board.class);
+        card.activateCard();
+
+        EasyMock.replay(board);
+
+        assertThrows(IllegalStateException.class, () ->
+                card.doMonopolyAction(player, List.of(player), board, ResourceType.ORE));
+
+        EasyMock.verify(board);
+    }
+
+    @Test // TC-DC-VERIFY-WRONG-TYPE
+    void test_RoadBuildingAction_WithWrongCardType_ThrowsIllegalStateException() {
+        DevCard card = new DevCard(DevCardType.KNIGHT);
+        Player player = new Player(1, "John", PlayerColor.RED);
+        Board board = EasyMock.createMock(Board.class);
+        card.activateCard();
+
+        EasyMock.replay(board);
+
+        assertThrows(IllegalStateException.class, () ->
+                card.doRoadBuildingAction(player, board));
+
+        EasyMock.verify(board);
     }
 
     @Test // TC-DC-VP
@@ -352,5 +425,224 @@ public class DevCardTests {
                 game.useDevCard(owningPlayerId, DevCardType.MONOPOLY, 0, -1,
                         null, null, ResourceType.ORE));
         assertEquals(0, player.getDevCardHand().size());
+    }
+
+    // ---- useDevCard dispatch: each card type actually has its effect through the Game ----
+
+    @Test // TC-DC-USE-RB
+    void test_UseDevCard_RoadBuilding_ThroughGame_DeductsTwoRoads() {
+        Player player = new Player(0, "John", PlayerColor.RED);
+        Game game = newGameWith(player);
+        player.setDevCardHand(new DevCard(DevCardType.ROAD_BUILDING));
+        player.manageDevCardActivation(0);
+        int roadsBefore = player.getInventory().get("roads");
+
+        game.useDevCard(0, DevCardType.ROAD_BUILDING, -1, -1, null, null, null);
+
+        assertEquals(roadsBefore - 2, player.getInventory().get("roads"));
+    }
+
+    @Test // TC-DC-USE-YP
+    void test_UseDevCard_YearOfPlenty_ThroughGame_AddsTwoChosenResources() {
+        Player player = new Player(0, "John", PlayerColor.RED);
+        Game game = newGameWith(player);
+        player.setDevCardHand(new DevCard(DevCardType.YEAR_OF_PLENTY));
+        player.manageDevCardActivation(0);
+
+        game.useDevCard(0, DevCardType.YEAR_OF_PLENTY, -1, -1,
+                ResourceType.WOOD, ResourceType.WHEAT, null);
+
+        assertEquals(1, player.getResources().getOrDefault(ResourceType.WOOD, 0));
+        assertEquals(1, player.getResources().getOrDefault(ResourceType.WHEAT, 0));
+    }
+
+    @Test // TC-DC-USE-MO
+    void test_UseDevCard_Monopoly_ThroughGame_SweepsResourceFromOpponents() {
+        Player player = new Player(0, "John", PlayerColor.RED);
+        Player opponent = new Player(1, "Alice", PlayerColor.BLUE);
+        Game game = new Game(new Board(), List.of(player, opponent), new Dice(new Random()), new TurnManager(2));
+
+        Map<ResourceType, Integer> oppResources = new HashMap<>();
+        oppResources.put(ResourceType.ORE, 3);
+        opponent.addResources(oppResources);
+
+        player.setDevCardHand(new DevCard(DevCardType.MONOPOLY));
+        player.manageDevCardActivation(0);
+
+        game.useDevCard(0, DevCardType.MONOPOLY, -1, -1, null, null, ResourceType.ORE);
+
+        assertEquals(0, opponent.getResources().getOrDefault(ResourceType.ORE, 0));
+        assertEquals(3, player.getResources().getOrDefault(ResourceType.ORE, 0));
+    }
+
+    @Test // TC-DC-USE-KN-ARMY
+    void test_UseDevCard_ThirdKnight_ThroughGame_GrantsLargestArmy() {
+        Player player = new Player(0, "John", PlayerColor.RED);
+        Game game = newGameWith(player);
+        player.incrementPlayedKnightCount();
+        player.incrementPlayedKnightCount(); // two knights already played
+        player.setDevCardHand(new DevCard(DevCardType.KNIGHT));
+        player.manageDevCardActivation(0);
+
+        game.useDevCard(0, DevCardType.KNIGHT, 0, -1, null, null, null);
+
+        assertEquals(3, player.getPlayedKnightCount());
+        assertTrue(player.isHasLargestArmy());
+    }
+
+    @Test // TC-DC-USE-KN-VICTIM0
+    void test_UseDevCard_Knight_VictimIdZero_StealsFromPlayerZero() {
+        Board board = new Board(new Random(0));
+        Player thief = new Player(1, "John", PlayerColor.RED);
+        Player victim = new Player(0, "Alice", PlayerColor.BLUE); // victim id is exactly 0
+
+        board.getNode(0).buildSettlement(victim);
+        Map<ResourceType, Integer> hand = new HashMap<>();
+        hand.put(ResourceType.WHEAT, 2);
+        victim.addResources(hand);
+
+        Game game = new Game(board, List.of(thief, victim), new Dice(new Random()), new TurnManager(2));
+        thief.setDevCardHand(new DevCard(DevCardType.KNIGHT));
+        thief.manageDevCardActivation(thief.getId());
+
+        // victimPlayerId == 0 must be treated as a real victim (boundary: < 0, not <= 0).
+        game.useDevCard(thief.getId(), DevCardType.KNIGHT, 0, victim.getId(), null, null, null);
+
+        assertEquals(1, victim.getResources().getOrDefault(ResourceType.WHEAT, 0));
+        assertEquals(1, thief.getResources().getOrDefault(ResourceType.WHEAT, 0));
+    }
+
+    // ---- updateLargestArmyPlayer ----
+
+    @Test // TC-DC-ARMY-2
+    void test_UpdateLargestArmy_TwoKnights_DoesNotGrant() {
+        Player player = new Player(0, "John", PlayerColor.RED);
+        Game game = newGameWith(player);
+        for (int i = 0; i < 2; i++) {
+            player.incrementPlayedKnightCount();
+        }
+
+        game.updateLargestArmyPlayer();
+
+        assertFalse(player.isHasLargestArmy());
+        assertEquals(0, player.getVictoryPoints());
+    }
+
+    @Test // TC-DC-ARMY-3
+    void test_UpdateLargestArmy_ThreeKnights_GrantsArmyAndTwoPoints() {
+        Player player = new Player(0, "John", PlayerColor.RED);
+        Game game = newGameWith(player);
+        for (int i = 0; i < 3; i++) {
+            player.incrementPlayedKnightCount();
+        }
+
+        game.updateLargestArmyPlayer();
+
+        assertTrue(player.isHasLargestArmy());
+        assertEquals(2, player.getVictoryPoints());
+    }
+
+    @Test // TC-DC-ARMY-STEAL
+    void test_UpdateLargestArmy_HigherKnightCount_StealsFromCurrentHolder() {
+        Player playerA = new Player(0, "A", PlayerColor.RED);
+        Player playerB = new Player(1, "B", PlayerColor.BLUE);
+        Game game = new Game(new Board(), List.of(playerA, playerB), new Dice(new Random()), new TurnManager(2));
+
+        for (int i = 0; i < 3; i++) {
+            playerA.incrementPlayedKnightCount();
+        }
+        game.updateLargestArmyPlayer();
+        assertTrue(playerA.isHasLargestArmy());
+        assertEquals(2, playerA.getVictoryPoints());
+
+        for (int i = 0; i < 4; i++) {
+            playerB.incrementPlayedKnightCount();
+        }
+        game.updateLargestArmyPlayer();
+
+        assertFalse(playerA.isHasLargestArmy());
+        assertEquals(0, playerA.getVictoryPoints());
+        assertTrue(playerB.isHasLargestArmy());
+        assertEquals(2, playerB.getVictoryPoints());
+    }
+
+    @Test // TC-DC-ARMY-TIE
+    void test_UpdateLargestArmy_EqualKnightCount_DoesNotSteal() {
+        Player playerA = new Player(0, "A", PlayerColor.RED);
+        Player playerB = new Player(1, "B", PlayerColor.BLUE);
+        Game game = new Game(new Board(), List.of(playerA, playerB), new Dice(new Random()), new TurnManager(2));
+
+        for (int i = 0; i < 3; i++) {
+            playerA.incrementPlayedKnightCount();
+        }
+        game.updateLargestArmyPlayer(); // A holds it
+
+        for (int i = 0; i < 3; i++) {
+            playerB.incrementPlayedKnightCount();
+        }
+        game.updateLargestArmyPlayer(); // B ties at 3 -> must NOT steal
+
+        assertTrue(playerA.isHasLargestArmy());
+        assertFalse(playerB.isHasLargestArmy());
+        assertEquals(2, playerA.getVictoryPoints());
+        assertEquals(0, playerB.getVictoryPoints());
+    }
+
+    // ---- useDevCard card lookup ----
+
+    @Test // TC-DC-USE-PICK-BY-TYPE
+    void test_UseDevCard_SelectsRequestedTypeNotFirstInHand() {
+        Player player = new Player(0, "John", PlayerColor.RED);
+        Game game = newGameWith(player);
+        player.setDevCardHand(new DevCard(DevCardType.YEAR_OF_PLENTY)); // first in hand
+        player.setDevCardHand(new DevCard(DevCardType.ROAD_BUILDING));  // second in hand
+        player.manageDevCardActivation(0);
+
+        // Requesting the second card type must select by type, not by position.
+        game.useDevCard(0, DevCardType.ROAD_BUILDING, -1, -1, null, null, null);
+
+        List<DevCard> remaining = player.getDevCardHand();
+        assertEquals(1, remaining.size());
+        assertEquals(DevCardType.YEAR_OF_PLENTY, remaining.get(0).getType());
+    }
+
+    @Test // TC-DC-USE-MISSING
+    void test_UseDevCard_PlayerDoesNotHaveCardType_ThrowsIllegalArgument() {
+        Player player = new Player(0, "John", PlayerColor.RED);
+        Game game = newGameWith(player); // empty dev card hand
+
+        assertThrows(IllegalArgumentException.class,
+                () -> game.useDevCard(0, DevCardType.KNIGHT, 0, -1, null, null, null));
+    }
+
+    @Test // TC-DC-DRAW-BADID
+    void test_DrawDevCard_InvalidPlayerId_ThrowsIllegalArgument() {
+        Player player = new Player(0, "John", PlayerColor.RED);
+        Game game = newGameWith(player);
+
+        assertThrows(IllegalArgumentException.class, () -> game.drawDevCard(999));
+    }
+
+    @Test // TC-DC-RB-INACTIVE
+    void test_RoadBuilding_OnInactiveCard_ThrowsAndDeductsNoRoads() {
+        DevCard card = new DevCard(DevCardType.ROAD_BUILDING); // bought this turn -> inactive
+        Player player = new Player(0, "John", PlayerColor.RED);
+        Board board = new Board();
+
+        // verifyCardIsPlayable must reject an inactive card before any roads are spent.
+        assertThrows(IllegalActionException.class, () -> card.doRoadBuildingAction(player, board));
+        assertEquals(15, player.getInventory().get("roads"));
+    }
+
+    @Test // TC-DC-USE-VP
+    void test_UseDevCard_VictoryPoint_ThrowsUnsupportedOperation() {
+        Player player = new Player(0, "John", PlayerColor.RED);
+        Game game = newGameWith(player);
+        player.setDevCardHand(new DevCard(DevCardType.VICTORY_POINT));
+        player.manageDevCardActivation(0);
+
+        // Victory Point cards are scored passively and cannot be actively played.
+        assertThrows(UnsupportedOperationException.class,
+                () -> game.useDevCard(0, DevCardType.VICTORY_POINT, -1, -1, null, null, null));
     }
 }

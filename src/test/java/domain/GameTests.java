@@ -51,6 +51,17 @@ public class GameTests {
         assertThrows(IllegalArgumentException.class, () -> game.getPlayer(99));
     }
 
+    @Test
+    public void findPlayerByName_MatchesCaseInsensitively_ReturnsThatPlayer() {
+        // Searches for a non-first player by a differently-cased name.
+        assertEquals(player1, game.findPlayerByName("benny"));
+    }
+
+    @Test
+    public void findPlayerByName_UnknownName_ThrowsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> game.findPlayerByName("Nobody"));
+    }
+
 
     @Test
     public void phaseSetupCheck_WhenSetup_ReturnsTrue() {
@@ -98,6 +109,79 @@ public class GameTests {
         game.setCurrPhase(GamePhase.GAME_OVER);
         assertDoesNotThrow(() -> game.advancePhase());
         assertFalse(game.phaseSetupCheck());
+    }
+
+    @Test
+    public void isGameOver_NewGame_ReturnsFalse() {
+        assertFalse(game.isGameOver());
+    }
+
+    @Test
+    public void getWinner_NoPlayerAtThreshold_ReturnsNull() {
+        player0.addVictoryPoints(9);
+        player1.addVictoryPoints(5);
+
+        assertNull(game.getWinner());
+    }
+
+    @Test
+    public void getWinner_PlayerWithTenPoints_ReturnsThatPlayer() {
+        player1.addVictoryPoints(10);
+
+        assertEquals(player1, game.getWinner());
+    }
+
+    @Test
+    public void getWinner_PlayerAboveThreshold_ReturnsThatPlayer() {
+        player2.addVictoryPoints(12);
+
+        assertEquals(player2, game.getWinner());
+    }
+
+    @Test
+    public void getWinner_MultiplePlayersAtThreshold_ReturnsHighest() {
+        player0.addVictoryPoints(10);
+        player2.addVictoryPoints(11);
+
+        assertEquals(player2, game.getWinner());
+    }
+
+    @Test
+    public void getWinner_DoesNotEndGameOnItsOwn() {
+        player0.addVictoryPoints(10);
+
+        assertEquals(player0, game.getWinner());
+        assertFalse(game.isGameOver());
+    }
+
+    @Test
+    public void checkForWinner_NoWinner_ReturnsNullAndGameNotOver() {
+        player0.addVictoryPoints(8);
+
+        assertNull(game.checkForWinner());
+        assertFalse(game.isGameOver());
+    }
+
+    @Test
+    public void checkForWinner_PlayerHasWon_EndsGameAndReturnsWinner() {
+        player1.addVictoryPoints(10);
+
+        assertEquals(player1, game.checkForWinner());
+        assertTrue(game.isGameOver());
+        assertFalse(game.phaseSetupCheck());
+    }
+
+    @Test
+    public void checkForWinner_PlayerJumpsFromEightToEleven_EndsGameAndReturnsWinner() {
+        player2.addVictoryPoints(8);
+        assertNull(game.checkForWinner());
+        assertFalse(game.isGameOver());
+
+        player2.addVictoryPoints(3); // 8 -> 11, skipping the exact threshold of 10
+
+        assertEquals(player2, game.checkForWinner());
+        assertTrue(game.isGameOver());
+        assertEquals(11, player2.getVictoryPoints());
     }
 
     @Test
@@ -358,6 +442,21 @@ public class GameTests {
                 () -> game.findPlayerByName("Nobody"));
 
         assertEquals("Player not found with name: Nobody", ex.getMessage());
+    }
+
+    @Test 
+    public void build_setupSecondRoadWithoutNewSettlement_Rejected() {
+        game.build(player0, InfraType.SETTLEMENT, 0);
+
+        List<Edge> connectedEdges = game.getBoard().getEdgesConnectedToNode(game.getBoard().getNode(0));
+        int firstEdge = connectedEdges.get(0).getId();
+        int secondEdge = connectedEdges.get(1).getId();
+
+        game.build(player0, InfraType.ROAD, firstEdge); // clears setupSettlements for player0
+
+        assertThrows(IllegalStateException.class,
+                () -> game.build(player0, InfraType.ROAD, secondEdge));
+        assertNull(game.getBoard().getEdge(secondEdge).getEdgeOccupant());
     }
 
     private int[] placeSetupSettlements(Player player) {

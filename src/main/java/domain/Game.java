@@ -20,6 +20,7 @@ public class Game {
     private GamePhase currPhase;
     private final Map<Integer, Node> setupSettlements;
     private final Map<Integer, Node> secondSetupSettlements;
+    private static final int pointsNeededToWin = 10;
 
     public Game(Board board, List<Player> players, Dice dice, TurnManager turnManager) {
         this.board = board;
@@ -70,6 +71,29 @@ public class Game {
         else if (this.currPhase == GamePhase.NORMAL_PLAY){
             this.currPhase = GamePhase.GAME_OVER;
         }
+    }
+
+    public boolean isGameOver() {
+        return this.currPhase == GamePhase.GAME_OVER;
+    }
+
+    public Player getWinner() {
+        Player currWinner = null;
+        for (Player player : players) {
+            if (player.getVictoryPoints() >= pointsNeededToWin
+                    && (currWinner == null || player.getVictoryPoints() > currWinner.getVictoryPoints())) {
+                currWinner = player;
+            }
+        }
+        return currWinner;
+    }
+
+    public Player checkForWinner() {
+        Player winner = getWinner();
+        if (winner != null) {
+            this.currPhase = GamePhase.GAME_OVER;
+        }
+        return winner;
     }
 
     public void distributeSetupResources() {
@@ -246,18 +270,14 @@ public class Game {
     public void drawDevCard(int currentPlayerId) {
         Player player = findPlayerById(currentPlayerId);
 
-        // A dev card costs 1 Ore + 1 Wool (Sheep) + 1 Grain (Wheat).
         Map<ResourceType, Integer> cost = getDevCardCost();
         if (!player.hasResources(cost)) {
             throw new IllegalStateException("Player does not have enough resources to draw a dev card.");
         }
 
-        // Draw first so an empty deck throws before the player is charged.
         DevCard randomCard = devCardDeck.drawCard();
         player.setDevCardHand(randomCard);
         player.useResources(cost);
-
-        System.out.println("Player " + currentPlayerId + " drew a " + randomCard.getType());
     }
 
     private Map<ResourceType, Integer> getDevCardCost() {
@@ -413,9 +433,11 @@ public class Game {
 
         if (longestRoadPlayer != null) {
             longestRoadPlayer.removeVictoryPoints(2);
+            longestRoadPlayer.setHasLongestRoad(false);
         }
 
         candidate.addVictoryPoints(2);
+        candidate.setHasLongestRoad(true);
         longestRoadPlayer = candidate;
     }
 }

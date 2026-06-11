@@ -31,3 +31,4 @@ Because the deck exposes no size or peek accessor, boundaries are verified throu
 | Test Case | State of the System          | Expected output / behavior                                  | Implemented?       |
 |-----------|------------------------------|-------------------------------------------------------------|--------------------|
 | TC-DD-08  | A full deck is shuffled      | Card count (25) and composition are unchanged after shuffle | :white_check_mark: |
+| TC-DD-09  | A seeded deck (`new Random(0)`) is shuffled | Draw order differs from the original build order (the shuffle actually reorders) | :white_check_mark: |

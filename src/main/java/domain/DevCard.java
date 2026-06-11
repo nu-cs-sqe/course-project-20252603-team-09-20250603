@@ -71,22 +71,17 @@ public class DevCard {
         for (Player opponent : gamePlayers) {
             if (opponent.getId() != player.getId()) {
                 int countToSteal = opponent.getResources().getOrDefault(targetType, 0);
+                totalStolenAmount += countToSteal;
 
-                if (countToSteal > 0) {
-                    totalStolenAmount += countToSteal;
-
-                    Map<ResourceType, Integer> resourceCost = new HashMap<>();
-                    resourceCost.put(targetType, countToSteal);
-                    opponent.useResources(resourceCost);
-                }
+                Map<ResourceType, Integer> resourceCost = new HashMap<>();
+                resourceCost.put(targetType, countToSteal);
+                opponent.useResources(resourceCost);
             }
         }
 
-        if (totalStolenAmount > 0) {
-            Map<ResourceType, Integer> stolenResources = new HashMap<>();
-            stolenResources.put(targetType, totalStolenAmount);
-            player.addResources(stolenResources);
-        }
+        Map<ResourceType, Integer> stolenResources = new HashMap<>();
+        stolenResources.put(targetType, totalStolenAmount);
+        player.addResources(stolenResources);
 
         this.isActive = false;
     }
