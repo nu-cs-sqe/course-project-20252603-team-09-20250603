@@ -29,7 +29,15 @@ public class HandleBuildStepDefinitions {
     @Given("a game with a current player")
     public void a_game_with_a_current_player() {
         currentPlayer = new Player(0, "Bob", PlayerColor.RED);
-        dice = new Dice(new Random());
+        
+        Random fixedRandom = new Random() {
+            @Override
+            public int nextInt(int bound) {
+                return 0;
+            }
+        };
+
+        dice = new Dice(fixedRandom);
         turnManager = new TurnManager(3);
     }
 

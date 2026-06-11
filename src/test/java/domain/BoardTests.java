@@ -677,4 +677,53 @@ public class BoardTests {
         assertEquals(expectedThree, playerThree.getResources());
     }
 
+    @Test
+    void getPlayersOnHex_NoOccupiedNodes_ReturnsEmptyList() {
+        List<Player> players = board.getPlayersOnHex(0);
+
+        assertTrue(players.isEmpty());
+    }
+
+    @Test
+    void getPlayersOnHex_OneOccupiedNode_ReturnsPlayer() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        // Node 0 is adjacent to hex 0.
+        board.getNode(0).buildSettlement(player);
+
+        List<Player> players = board.getPlayersOnHex(0);
+
+        assertEquals(1, players.size());
+        assertTrue(players.contains(player));
+    }
+
+    @Test
+    void getPlayersOnHex_SamePlayerOccupiesMultipleAdjacentNodes_ReturnsPlayerOnce() {
+        Player player = new Player(1, "Alice", PlayerColor.RED);
+
+        // Nodes 0 and 2 are both adjacent to hex 0.
+        board.getNode(0).buildSettlement(player);
+        board.getNode(2).buildSettlement(player);
+
+        List<Player> players = board.getPlayersOnHex(0);
+
+        assertEquals(1, players.size());
+        assertEquals(player, players.get(0));
+    }
+
+    @Test
+    void getPlayersOnHex_DifferentPlayersOccupyAdjacentNodes_ReturnsBothPlayers() {
+        Player playerOne = new Player(1, "Alice", PlayerColor.RED);
+        Player playerTwo = new Player(2, "Bob", PlayerColor.BLUE);
+
+        board.getNode(0).buildSettlement(playerOne);
+        board.getNode(2).buildSettlement(playerTwo);
+
+        List<Player> players = board.getPlayersOnHex(0);
+
+        assertEquals(2, players.size());
+        assertTrue(players.contains(playerOne));
+        assertTrue(players.contains(playerTwo));
+    }
+
 }

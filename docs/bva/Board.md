@@ -123,3 +123,13 @@
 | Test Case 9  | Dice roll matches a hex containing the robber                                | No resources distributed from that hex                                    | :white_check_mark: |
 | Test Case 10 | Dice roll matches a hex containing the robber and other hex with settlements | No resources distributed from robber hex, other hex distributes as normal | :white_check_mark: |
 | Test Case 11 | Dice roll matches a multiple hexes with multiple occupied nodes each         | All eligible players receive resources                                    | :white_check_mark: |
+
+### Method under test: `getPlayersOnHex(int hexId)`
+
+|              | State of the System                                         | Expected output / behavior                          | Implemented? |
+|--------------|-------------------------------------------------------------|------------------------------------------------------|--------------|
+| Test Case 1  | No nodes around the hex are occupied                        | Returns an empty list                                | :x: |
+| Test Case 2  | One adjacent node is occupied by a player                   | Returns a list containing that player                | :x: |
+| Test Case 3  | Two adjacent nodes are occupied by the same player          | Returns that player only once                        | :x: |
+| Test Case 4  | Adjacent nodes are occupied by two different players        | Returns both players                                 | :x: |
+| Test Case 5  | Hex ID is invalid                                           | Throws `IllegalArgumentException`                    | :x: |
