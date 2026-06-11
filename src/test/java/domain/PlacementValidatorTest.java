@@ -234,6 +234,45 @@ public class PlacementValidatorTest {
                 () -> validator.validateRegularRoad(0, player));
     }
 
+    @Test // TC-PV-11
+    void test_RegularRoadSucceedsWhenConnectedToOwnSettlementAtNodeB() {
+        board = new Board();
+        validator = new PlacementValidator(board);
+        Player player = new Player(0, "Player", PlayerColor.RED);
+
+        Edge target = board.getEdge(0);
+        target.getNodeB().buildSettlement(player);
+
+        assertDoesNotThrow(() ->
+                validator.validateRegularRoad(target.getId(), player)
+        );
+    }
+
+    @Test // TC-PV-12
+    void test_RegularRoadSucceedsWhenConnectedToOwnRoadAtNodeB() {
+        board = new Board();
+        validator = new PlacementValidator(board);
+        Player player = new Player(0, "Player", PlayerColor.RED);
+
+        Edge target = board.getEdge(0);
+        Edge neighbourAtNodeB = null;
+
+        for (Edge edge : board.getEdgesConnectedToNode(target.getNodeB())) {
+            if (edge.getId() != target.getId()) {
+                neighbourAtNodeB = edge;
+                break;
+            }
+        }
+
+        assertNotNull(neighbourAtNodeB);
+
+        neighbourAtNodeB.buildRoad(player);
+
+        assertDoesNotThrow(() ->
+                validator.validateRegularRoad(target.getId(), player)
+        );
+    }
+
     private Edge findNeighbourEdge(Edge target) {
         for (Edge edge : board.getEdgesConnectedToNode(target.getNodeA())) {
             if (edge.getId() != target.getId()) {

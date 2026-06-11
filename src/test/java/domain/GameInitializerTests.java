@@ -219,4 +219,36 @@ public class GameInitializerTests {
         assertNotNull(game.getTurnManager());
     }
 
+    @Test
+    void assignColor_IndexZero_ReturnsFirstColor() {
+        GameInitializer initializer = new GameInitializer();
+
+        assertEquals(PlayerColor.RED, initializer.assignColor(0));
+    }
+
+    @Test
+    void assignColor_IndexThree_ReturnsFourthColor() {
+        GameInitializer initializer = new GameInitializer();
+
+        assertEquals(PlayerColor.WHITE, initializer.assignColor(3));
+    }
+
+    @Test
+    void assignColor_NegativeIndex_ThrowsException() {
+        GameInitializer initializer = new GameInitializer();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            initializer.assignColor(-1);
+        });
+    }
+
+    @Test
+    void assignColor_IndexFour_ThrowsException() {
+        GameInitializer initializer = new GameInitializer();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            initializer.assignColor(4);
+        });
+    }
+
 }

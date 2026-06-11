@@ -2,6 +2,7 @@ package domain;
 
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -838,6 +839,42 @@ public class PlayerTests {
         assertThrows(IllegalStateException.class, () -> {
             player.removeRandomCard();
         });
+    }
+
+    @Test
+    void removeRandomCard_ResourceHandActuallyContainsDesert_IgnoresDesert() throws Exception {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        Field resourceHandField = Player.class.getDeclaredField("resourceHand");
+        resourceHandField.setAccessible(true);
+
+        @SuppressWarnings("unchecked")
+        Map<ResourceType, Integer> resourceHand =
+                (Map<ResourceType, Integer>) resourceHandField.get(player);
+
+        resourceHand.put(ResourceType.DESERT, 1);
+        resourceHand.put(ResourceType.WOOD, 1);
+
+        ResourceType removed = player.removeRandomCard();
+
+        assertEquals(ResourceType.WOOD, removed);
+        assertEquals(1, player.getResources().getOrDefault(ResourceType.DESERT, 0));
+    }
+
+    @Test
+    void removeRandomCard_ResourceHandActuallyContainsOnlyDesert_ThrowsException() throws Exception {
+        Player player = new Player(0, "Bob", PlayerColor.RED);
+
+        Field resourceHandField = Player.class.getDeclaredField("resourceHand");
+        resourceHandField.setAccessible(true);
+
+        @SuppressWarnings("unchecked")
+        Map<ResourceType, Integer> resourceHand =
+                (Map<ResourceType, Integer>) resourceHandField.get(player);
+
+        resourceHand.put(ResourceType.DESERT, 1);
+
+        assertThrows(IllegalStateException.class, player::removeRandomCard);
     }
 
     @Test
