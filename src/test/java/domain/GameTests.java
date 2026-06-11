@@ -308,6 +308,58 @@ public class GameTests {
         assertNull(game.getBoard().getNode(0).getInfraType());
     }
 
+    @Test
+    public void useDevCard_VictoryPointCard_ThrowsUnsupportedOperationException() {
+        player0.setDevCardHand(new DevCard(DevCardType.KNIGHT));
+        player0.setDevCardHand(new DevCard(DevCardType.VICTORY_POINT));
+
+        UnsupportedOperationException ex = assertThrows(UnsupportedOperationException.class,
+                () -> game.useDevCard(0, DevCardType.VICTORY_POINT, -1, -1, null, null, null));
+
+        assertEquals("This development card type cannot be manually played.", ex.getMessage());
+    }
+
+    @Test
+    public void updateLargestArmyPlayer_NewLeaderOvertakesPrevious_RemovesFlagFromOldLeader() {
+        for (int i = 0; i < 3; i++) {
+            player0.incrementPlayedKnightCount();
+        }
+        game.updateLargestArmyPlayer();
+        assertTrue(player0.isHasLargestArmy());
+
+        for (int i = 0; i < 4; i++) {
+            player1.incrementPlayedKnightCount();
+        }
+        game.updateLargestArmyPlayer();
+
+        assertFalse(player0.isHasLargestArmy());
+        assertTrue(player1.isHasLargestArmy());
+    }
+
+    @Test
+    public void useDevCard_PlayerDoesNotHaveCardType_ThrowsIllegalArgumentException() {
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> game.useDevCard(0, DevCardType.KNIGHT, -1, -1, null, null, null));
+
+        assertEquals("Player doesn't have this card type", ex.getMessage());
+    }
+
+    @Test
+    public void useDevCard_InvalidPlayerId_ThrowsIllegalArgumentException() {
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> game.useDevCard(99, DevCardType.KNIGHT, -1, -1, null, null, null));
+
+        assertEquals("Player not found with ID: 99", ex.getMessage());
+    }
+
+    @Test
+    public void findPlayerByName_UnknownName_ThrowsIllegalArgumentException() {
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> game.findPlayerByName("Nobody"));
+
+        assertEquals("Player not found with name: Nobody", ex.getMessage());
+    }
+
     private int[] placeSetupSettlements(Player player) {
         int firstNodeId = findValidSettlementNode();
         game.build(player, InfraType.SETTLEMENT, firstNodeId);
