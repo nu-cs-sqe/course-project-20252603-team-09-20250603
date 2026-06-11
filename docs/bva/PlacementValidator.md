@@ -1,11 +1,6 @@
 ## Class: `PlacementValidator`
-**Responsibilities:** Enforces distance and adjacency rules.
+Enforces distance and adjacency rules.
 
-# PlacementValidator BVA
-
-**Responsibilities:** Enforces distance and adjacency rules for settlement placement.
-
----
 
 ## Method under test: `validateSettlementPlacement(Node targetNode)`
 
@@ -28,6 +23,7 @@ Ensures that a road placement connects to a owned settlement (node).
 |--------------|--------------------------------------------------|-------------------------------------------|--------------|
 | **TC-PV-04** | Edge ID matches settlement node's hash code      | No exception thrown                       | ✅            | 
 | **TC-PV-05** | Edge ID does not match settlement node's hash code | Throws `IllegalPlacementException`      |   ✅          |
+| **TC-PV-11** | Target edge is already occupied                  | Throws `IllegalPlacementException` ("Edge already occupied.") | ✅            |
 
 
 

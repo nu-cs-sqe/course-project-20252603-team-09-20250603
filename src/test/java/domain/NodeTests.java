@@ -34,10 +34,9 @@ public class NodeTests {
         EasyMock.replay(mockPlayer1);
         EasyMock.replay(mockPlayer2);
 
-        // player 1 builds a settlement
+
         n.buildSettlement(mockPlayer1);
 
-        // player 2 tries to build a settlement
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
                 () -> n.buildSettlement(mockPlayer2)
@@ -69,15 +68,14 @@ public class NodeTests {
         n.buildSettlement(mockPlayer);
         n.buildCity(mockPlayer);
 
-        // try to build a city on a city
-        IllegalStateException exception = assertThrows(
-                IllegalStateException.class,
+        IllegalPlacementException exception = assertThrows(
+                IllegalPlacementException.class,
                 () -> n.buildCity(mockPlayer)
         );
 
         assertEquals(InfraType.CITY, n.getInfraType());
         assertSame(mockPlayer, n.getNodeOccupant());
-        assertEquals("Cannot upgrade a city further.", exception.getMessage());
+        assertEquals(DomainErrorKey.PLACEMENT_CITY_ALREADY_UPGRADED, exception.getErrorKey());
     }
 
     @Test public void buildCity_GetInfraType_UnsuccessfulUpdateEmptyNodeToCity() {
@@ -86,15 +84,14 @@ public class NodeTests {
 
         EasyMock.replay(mockPlayer);
 
-        // try to build a city on an unoccupied node
-        IllegalStateException exception = assertThrows(
-                IllegalStateException.class,
+        IllegalPlacementException exception = assertThrows(
+                IllegalPlacementException.class,
                 () -> n.buildCity(mockPlayer)
         );
 
         assertNull(n.getInfraType());
         assertNull(n.getNodeOccupant());
-        assertEquals("Cannot upgrade an unsettled node to city.", exception.getMessage());
+        assertEquals(DomainErrorKey.PLACEMENT_CITY_REQUIRES_SETTLEMENT, exception.getErrorKey());
     }
 
     @Test public void buildCity_UnsuccessfulUpgradeOpponentToCity() {
@@ -108,13 +105,13 @@ public class NodeTests {
         n.buildSettlement(mockPlayer1);
         n.buildCity(mockPlayer1);
 
-        IllegalStateException exception = assertThrows(
-                IllegalStateException.class,
+        IllegalPlacementException exception = assertThrows(
+                IllegalPlacementException.class,
                 () -> n.buildCity(mockPlayer2)
         );
 
         assertEquals(mockPlayer1, n.getNodeOccupant());
-        assertEquals("Cannot build a city on an already-settled node.", exception.getMessage());
+        assertEquals(DomainErrorKey.PLACEMENT_CITY_ON_OPPONENT_NODE, exception.getErrorKey());
     }
 
     @Test

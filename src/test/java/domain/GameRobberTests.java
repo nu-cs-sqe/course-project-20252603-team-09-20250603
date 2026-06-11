@@ -55,7 +55,6 @@ public class GameRobberTests {
         Player player1 = new Player(0, "Bob", PlayerColor.RED);
         Game game = new Game(board, List.of(player1), new Dice(new Random()), new TurnManager(1));
 
-        // The robber starts on the desert (hex 9); moving it onto its own hex is illegal.
          assertThrows(IllegalStateException.class, () -> {
              game.handleMoveRobber(7, 9, 0, -1);
          });
@@ -97,7 +96,6 @@ public class GameRobberTests {
         Player active = new Player(0, "Bob", PlayerColor.RED);
         Player victim = new Player(1, "Ann", PlayerColor.BLUE);
 
-        // Victim owns a settlement on node 0, which borders hex 0.
         board.getNode(0).buildSettlement(victim);
         Map<ResourceType, Integer> hand = new HashMap<>();
         hand.put(ResourceType.ORE, 3);
@@ -107,7 +105,6 @@ public class GameRobberTests {
 
         game.handleMoveRobber(7, 0, active.getId(), victim.getId());
 
-        // Exactly one card moves from victim to active player.
         assertEquals(2, victim.getResources().getOrDefault(ResourceType.ORE, 0));
         assertEquals(1, active.getResources().getOrDefault(ResourceType.ORE, 0));
         assertTrue(board.getHex(0).getHasRobber());
@@ -119,7 +116,6 @@ public class GameRobberTests {
         Player active = new Player(0, "Bob", PlayerColor.RED);
         Player victim = new Player(1, "Ann", PlayerColor.BLUE);
 
-        // Victim has resources but no building on hex 0.
         Map<ResourceType, Integer> hand = new HashMap<>();
         hand.put(ResourceType.ORE, 3);
         victim.addResources(hand);
@@ -131,7 +127,7 @@ public class GameRobberTests {
 
         assertEquals(3, victim.getResources().getOrDefault(ResourceType.ORE, 0));
         assertEquals(0, active.getResources().getOrDefault(ResourceType.ORE, 0));
-        // Validation happens before the robber moves, so it stays on the desert.
+
         assertTrue(board.getHex(9).getHasRobber());
         assertFalse(board.getHex(0).getHasRobber());
     }
@@ -168,7 +164,6 @@ public class GameRobberTests {
         Player player1 = new Player(0, "Bob", PlayerColor.RED);
         Game game = new Game(board, List.of(player1), new Dice(new Random()), new TurnManager(1));
 
-        // The robber starts on the desert (hex 9); moving it onto its own hex is illegal.
          assertThrows(IllegalStateException.class, () -> {
              game.handleMoveRobberLocation( 9);
          });
@@ -208,16 +203,15 @@ public class GameRobberTests {
     void handleMoveRobber_VictimIdZero_StealsFromPlayerZero() {
         Board board = new Board(new Random(0));
         Player active = new Player(1, "Bob", PlayerColor.RED);
-        Player victim = new Player(0, "Ann", PlayerColor.BLUE); // victim id is exactly 0
+        Player victim = new Player(0, "Ann", PlayerColor.BLUE);
 
-        board.getNode(0).buildSettlement(victim); // node 0 borders hex 0
+        board.getNode(0).buildSettlement(victim);
         Map<ResourceType, Integer> hand = new HashMap<>();
         hand.put(ResourceType.ORE, 2);
         victim.addResources(hand);
 
         Game game = new Game(board, List.of(active, victim), new Dice(new Random()), new TurnManager(2));
 
-        // victimId == 0 must be treated as a real victim (boundary: < 0, not <= 0).
         game.handleMoveRobber(7, 0, active.getId(), victim.getId());
 
         assertEquals(1, victim.getResources().getOrDefault(ResourceType.ORE, 0));

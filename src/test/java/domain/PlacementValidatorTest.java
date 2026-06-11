@@ -25,7 +25,7 @@ public class PlacementValidatorTest {
         }
 
         assertNotNull(node0);
-        node0.buildSettlement(mockPlayer); // Occupy the target node itself
+        node0.buildSettlement(mockPlayer);
 
         EasyMock.replay(mockPlayer);
 
@@ -56,7 +56,7 @@ public class PlacementValidatorTest {
         }
 
         assertNotNull(node1);
-        node1.buildSettlement(mockPlayer); // Occupy the adjacent node
+        node1.buildSettlement(mockPlayer);
 
         EasyMock.replay(mockPlayer);
 
@@ -147,7 +147,6 @@ public class PlacementValidatorTest {
                     break;
                 }
             } catch (IllegalArgumentException ignored) {
-                // Ignore invalid IDs while searching
             }
         }
 
@@ -159,6 +158,20 @@ public class PlacementValidatorTest {
         assertThrows(IllegalPlacementException.class, () -> {
             validator.validateInitialRoad(finalInvalidEdgeId, finalSettlementNode);
         });
+    }
+
+    @Test // TC-PV-11
+    void test_InitialRoadFailsWhenEdgeOccupied() {
+        board = new Board();
+        validator = new PlacementValidator(board);
+        Player player = new Player(0, "Player", PlayerColor.RED);
+
+        Edge edge = board.getEdge(0);
+        edge.buildRoad(player);
+
+        IllegalPlacementException exception = assertThrows(IllegalPlacementException.class,
+                () -> validator.validateInitialRoad(0, edge.getNodeA()));
+        assertEquals(DomainErrorKey.PLACEMENT_EDGE_ALREADY_OCCUPIED, exception.getErrorKey());
     }
 
     @Test // TC-PV-06

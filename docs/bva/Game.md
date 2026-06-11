@@ -74,7 +74,10 @@ behavior is exercised by JUnit tests (pitest does not run the cucumber suite).
 | **TC-GB-06** | Normal-play road not connected to the player's road/building       | Rejected (`IllegalStateException`); edge stays empty        | :white_check_mark: |
 | **TC-GB-07** | Settlement violates the distance rule (neighbor occupied)          | Rejected (`IllegalStateException`); target node stays empty | :white_check_mark: |
 | **TC-GB-08** | Setup-phase road, unconnected vs. connected to the new settlement  | Unconnected rejected; connected road is placed              | :white_check_mark: |
-| **TC-GB-09** | Setup-phase: a 2nd road placed without a new settlement in between  | Rejected (`IllegalStateException`); recent settlement is cleared after its road | :white_check_mark: |
+| **TC-GB-09** | `infraType` is `null`                                              | Rejected (`IllegalArgumentException`, "Build type cannot be null") | :white_check_mark: |
+| **TC-GB-10** | Setup-phase road placed before any settlement (no recent settlement) | Rejected (`IllegalStateException`, "...build a settlement before...road during setup."); edge stays empty | :white_check_mark: |
+| **TC-GB-11** | City built on an unsettled (empty) node                            | Rejected (`IllegalStateException`, "Cannot upgrade an unsettled node to city."); node stays empty | :white_check_mark: |
+| **TC-GB-12** | Setup-phase: a 2nd road placed without a new settlement in between  | Rejected (`IllegalStateException`); recent settlement is cleared after its road | :white_check_mark: |
 
 ## Method under test: `calculateLongestRoad(Player player)`
 
@@ -95,6 +98,25 @@ behavior is exercised by JUnit tests (pitest does not run the cucumber suite).
 | Test Case 19 | Same player still has longest road               | Victory points do not change again                  | :white_check_mark:       |
 | Test Case 20 | Another player exceeds the current longest road  | Old player loses 2 points; new player gains 2       | :white_check_mark:       |
 
+## Method under test: `useDevCard(...)`
+
+|              | State of the System                                            | Expected output / behavior                                                  | Implemented? |
+|--------------|----------------------------------------------------------------|-----------------------------------------------------------------------------|--------------|
+| Test Case 21 | Player attempts to manually play a `VICTORY_POINT` dev card     | Rejected (`UnsupportedOperationException`, "This development card type cannot be manually played.") | :white_check_mark: |
+| Test Case 23 | Player tries to play a card type they do not hold              | Rejected (`IllegalArgumentException`, "Player doesn't have this card type") | :white_check_mark: |
+| Test Case 24 | `currentPlayerId` does not match any player                     | Rejected (`IllegalArgumentException`, "Player not found with ID: ...") | :white_check_mark: |
+
+## Method under test: `updateLargestArmyPlayer()`
+
+|              | State of the System                                                  | Expected output / behavior                                       | Implemented? |
+|--------------|----------------------------------------------------------------------|------------------------------------------------------------------|--------------|
+| Test Case 22 | A new player's knight count overtakes the previous largest-army holder | Previous holder loses the largest-army flag; new holder gains it | :white_check_mark: |
+
+## Method under test: `findPlayerByName(String name)`
+
+|              | State of the System              | Expected output / behavior                                        | Implemented? |
+|--------------|----------------------------------|-------------------------------------------------------------------|--------------|
+| Test Case 25 | No player matches the given name | Throws `IllegalArgumentException` ("Player not found with name: ...") | :white_check_mark: |
 ## Method under test: `useDevCard(int currentPlayerId, DevCardType cardType, int targetHexId, int victimPlayerId, ResourceType choice1, ResourceType choice2, ResourceType targetType)`
 
 Each card type, when played through the `Game`, must produce its real effect (the dispatch actually

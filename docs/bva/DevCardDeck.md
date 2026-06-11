@@ -2,7 +2,6 @@
 
 Manages the shuffled draw pile of development cards. A new deck holds 25 cards:
 **14 Knight, 5 Victory Point, 2 Road Building, 2 Year of Plenty, 2 Monopoly**.
-Because the deck exposes no size or peek accessor, boundaries are verified through `drawCard()`.
 
 ## Method under test: `DevCardDeck()` (construction)
 

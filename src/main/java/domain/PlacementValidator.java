@@ -1,5 +1,3 @@
-// - Handles initial settlement/road validation
-// - Loops through node/hex map to identify neighbors
 
 package domain;
 
