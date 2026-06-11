@@ -28,11 +28,14 @@ public class SetupController {
             Game game = gameInitializer.setupGame(enteredNames);
             mainView.showBoardView(game);
         } catch (IllegalArgumentException e) {
-            MessageDialog.showError(view, e.getMessage());
+            view.setStatusMessage(I18n.text("setup.error", UiText.exceptionMessage(e)));
         } catch (Exception e) {
-            MessageDialog.showError(view, "System Error: " + e.getMessage());
-            e.printStackTrace();
+            MessageDialog.showError(view, I18n.text("error.system", e.getMessage()));
         }
+    }
+
+    public void handleBackToWelcome() {
+        mainView.showWelcomeView();
     }
 
     private List<String> getEnteredPlayerNames(List<String> names) {

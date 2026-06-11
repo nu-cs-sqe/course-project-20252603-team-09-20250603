@@ -1,6 +1,7 @@
 package ui;
 
-import domain.DevCardType;
+import domain.DevCard;
+import domain.DomainErrorKey;
 import domain.InfraType;
 import domain.Player;
 import domain.PlayerAction;
@@ -16,8 +17,8 @@ import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+
 public class PlayerActionView extends VBox {
     private final List<Player> players;
     private PlayerActionController controller;
@@ -32,9 +33,9 @@ public class PlayerActionView extends VBox {
         setSpacing(10);
         getStyleClass().add("player-action-view");
 
-        URL stylesheetUrl = getClass().getResource("/ui/player-action.css");
-        if (stylesheetUrl != null) {
-            getStylesheets().add(stylesheetUrl.toExternalForm());
+        URL stylesheet = getClass().getResource("/ui/player-action.css");
+        if (stylesheet != null) {
+            getStylesheets().add(stylesheet.toExternalForm());
         }
     }
 
@@ -46,23 +47,27 @@ public class PlayerActionView extends VBox {
     public void renderSetupTurn(Player player, boolean waitingForRoad) {
         getChildren().clear();
         selectedInfraButton = null;
+        selectedDevCardButton = null;
 
-        Label title = new Label("Setup Phase");
+        Label title = new Label(I18n.text("playerAction.setupPhaseActive"));
         title.getStyleClass().add("action-title");
 
-        Label playerTurn = new Label(player.getName() + "'s Turn");
+        Label playerTurn = new Label(I18n.text("playerAction.playerTurn", player.getName()));
         playerTurn.getStyleClass().add("player-turn-label");
         playerTurn.setStyle("-fx-text-fill: " + mapColorToHex(player.getColor().name()) + ";");
 
         String instruction = waitingForRoad
-                ? "Click an edge on the board to place a road."
-                : "Click a node on the board to place a settlement.";
+                ? I18n.text("playerAction.setupInstructionRoad")
+                : I18n.text("playerAction.setupInstructionSettlement");
         Label instructionLabel = new Label(instruction);
         instructionLabel.getStyleClass().add("setup-instruction");
         instructionLabel.setWrapText(true);
 
-        Label invLabel = new Label("Settlements left: " + player.getInventory().get("settlements")
-                + "\nRoads left: " + player.getInventory().get("roads"));
+        Label invLabel = new Label(
+                I18n.text("playerAction.settlementsLeft", player.getInventory().get("settlements"))
+                        + "\n"
+                        + I18n.text("playerAction.roadsLeft", player.getInventory().get("roads"))
+        );
         invLabel.getStyleClass().add("resources-label");
 
         getChildren().addAll(title, playerTurn, instructionLabel, invLabel);
@@ -71,19 +76,20 @@ public class PlayerActionView extends VBox {
     public void renderActionMenu() {
         getChildren().clear();
         selectedInfraButton = null;
+        selectedDevCardButton = null;
 
         Player currentPlayer = getCurrentPlayer();
         if (currentPlayer == null) {
-            Label title = new Label("No players available");
+            Label title = new Label(I18n.text("playerAction.noPlayersAvailable"));
             title.getStyleClass().add("action-title");
             getChildren().add(title);
             return;
         }
 
-        Label title = new Label("Normal Play");
+        Label title = new Label(I18n.text("playerAction.normalPlay"));
         title.getStyleClass().add("action-title");
 
-        Label playerTurn = new Label(currentPlayer.getName() + "'s Turn");
+        Label playerTurn = new Label(I18n.text("playerAction.playerTurn", currentPlayer.getName()));
         playerTurn.getStyleClass().add("player-turn-label");
         playerTurn.setStyle("-fx-text-fill: " + mapColorToHex(currentPlayer.getColor().name()) + ";");
 
@@ -91,7 +97,7 @@ public class PlayerActionView extends VBox {
         promptLabel.getStyleClass().add("build-prompt-label");
         promptLabel.setWrapText(true);
 
-        Label actionsTitle = new Label("Actions:");
+        Label actionsTitle = new Label(I18n.text("playerAction.actions"));
         actionsTitle.getStyleClass().add("resources-title");
 
         VBox actions = new VBox(6);
@@ -116,28 +122,28 @@ public class PlayerActionView extends VBox {
 
         Player currentPlayer = getCurrentPlayer();
         if (currentPlayer == null) {
-            Label title = new Label("No players available");
+            Label title = new Label(I18n.text("playerAction.noPlayersAvailable"));
             title.getStyleClass().add("action-title");
             getChildren().add(title);
             return;
         }
 
-        Label title = new Label("Build");
+        Label title = new Label(I18n.text("playerAction.buildTitle"));
         title.getStyleClass().add("action-title");
 
-        Label playerTurn = new Label(currentPlayer.getName() + "'s Turn");
+        Label playerTurn = new Label(I18n.text("playerAction.playerTurn", currentPlayer.getName()));
         playerTurn.getStyleClass().add("player-turn-label");
         playerTurn.setStyle("-fx-text-fill: " + mapColorToHex(currentPlayer.getColor().name()) + ";");
 
-        Label prompt = new Label("Choose an infrastructure type, click the board, then confirm.");
+        Label prompt = new Label(I18n.text("playerAction.buildPrompt"));
         prompt.getStyleClass().add("build-prompt-label");
         prompt.setWrapText(true);
 
-        Button roadButton = createInfraButton("Road", InfraType.ROAD);
-        Button settlementButton = createInfraButton("Settlement", InfraType.SETTLEMENT);
-        Button cityButton = createInfraButton("City", InfraType.CITY);
+        Button roadButton = createInfraButton(UiText.infra(InfraType.ROAD), InfraType.ROAD);
+        Button settlementButton = createInfraButton(UiText.infra(InfraType.SETTLEMENT), InfraType.SETTLEMENT);
+        Button cityButton = createInfraButton(UiText.infra(InfraType.CITY), InfraType.CITY);
 
-        Button confirmButton = new Button("Confirm");
+        Button confirmButton = new Button(I18n.text("button.confirm"));
         confirmButton.getStyleClass().addAll("action-button", "confirm-button");
         confirmButton.setMaxWidth(Double.MAX_VALUE);
         confirmButton.setOnAction(e -> {
@@ -146,7 +152,7 @@ public class PlayerActionView extends VBox {
             }
         });
 
-        Button cancelButton = new Button("Cancel");
+        Button cancelButton = new Button(I18n.text("button.cancel"));
         cancelButton.getStyleClass().addAll("action-button", "cancel-button");
         cancelButton.setMaxWidth(Double.MAX_VALUE);
         cancelButton.setOnAction(e -> {
@@ -167,32 +173,29 @@ public class PlayerActionView extends VBox {
         );
     }
 
-    public void renderUseDevCardMenu(Player player, Map<DevCardType, Integer> cardCounts) {
+    public void renderUseDevCardMenu(Player player, List<DevCard> devCards) {
         getChildren().clear();
         selectedInfraButton = null;
         selectedDevCardButton = null;
 
-        Label title = new Label("Use Development Card");
+        Label title = new Label(I18n.text("playerAction.useDevCardTitle"));
         title.getStyleClass().add("action-title");
 
-        Label playerTurn = new Label(player.getName() + "'s Turn");
+        Label playerTurn = new Label(I18n.text("playerAction.playerTurn", player.getName()));
         playerTurn.getStyleClass().add("player-turn-label");
         playerTurn.setStyle("-fx-text-fill: " + mapColorToHex(player.getColor().name()) + ";");
 
-        Label prompt = new Label("Select a development card, then press Use.");
+        Label prompt = new Label(I18n.text("playerAction.useDevCardPrompt"));
         prompt.getStyleClass().add("build-prompt-label");
         prompt.setWrapText(true);
 
         getChildren().addAll(title, playerTurn, prompt);
 
-        for (DevCardType type : DevCardType.values()) {
-            int count = cardCounts.getOrDefault(type, 0);
-            if (count > 0) {
-                getChildren().add(createDevCardButton(type, count));
-            }
+        for (DevCard card : devCards) {
+            getChildren().add(createDevCardButton(player, card));
         }
 
-        Button useButton = new Button("Use");
+        Button useButton = new Button(I18n.text("button.use"));
         useButton.getStyleClass().addAll("action-button", "confirm-button");
         useButton.setMaxWidth(Double.MAX_VALUE);
         useButton.setOnAction(e -> {
@@ -201,7 +204,7 @@ public class PlayerActionView extends VBox {
             }
         });
 
-        Button cancelButton = new Button("Cancel");
+        Button cancelButton = new Button(I18n.text("button.cancel"));
         cancelButton.getStyleClass().addAll("action-button", "cancel-button");
         cancelButton.setMaxWidth(Double.MAX_VALUE);
         cancelButton.setOnAction(e -> {
@@ -216,16 +219,16 @@ public class PlayerActionView extends VBox {
     /** Prompts for a single non-desert resource. Empty if the player cancels. */
     public Optional<ResourceType> promptResource(String header) {
         List<ResourceType> choices = playableResources();
-        return promptChoice("Choose Resource", header, choices, ResourceType::name);
+        return promptChoice(I18n.text("playerAction.chooseResourceTitle"), header, choices, UiText::resource);
     }
 
     /** Prompts for which player to steal from. Empty if the player cancels. */
     public Optional<Player> promptVictim(List<Player> candidates) {
         return promptChoice(
-                "Steal From",
-                "Choose a player to steal from",
+                I18n.text("playerAction.stealFromTitle"),
+                I18n.text("playerAction.stealFromHeader"),
                 candidates,
-                candidate -> candidate.getName() + " (" + candidate.getColor() + ")"
+                UiText::playerLabel
         );
     }
 
@@ -256,7 +259,7 @@ public class PlayerActionView extends VBox {
             root.getChildren().add(button);
         }
 
-        Button cancelButton = new Button("Cancel");
+        Button cancelButton = new Button(I18n.text("button.cancel"));
         cancelButton.setMaxWidth(Double.MAX_VALUE);
         cancelButton.getStyleClass().addAll("action-button", "cancel-button");
         cancelButton.setOnAction(e -> modal.close(Optional.empty()));
@@ -314,7 +317,7 @@ public class PlayerActionView extends VBox {
     }
 
     private Button createActionButton(PlayerAction action) {
-        Button button = new Button(formatActionLabel(action));
+        Button button = new Button(UiText.action(action));
         button.getStyleClass().add("action-button");
         if (action == PlayerAction.END_TURN) {
             button.getStyleClass().add("confirm-button");
@@ -351,17 +354,34 @@ public class PlayerActionView extends VBox {
         }
     }
 
-    private Button createDevCardButton(DevCardType type, int count) {
-        Button button = new Button(formatDevCardLabel(type) + "  x" + count);
+    private Button createDevCardButton(Player player, DevCard card) {
+        boolean isPlayableNow = isDevCardPlayableNow(player, card);
+        String statusKey = isPlayableNow
+                ? "playerAction.devCardStatus.active"
+                : "playerAction.devCardStatus.inactive";
+        Button button = new Button(I18n.text("playerAction.devCardEntry",
+                UiText.devCard(card.getType()),
+                I18n.text(statusKey)));
         button.getStyleClass().add("action-button");
         button.setMaxWidth(Double.MAX_VALUE);
         button.setOnAction(e -> {
             if (controller != null) {
+                if (!isDevCardPlayableNow(player, card)) {
+                    String errorKey = player.getHasPlayedDevCardThisTurn()
+                            ? DomainErrorKey.DEV_CARD_ALREADY_PLAYED_THIS_TURN.key()
+                            : DomainErrorKey.DEV_CARD_NOT_PLAYABLE_ON_PURCHASE_TURN.key();
+                    showError(I18n.text(errorKey));
+                    return;
+                }
                 selectDevCardButton(button);
-                controller.onDevCardTypeSelected(type);
+                controller.onDevCardSelected(card);
             }
         });
         return button;
+    }
+
+    private boolean isDevCardPlayableNow(Player player, DevCard card) {
+        return card.getIsActive() && !player.getHasPlayedDevCardThisTurn();
     }
 
     private void selectDevCardButton(Button button) {
@@ -371,42 +391,6 @@ public class PlayerActionView extends VBox {
         selectedDevCardButton = button;
         if (!selectedDevCardButton.getStyleClass().contains("selected-infra-button")) {
             selectedDevCardButton.getStyleClass().add("selected-infra-button");
-        }
-    }
-
-    private String formatDevCardLabel(DevCardType type) {
-        switch (type) {
-            case KNIGHT:
-                return "Knight";
-            case ROAD_BUILDING:
-                return "Road Building";
-            case YEAR_OF_PLENTY:
-                return "Year of Plenty";
-            case MONOPOLY:
-                return "Monopoly";
-            case VICTORY_POINT:
-                return "Victory Point";
-            default:
-                return type.name();
-        }
-    }
-
-    private String formatActionLabel(PlayerAction action) {
-        switch (action) {
-            case BUILD:
-                return "Build";
-            case BUY_DEV_CARD:
-                return "Buy Development Card";
-            case USE_DEV_CARD:
-                return "Use Development Card";
-            case TRADE_WITH_PLAYER:
-                return "Trade With Player";
-            case TRADE_WITH_BANK:
-                return "Trade With Bank";
-            case END_TURN:
-                return "End Turn";
-            default:
-                return action.name();
         }
     }
 

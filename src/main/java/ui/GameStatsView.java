@@ -15,6 +15,7 @@ import java.util.Map;
 
 public class GameStatsView extends VBox {
     private static final String BUILDING_COSTS_IMAGE = "/ui/building-costs.jpg";
+    private static final String BUILDING_COSTS_IMAGE_CHINESE = "/ui/building-costs-chinese.png";
     private static final String RESOURCE_ICON_DIR = "/ui/resource-icons/";
 
     public GameStatsView(GameStatsController controller) {
@@ -23,7 +24,10 @@ public class GameStatsView extends VBox {
         setSpacing(10);
         getStyleClass().add("game-stats-view");
 
-        getStylesheets().add(getClass().getResource("/ui/game-stats.css").toExternalForm());
+        java.net.URL stylesheet = getClass().getResource("/ui/game-stats.css");
+        if (stylesheet != null) {
+            getStylesheets().add(stylesheet.toExternalForm());
+        }
 
         // Let the controller populate the initial stats
         // This is done via setView() from MainView
@@ -32,11 +36,11 @@ public class GameStatsView extends VBox {
     public void renderStats(List<Player> players) {
         getChildren().clear();
 
-        Label title = new Label("Game Stats");
+        Label title = new Label(I18n.text("stats.title"));
         title.getStyleClass().add("stats-title");
         getChildren().add(title);
 
-        Label orderLabel = new Label("Order: " + getPlacementOrderString(players.size()));
+        Label orderLabel = new Label(I18n.text("stats.order", getPlacementOrderString(players.size())));
         orderLabel.getStyleClass().add("stats-order");
         getChildren().add(orderLabel);
 
@@ -48,13 +52,13 @@ public class GameStatsView extends VBox {
             String colorHex = mapColorToHex(p.getColor().name());
             playerBox.setStyle("-fx-border-color: " + colorHex + "; -fx-border-width: 2px;");
 
-            Label nameLabel = new Label(p.getName() + " (" + p.getColor() + ")");
+            Label nameLabel = new Label(UiText.playerLabel(p));
             nameLabel.getStyleClass().add("player-name");
 
-            Label vpLabel = new Label("Victory Points: " + p.getVictoryPoints());
+            Label vpLabel = new Label(I18n.text("stats.victoryPoints", p.getVictoryPoints()));
             vpLabel.getStyleClass().add("player-vp");
 
-            Label devCardLabel = new Label("Development Cards: " + p.getDevCardHand().size());
+            Label devCardLabel = new Label(I18n.text("stats.devCards", p.getDevCardHand().size()));
             devCardLabel.getStyleClass().add("player-vp");
 
             HBox resourcesRow = buildResourcesRow(p);
@@ -62,16 +66,22 @@ public class GameStatsView extends VBox {
             playerBox.getChildren().addAll(nameLabel, vpLabel, devCardLabel, resourcesRow);
 
             if (p.getHasLongestRoad()) {
-                Label longestRoadBadge = new Label("🛣 Longest Road");
+                Label longestRoadBadge = new Label(I18n.text("stats.longestRoad"));
                 longestRoadBadge.getStyleClass().add("player-vp");
                 playerBox.getChildren().add(longestRoadBadge);
+            }
+
+            if (p.isHasLargestArmy()) {
+                Label largestArmyBadge = new Label(I18n.text("stats.largestArmy"));
+                largestArmyBadge.getStyleClass().add("player-vp");
+                playerBox.getChildren().add(largestArmyBadge);
             }
 
             getChildren().add(playerBox);
         }
 
         ImageView buildingCostsImage = new ImageView(
-                new Image(getClass().getResource(BUILDING_COSTS_IMAGE).toExternalForm())
+                new Image(getClass().getResource(getBuildingCostsImagePath()).toExternalForm())
         );
         buildingCostsImage.getStyleClass().add("building-costs-image");
         buildingCostsImage.setFitWidth(190.0);
@@ -81,12 +91,18 @@ public class GameStatsView extends VBox {
         getChildren().add(buildingCostsImage);
     }
 
+    private String getBuildingCostsImagePath() {
+        return java.util.Locale.SIMPLIFIED_CHINESE.getLanguage().equals(I18n.getLocale().getLanguage())
+                ? BUILDING_COSTS_IMAGE_CHINESE
+                : BUILDING_COSTS_IMAGE;
+    }
+
     // Snake draft placeholder
     private String getPlacementOrderString(int numPlayers) {
         if (numPlayers == 3) {
-            return "1, 2, 3, 3, 2, 1";
+            return I18n.text("stats.order.threePlayers");
         }
-        return "1, 2, 3, 4, 4, 3, 2, 1";
+        return I18n.text("stats.order.fourPlayers");
     }
 
     private String mapColorToHex(String color) {
@@ -121,7 +137,7 @@ public class GameStatsView extends VBox {
         iconView.setPreserveRatio(true);
         iconView.getStyleClass().add("resource-icon");
 
-        Label countLabel = new Label("x" + count);
+        Label countLabel = new Label(I18n.text("stats.resourceCount", count));
         countLabel.getStyleClass().add("player-resources");
 
         HBox chip = new HBox(3, iconView, countLabel);

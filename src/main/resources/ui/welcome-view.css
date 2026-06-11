@@ -17,28 +17,17 @@
     -fx-alignment: center;
 }
 
-.primary-button {
-    -fx-background-color: #2e5044;
-    -fx-background-radius: 6;
+.language-label {
     -fx-font-size: 15px;
     -fx-font-weight: 700;
-    -fx-padding: 10 24;
-    -fx-text-fill: #ffffff;
+    -fx-text-fill: #25352f;
 }
 
-.primary-button:hover {
-    -fx-background-color: #386657;
-}
-
-.secondary-button {
-    -fx-background-color: transparent;
-    -fx-border-color: #2e5044;
-    -fx-border-radius: 6;
-    -fx-background-radius: 6;
+.language-option {
     -fx-font-size: 14px;
-    -fx-padding: 8 18;
     -fx-text-fill: #2e5044;
 }
+
 
 .status-label {
     -fx-font-size: 13px;

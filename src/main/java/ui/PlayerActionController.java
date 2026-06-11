@@ -2,6 +2,7 @@ package ui;
 
 import domain.DevCard;
 import domain.DevCardType;
+import domain.DomainErrorKey;
 import domain.Game;
 import domain.IllegalActionException;
 import domain.InfraType;
@@ -12,9 +13,7 @@ import domain.TradeManager;
 import domain.TurnManager;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class PlayerActionController {
@@ -39,7 +38,7 @@ public class PlayerActionController {
     private int selectedLocationId = -1;
     private LocationType selectedLocationType = null;
     private InfraType selectedBuildType = null;
-    private DevCardType selectedDevCardType = null;
+    private DevCard selectedDevCard = null;
     private boolean awaitingKnightHex = false;
     private boolean awaitingRobberHex = false;
 
@@ -103,7 +102,7 @@ public class PlayerActionController {
     public void onActionClicked(PlayerAction action) {
         if (!canTakeNormalPlayActions()) {
             if (view != null) {
-                view.showError("Wait for the dice roll to finish before taking actions.");
+                view.showError(I18n.text("playerAction.error.waitDiceActions"));
             }
             return;
         }
@@ -154,7 +153,7 @@ public class PlayerActionController {
         }
         if (!hasOtherPlayers) {
             if (view != null) {
-                view.showError("No other players to trade with.");
+                view.showError(I18n.text("playerAction.error.noOtherPlayersToTrade"));
             }
             return;
         }
@@ -193,10 +192,10 @@ public class PlayerActionController {
 
             if (boardController != null) {
                 boardController.setStatusMessage(
-                        currentPlayer.getName() + " bought a development card.");
+                        I18n.text("playerAction.status.devCardBought", currentPlayer.getName()));
             }
             if (view != null) {
-                view.showSuccess("You drew a " + formatDevCardType(drawn.getType()) + " card!");
+                view.showSuccess(I18n.text("playerAction.success.devCardDrawn", UiText.devCard(drawn.getType())));
             }
             if (statsController != null) {
                 statsController.updateStats();
@@ -205,25 +204,8 @@ public class PlayerActionController {
             update();
         } catch (IllegalStateException | IllegalArgumentException e) {
             if (view != null) {
-                view.showError(e.getMessage());
+                view.showError(UiText.exceptionMessage(e));
             }
-        }
-    }
-
-    private String formatDevCardType(DevCardType type) {
-        switch (type) {
-            case KNIGHT:
-                return "Knight";
-            case ROAD_BUILDING:
-                return "Road Building";
-            case YEAR_OF_PLENTY:
-                return "Year of Plenty";
-            case MONOPOLY:
-                return "Monopoly";
-            case VICTORY_POINT:
-                return "Victory Point";
-            default:
-                return type.name();
         }
     }
 
@@ -233,64 +215,76 @@ public class PlayerActionController {
             return;
         }
 
-        Map<DevCardType, Integer> counts = countDevCards(currentPlayer);
-        if (counts.isEmpty()) {
+        List<DevCard> devCards = currentPlayer.getDevCardHand();
+        if (devCards.isEmpty()) {
             if (view != null) {
-                view.showError("You have no development cards to use.");
+                view.showError(I18n.text("playerAction.error.noDevCards"));
             }
             return;
         }
 
-        selectedDevCardType = null;
+        selectedDevCard = null;
         awaitingKnightHex = false;
         if (view != null) {
-            view.renderUseDevCardMenu(currentPlayer, counts);
+            view.renderUseDevCardMenu(currentPlayer, devCards);
         }
     }
 
-    private Map<DevCardType, Integer> countDevCards(Player player) {
-        Map<DevCardType, Integer> counts = new EnumMap<>(DevCardType.class);
-        for (DevCard card : player.getDevCardHand()) {
-            counts.merge(card.getType(), 1, Integer::sum);
-        }
-        return counts;
-    }
-
-    public void onDevCardTypeSelected(DevCardType type) {
-        selectedDevCardType = type;
+    public void onDevCardSelected(DevCard card) {
+        selectedDevCard = card;
     }
 
     public void onUseDevCardCanceled() {
-        selectedDevCardType = null;
+        selectedDevCard = null;
         awaitingKnightHex = false;
         setHexSelectionMode(false);
         update();
     }
 
     public void onUseDevCardConfirmed() {
-        if (selectedDevCardType == null) {
+        if (selectedDevCard == null) {
             if (view != null) {
-                view.showError("Select a development card to use first.");
+                view.showError(I18n.text("playerAction.error.selectDevCardFirst"));
             }
             return;
         }
 
-        switch (selectedDevCardType) {
+        Player currentPlayer = getCurrentPlayer();
+        if (currentPlayer == null) {
+            return;
+        }
+
+        if (currentPlayer.getHasPlayedDevCardThisTurn()) {
+            if (view != null) {
+                view.showError(I18n.text(DomainErrorKey.DEV_CARD_ALREADY_PLAYED_THIS_TURN.key()));
+            }
+            return;
+        }
+
+        DevCard cardToPlay = selectedDevCard;
+        if (!cardToPlay.getIsActive()) {
+            if (view != null) {
+                view.showError(I18n.text(DomainErrorKey.DEV_CARD_NOT_PLAYABLE_ON_PURCHASE_TURN.key()));
+            }
+            return;
+        }
+
+        switch (cardToPlay.getType()) {
             case ROAD_BUILDING:
-                executeUseDevCard(DevCardType.ROAD_BUILDING, -1, -1, null, null, null, "Road Building played.");
+                executeUseDevCard(cardToPlay, -1, -1, null, null, null, I18n.text("playerAction.success.roadBuildingPlayed"));
                 break;
             case YEAR_OF_PLENTY:
-                playYearOfPlenty();
+                playYearOfPlenty(cardToPlay);
                 break;
             case MONOPOLY:
-                playMonopoly();
+                playMonopoly(cardToPlay);
                 break;
             case KNIGHT:
-                startKnightTargeting();
+                startKnightTargeting(cardToPlay);
                 break;
             case VICTORY_POINT:
                 if (view != null) {
-                    view.showSuccess("Victory Point cards are scored automatically and cannot be played.");
+                    view.showSuccess(I18n.text("playerAction.success.victoryPointAuto"));
                 }
                 break;
             default:
@@ -298,46 +292,47 @@ public class PlayerActionController {
         }
     }
 
-    private void playYearOfPlenty() {
+    private void playYearOfPlenty(DevCard cardToPlay) {
         if (view == null) {
             return;
         }
 
-        Optional<ResourceType> first = view.promptResource("Year of Plenty: choose the first resource");
+        Optional<ResourceType> first = view.promptResource(I18n.text("playerAction.yearOfPlenty.firstChoice"));
         if (first.isEmpty()) {
             update();
             return;
         }
 
-        Optional<ResourceType> second = view.promptResource("Year of Plenty: choose the second resource");
+        Optional<ResourceType> second = view.promptResource(I18n.text("playerAction.yearOfPlenty.secondChoice"));
         if (second.isEmpty()) {
             update();
             return;
         }
 
-        executeUseDevCard(DevCardType.YEAR_OF_PLENTY, -1, -1, first.get(), second.get(), null,
-                "Year of Plenty played.");
+        executeUseDevCard(cardToPlay, -1, -1, first.get(), second.get(), null,
+                I18n.text("playerAction.success.yearOfPlentyPlayed"));
     }
 
-    private void playMonopoly() {
+    private void playMonopoly(DevCard cardToPlay) {
         if (view == null) {
             return;
         }
 
-        Optional<ResourceType> choice = view.promptResource("Monopoly: choose a resource to take from all opponents");
+        Optional<ResourceType> choice = view.promptResource(I18n.text("playerAction.monopoly.choice"));
         if (choice.isEmpty()) {
             update();
             return;
         }
 
-        executeUseDevCard(DevCardType.MONOPOLY, -1, -1, null, null, choice.get(), "Monopoly played.");
+        executeUseDevCard(cardToPlay, -1, -1, null, null, choice.get(), I18n.text("playerAction.success.monopolyPlayed"));
     }
 
-    private void startKnightTargeting() {
+    private void startKnightTargeting(DevCard cardToPlay) {
+        selectedDevCard = cardToPlay;
         awaitingKnightHex = true;
         setHexSelectionMode(true);
         if (boardController != null) {
-            boardController.setStatusMessage("Knight: click a hex on the board to move the robber.");
+            boardController.setStatusMessage(I18n.text("playerAction.status.knightSelectHex"));
         }
         update();
     }
@@ -374,7 +369,7 @@ public class PlayerActionController {
             Optional<Player> chosen = view.promptVictim(candidates);
             if (chosen.isEmpty()) {
                 if (boardController != null) {
-                    boardController.setStatusMessage("Knight canceled.");
+                    boardController.setStatusMessage(I18n.text("playerAction.status.knightCanceled"));
                 }
                 update();
                 return;
@@ -382,7 +377,7 @@ public class PlayerActionController {
             victimId = chosen.get().getId();
         }
 
-        executeUseDevCard(DevCardType.KNIGHT, hexId, victimId, null, null, null, "Knight played.");
+        executeUseDevCard(selectedDevCard, hexId, victimId, null, null, null, I18n.text("playerAction.success.knightPlayed"));
     }
 
     private void handleRobberHexSelected(int hexId) {
@@ -401,9 +396,7 @@ public class PlayerActionController {
                     awaitingRobberHex = true;
                     setHexSelectionMode(true);
                     if (boardController != null) {
-                        boardController.setStatusMessage(
-                                currentPlayer.getName()
-                                        + ": choose a player to steal from, or click a different hex for the robber.");
+                        boardController.setStatusMessage(I18n.text("playerAction.status.robberChooseVictim", currentPlayer.getName()));
                     }
                     update();
                     return;
@@ -423,12 +416,11 @@ public class PlayerActionController {
             }
         } catch (IllegalArgumentException | IllegalStateException e) {
             if (view != null) {
-                view.showError(e.getMessage());
+                view.showError(UiText.exceptionMessage(e));
             }
             awaitingRobberHex = true;
             if (boardController != null) {
-                boardController.setStatusMessage(
-                        currentPlayer.getName() + ": click a different hex to place the robber.");
+                boardController.setStatusMessage(I18n.text("playerAction.status.robberRetry", currentPlayer.getName()));
             }
             setHexSelectionMode(true);
             return;
@@ -437,15 +429,11 @@ public class PlayerActionController {
         if (boardController != null) {
             boardController.refreshBoard();
             if (victim == null) {
-                boardController.setStatusMessage(
-                        currentPlayer.getName() + " moved the robber. No opponents to steal from.");
+                boardController.setStatusMessage(I18n.text("playerAction.status.robberMovedNoVictim", currentPlayer.getName()));
             } else if (victimHadResources) {
-                boardController.setStatusMessage(
-                        currentPlayer.getName() + " stole a resource from " + victim.getName() + ".");
+                boardController.setStatusMessage(I18n.text("playerAction.status.robberStole", currentPlayer.getName(), victim.getName()));
             } else {
-                boardController.setStatusMessage(
-                        currentPlayer.getName() + " moved the robber. "
-                                + victim.getName() + " had no resources to steal.");
+                boardController.setStatusMessage(I18n.text("playerAction.status.robberNoResources", currentPlayer.getName(), victim.getName()));
             }
         }
 
@@ -469,8 +457,7 @@ public class PlayerActionController {
         awaitingRobberHex = true;
         setHexSelectionMode(true);
         if (boardController != null) {
-            boardController.setStatusMessage(
-                    currentPlayer.getName() + ": click a hex on the board to place the robber.");
+            boardController.setStatusMessage(I18n.text("playerAction.status.robberChooseHex", currentPlayer.getName()));
         }
         if (statsController != null) {
             statsController.updateStats();
@@ -496,19 +483,20 @@ public class PlayerActionController {
         return candidates;
     }
 
-    private void executeUseDevCard(DevCardType type, int hexId, int victimId,
+    private void executeUseDevCard(DevCard cardToPlay, int hexId, int victimId,
                                    ResourceType choice1, ResourceType choice2, ResourceType targetType,
                                    String successMessage) {
         Player currentPlayer = getCurrentPlayer();
-        if (currentPlayer == null) {
+        if (currentPlayer == null || cardToPlay == null) {
             return;
         }
 
+        DevCardType type = cardToPlay.getType();
         try {
             game.useDevCard(currentPlayer.getId(), type, hexId, victimId, choice1, choice2, targetType);
             if (boardController != null) {
                 boardController.refreshBoard();
-                boardController.setStatusMessage(currentPlayer.getName() + " played " + formatDevCardType(type) + ".");
+                boardController.setStatusMessage(I18n.text("playerAction.status.devCardPlayed", currentPlayer.getName(), UiText.devCard(type)));
             }
             if (view != null) {
                 view.showSuccess(successMessage);
@@ -519,11 +507,11 @@ public class PlayerActionController {
             announceWinnerIfGameOver();
         } catch (IllegalActionException | IllegalArgumentException | IllegalStateException e) {
             if (view != null) {
-                view.showError(e.getMessage());
+                view.showError(UiText.exceptionMessage(e));
             }
         }
 
-        selectedDevCardType = null;
+        selectedDevCard = null;
         awaitingKnightHex = false;
         setHexSelectionMode(false);
         update();
@@ -543,7 +531,7 @@ public class PlayerActionController {
     public void onBuildTypeSelected(InfraType infraType) {
         if (!canTakeNormalPlayActions()) {
             if (view != null) {
-                view.showError("Wait for the dice roll to finish before taking actions.");
+                view.showError(I18n.text("playerAction.error.waitDiceActions"));
             }
             return;
         }
@@ -563,23 +551,24 @@ public class PlayerActionController {
     public void onLocationSelected(int locationId, LocationType locationType) {
         if (!canTakeNormalPlayActions()) {
             if (view != null) {
-                view.showError("Wait for the dice roll to finish before selecting a build location.");
+                view.showError(I18n.text("playerAction.error.waitDiceSelection"));
             }
             return;
         }
 
         if (selectedBuildType == null) {
             if (view != null) {
-                view.showError("Select infrastructure type to build first!");
+                view.showError(I18n.text("playerAction.error.selectInfraFirst"));
             }
             return;
         }
 
         if (!isLocationTypeValidForInfra(locationType)) {
-            String infraName = selectedBuildType.name().toLowerCase();
-            String allowed = (selectedBuildType == InfraType.ROAD) ? "edges" : "nodes";
             if (view != null) {
-                view.showError(infraName + " must be placed on " + allowed + "!");
+                String allowed = (selectedBuildType == InfraType.ROAD)
+                        ? I18n.text("location.edges")
+                        : I18n.text("location.nodes");
+                view.showError(I18n.text("playerAction.error.invalidBuildLocation", UiText.infra(selectedBuildType), allowed));
             }
             return;
         }
@@ -591,14 +580,14 @@ public class PlayerActionController {
     public void onBuildConfirmed() {
         if (!canTakeNormalPlayActions()) {
             if (view != null) {
-                view.showError("Wait for the dice roll to finish before building.");
+                view.showError(I18n.text("playerAction.error.waitDiceBuilding"));
             }
             return;
         }
 
         if (selectedBuildType == null || selectedLocationId < 0 || selectedLocationType == null) {
             if (view != null) {
-                view.showError("must select both infrastructure type and location in order to build");
+                view.showError(I18n.text("playerAction.error.buildMissingSelection"));
             }
             return;
         }
@@ -614,17 +603,17 @@ public class PlayerActionController {
             if (boardController != null) {
                 boardController.refreshBoard();
                 boardController.setStatusMessage(
-                        currentPlayer.getName()
-                                + " built a "
-                                + selectedBuildType.name().toLowerCase()
-                                + " at "
-                                + selectedLocationType.name().toLowerCase()
-                                + " "
-                                + selectedLocationId + "."
+                        I18n.text(
+                                "playerAction.status.buildComplete",
+                                currentPlayer.getName(),
+                                UiText.infra(selectedBuildType),
+                                locationTypeLabel(selectedLocationType),
+                                selectedLocationId
+                        )
                 );
             }
             if (view != null) {
-                view.showSuccess("Successful build");
+                view.showSuccess(I18n.text("playerAction.success.build"));
             }
             if (statsController != null) {
                 statsController.updateStats();
@@ -634,7 +623,7 @@ public class PlayerActionController {
             update();
         } catch (IllegalStateException | IllegalArgumentException e) {
             if (view != null) {
-                view.showError(e.getMessage());
+                view.showError(UiText.exceptionMessage(e));
             }
             clearBuildState();
             update();
@@ -670,8 +659,7 @@ public class PlayerActionController {
     private void announceWinnerIfGameOver() {
         Player winner = game.checkForWinner();
         if (winner != null && view != null) {
-            view.showSuccess("🏆 " + winner.getName() + " wins with "
-                    + winner.getVictoryPoints() + " victory points!");
+            view.showSuccess(I18n.text("playerAction.success.winner", winner.getName(), winner.getVictoryPoints()));
         }
     }
 
@@ -685,18 +673,18 @@ public class PlayerActionController {
         }
 
         if (rollingForTurn) {
-            return "Dice are rolling for this turn.";
+            return I18n.text("playerAction.prompt.rolling");
         }
 
         if (!turnRollResolved) {
-            return "Close the dice result to continue.";
+            return I18n.text("playerAction.prompt.waitingForRoll");
         }
 
         if (awaitingRobberHex) {
-            return "Click a hex on the board to place the robber.";
+            return I18n.text("playerAction.prompt.placeRobber");
         }
 
-        return "Choose an action for this turn.";
+        return I18n.text("playerAction.prompt.chooseAction");
     }
 
     private boolean isLocationTypeValidForInfra(LocationType locationType) {
@@ -739,7 +727,7 @@ public class PlayerActionController {
         currentPlayer.manageDevCardActivation(currentPlayer.getId());
 
         if (boardController != null) {
-            boardController.setStatusMessage(currentPlayer.getName() + "'s turn. Rolling dice...");
+            boardController.setStatusMessage(I18n.text("playerAction.status.turnRolling", currentPlayer.getName()));
         }
         if (diceRollView != null) {
             diceRollView.showTurnReady(currentPlayer);
@@ -772,7 +760,7 @@ public class PlayerActionController {
         if (rollTotal == 7) {
             if (diceRollView != null) {
                 diceRollView.showRollResult(currentPlayer, lastDieOne, lastDieTwo,
-                        "Rolled 7! The robber activates.", this::beginRobberPlacement);
+                        I18n.text("playerAction.roll.robberActivates"), this::beginRobberPlacement);
             } else {
                 beginRobberPlacement();
             }
@@ -782,12 +770,10 @@ public class PlayerActionController {
 
             if (diceRollView != null) {
                 diceRollView.showRollResult(currentPlayer, lastDieOne, lastDieTwo,
-                        "Rolled " + lastDieOne + " + " + lastDieTwo + " = " + rollTotal
-                                + ". Resources distributed.");
+                        I18n.text("playerAction.roll.distributed", lastDieOne, lastDieTwo, rollTotal));
             }
             if (boardController != null) {
-                boardController.setStatusMessage(
-                        currentPlayer.getName() + " rolled " + rollTotal + ". Resources distributed.");
+                boardController.setStatusMessage(I18n.text("playerAction.status.rollDistributed", currentPlayer.getName(), rollTotal));
                 boardController.refreshBoard();
             }
             if (statsController != null) {
@@ -795,5 +781,11 @@ public class PlayerActionController {
             }
             update();
         }
+    }
+
+    private String locationTypeLabel(LocationType locationType) {
+        return locationType == LocationType.EDGE
+                ? I18n.text("location.edge")
+                : I18n.text("location.node");
     }
 }

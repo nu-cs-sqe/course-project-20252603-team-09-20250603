@@ -14,7 +14,7 @@ public class Main extends Application {
         rootPane.getChildren().add(mainView);
         Scene scene = new Scene(rootPane, 1000, 700);
 
-        stage.setTitle("Catan");
+        stage.setTitle(I18n.text("app.title"));
         stage.setMinWidth(800);
         stage.setMinHeight(560);
         stage.setScene(scene);

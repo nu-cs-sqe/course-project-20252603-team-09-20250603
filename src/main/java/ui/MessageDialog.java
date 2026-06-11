@@ -20,11 +20,11 @@ public final class MessageDialog {
     }
 
     public static void showError(Node owner, String message) {
-        show(owner, "Error", message, "error-dialog");
+        show(owner, I18n.text("dialog.errorTitle"), message, "error-dialog");
     }
 
     public static void showInfo(Node owner, String message) {
-        show(owner, "Success", message, "info-dialog");
+        show(owner, I18n.text("dialog.successTitle"), message, "info-dialog");
     }
 
     private static void show(Node owner, String title, String message, String dialogStyleClass) {
@@ -67,7 +67,7 @@ public final class MessageDialog {
         messageLabel.setTextAlignment(TextAlignment.CENTER);
         messageLabel.setMaxWidth(320);
 
-        Button okButton = new Button("OK");
+        Button okButton = new Button(I18n.text("dialog.ok"));
         okButton.getStyleClass().add("message-dialog-button");
         okButton.setDefaultButton(true);
         okButton.setOnAction(e -> stackPane.getChildren().remove(overlay));

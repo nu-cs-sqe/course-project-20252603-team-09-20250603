@@ -32,7 +32,7 @@ public class SetupGameController {
     public void setBoardView(BoardView boardView) {
         this.boardView = boardView;
         Player first = game.getPlayer(turnManager.getCurrentPlayerIndex() - 1);
-        boardView.setStatusMessage(first.getName() + " - Place your first settlement.");
+        boardView.setStatusMessage(I18n.text("setupGame.firstSettlementPrompt", first.getName()));
         refreshSidePanel();
     }
 
@@ -71,15 +71,15 @@ public class SetupGameController {
                 handleInitialRoad(locationId, buildType);
             }
         } catch (IllegalStateException e) {
-            showError(e.getMessage());
+            showError(UiText.exceptionMessage(e));
         } catch (Exception e) {
-            showError("Invalid placement.");
+            showError(I18n.text("error.setup.invalidPlacement"));
         }
     }
 
     private void handleInitialSettlement(int locationId, InfraType buildType) {
         if (buildType != InfraType.SETTLEMENT) {
-            showError("Please click a node to place a Settlement.");
+            showError(I18n.text("setupGame.error.placeSettlement"));
             return;
         }
 
@@ -88,8 +88,7 @@ public class SetupGameController {
         waitingForRoad = true;
 
         if (boardView != null) {
-            boardView.setStatusMessage(currentPlayer.getName()
-                    + " placed settlement at node id = " + locationId  + ". Now place a road.");
+            boardView.setStatusMessage(I18n.text("setupGame.status.settlementPlaced", currentPlayer.getName(), locationId));
             boardView.refreshBoard();
         }
         if (statsController != null) {
@@ -100,7 +99,7 @@ public class SetupGameController {
 
     private void handleInitialRoad(int locationId, InfraType buildType) {
         if (buildType != InfraType.ROAD) {
-            showError("Please click an edge to place a Road.");
+            showError(I18n.text("setupGame.error.placeRoad"));
             return;
         }
 
@@ -126,12 +125,12 @@ public class SetupGameController {
                 onSetupComplete.run();
             }
             if (boardView != null) {
-                boardView.setStatusMessage("Setup complete! Starting normal play.");
+                boardView.setStatusMessage(I18n.text("setupGame.complete"));
             }
         } else {
             Player nextPlayer = game.getPlayer(turnManager.getCurrentPlayerIndex() - 1);
             if (boardView != null) {
-                boardView.setStatusMessage("Road placed at edge id = " + locationId + ". Next up: " + nextPlayer.getName() + " - Place a settlement.");
+                boardView.setStatusMessage(I18n.text("setupGame.status.roadPlacedNext", locationId, nextPlayer.getName()));
             }
             refreshSidePanel();
         }

@@ -54,22 +54,21 @@ public class DiscardResourcesDialog {
         root.getStyleClass().addAll("trade-dialog-root", "message-dialog");
         root.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
-        Label playerLabel = new Label(player.getName() + "'s Turn");
+        Label playerLabel = new Label(I18n.text("playerAction.playerTurn", player.getName()));
         playerLabel.getStyleClass().add("player-turn-label");
         playerLabel.setStyle("-fx-text-fill: " + mapColorToHex(player.getColor().name()) + ";");
 
         Label instructionLabel = new Label(
-                "A 7 was rolled! You must discard " + discardCount + " resource"
-                        + (discardCount == 1 ? "." : "s."));
+                I18n.text("discard.instruction", discardCount));
         instructionLabel.getStyleClass().add("build-prompt-label");
         instructionLabel.setWrapText(true);
 
-        totalLabel = new Label("Discarding: 0 / " + discardCount);
+        totalLabel = new Label(I18n.text("discard.progress", 0, discardCount));
         totalLabel.getStyleClass().add("resources-title");
 
         HBox resourceRow = buildResourceRow();
 
-        discardButton = new Button("Discard");
+        discardButton = new Button(I18n.text("discard.button"));
         discardButton.getStyleClass().addAll("action-button", "confirm-button");
         discardButton.setDisable(true);
         discardButton.setOnAction(e -> {
@@ -99,7 +98,7 @@ public class DiscardResourcesDialog {
 
         ImageView icon = loadIcon(resource);
 
-        Label availLabel = new Label("x" + available);
+        Label availLabel = new Label(I18n.text("stats.resourceCount", available));
         availLabel.getStyleClass().add("trade-avail-count");
 
         Label selectedLabel = new Label("0");
@@ -144,7 +143,7 @@ public class DiscardResourcesDialog {
     }
 
     private void updateTotal() {
-        totalLabel.setText("Discarding: " + totalSelected + " / " + discardCount);
+        totalLabel.setText(I18n.text("discard.progress", totalSelected, discardCount));
         discardButton.setDisable(totalSelected != discardCount);
 
         Map<ResourceType, Integer> resources = player.getResources();
