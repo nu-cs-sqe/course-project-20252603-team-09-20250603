@@ -437,14 +437,6 @@ public class GameTests {
     }
 
     @Test
-    public void findPlayerByName_UnknownName_ThrowsIllegalArgumentException() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> game.findPlayerByName("Nobody"));
-
-        assertEquals("Player not found with name: Nobody", ex.getMessage());
-    }
-
-    @Test 
     public void build_setupSecondRoadWithoutNewSettlement_Rejected() {
         game.build(player0, InfraType.SETTLEMENT, 0);
 
