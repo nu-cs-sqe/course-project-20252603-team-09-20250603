@@ -102,7 +102,7 @@ public class PlayerActionController {
     public void onActionClicked(PlayerAction action) {
         if (!canTakeNormalPlayActions()) {
             if (view != null) {
-                view.showError(I18n.text("playerAction.error.waitDiceActions"));
+                view.showError(getBlockedActionMessage());
             }
             return;
         }
@@ -212,6 +212,13 @@ public class PlayerActionController {
     private void openUseDevCardMenu() {
         Player currentPlayer = getCurrentPlayer();
         if (currentPlayer == null) {
+            return;
+        }
+
+        if (currentPlayer.getHasPlayedDevCardThisTurn()) {
+            if (view != null) {
+                view.showError(I18n.text(DomainErrorKey.DEV_CARD_ALREADY_PLAYED_THIS_TURN.key()));
+            }
             return;
         }
 
@@ -653,7 +660,10 @@ public class PlayerActionController {
     }
 
     public boolean canTakeNormalPlayActions() {
-        return !game.isGameOver() && (game.phaseSetupCheck() || (!rollingForTurn && turnRollResolved));
+        return !game.isGameOver()
+                && !awaitingKnightHex
+                && !awaitingRobberHex
+                && (game.phaseSetupCheck() || (!rollingForTurn && turnRollResolved));
     }
 
     private void announceWinnerIfGameOver() {
@@ -672,6 +682,10 @@ public class PlayerActionController {
             return "";
         }
 
+        if (awaitingKnightHex) {
+            return I18n.text("playerAction.prompt.placeKnightRobber");
+        }
+
         if (rollingForTurn) {
             return I18n.text("playerAction.prompt.rolling");
         }
@@ -685,6 +699,18 @@ public class PlayerActionController {
         }
 
         return I18n.text("playerAction.prompt.chooseAction");
+    }
+
+    private String getBlockedActionMessage() {
+        if (awaitingKnightHex) {
+            return I18n.text("playerAction.prompt.placeKnightRobber");
+        }
+
+        if (awaitingRobberHex) {
+            return I18n.text("playerAction.prompt.placeRobber");
+        }
+
+        return I18n.text("playerAction.error.waitDiceActions");
     }
 
     private boolean isLocationTypeValidForInfra(LocationType locationType) {
