@@ -16,7 +16,6 @@ public class GameInitializer {
         Dice dice = new Dice(new Random());
         TurnManager turnManager = new TurnManager(players.size());
         Game game = new Game(board, players, dice, turnManager);
-        // Game's constructor already starts in SETUP, so no phase change is needed here.
         return game;
     }
 
@@ -45,8 +44,6 @@ public class GameInitializer {
 
             players.add(player);
         }
-
-        // TODO: perhaps randomize and assign order or just keep as is
 
         return players;
     }

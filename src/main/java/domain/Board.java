@@ -185,7 +185,6 @@ public class Board {
         Set<String> seenEdges = new HashSet<>();
         int edgeId = 0;
 
-        // iterate around each hex and connect adjacent nodes with edges
         for (List<Node> nodes : hexToNodes.values()) {
             for (int i = 0; i < 6; i++) {
                 Node nodeA = nodes.get(i);
@@ -327,11 +326,6 @@ public class Board {
         targetHex.setHasRobber(true);
     }
 
-    /**
-     * moves the robber to targetHexId and steals one random resource card from victim.
-     * The victim must own a building on the target hex and cannot be the active player.
-     * Passing null for the victim moves the robber w/o stealing (no opponent borders the hex).
-     */
     public void moveRobberAndSteal(Player activePlayer, int targetHexId, Player victim) {
         if (victim != null) {
             if (victim == activePlayer) {
@@ -349,7 +343,6 @@ public class Board {
         }
     }
 
-    /** Distinct players owning a settlement or city on a node bordering the hex. */
     public List<Player> getPlayersOnHex(int hexId) {
         Hex hex = getHex(hexId);
         List<Player> occupants = new ArrayList<>();
