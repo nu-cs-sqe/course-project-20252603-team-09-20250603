@@ -141,7 +141,6 @@ public class DevCardDeckTests {
             drawnOrder.add(deck.drawCard().getType());
         }
 
-        // A deck that was shuffled must not come out in the original build order.
         assertNotEquals(initializationOrder(), drawnOrder);
     }
 }

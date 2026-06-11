@@ -53,7 +53,6 @@ public class GameTests {
 
     @Test
     public void findPlayerByName_MatchesCaseInsensitively_ReturnsThatPlayer() {
-        // Searches for a non-first player by a differently-cased name.
         assertEquals(player1, game.findPlayerByName("benny"));
     }
 
@@ -177,7 +176,7 @@ public class GameTests {
         assertNull(game.checkForWinner());
         assertFalse(game.isGameOver());
 
-        player2.addVictoryPoints(3); // 8 -> 11, skipping the exact threshold of 10
+        player2.addVictoryPoints(3);
 
         assertEquals(player2, game.checkForWinner());
         assertTrue(game.isGameOver());
@@ -269,10 +268,7 @@ public class GameTests {
         assertFalse(player0.getResources().containsKey(ResourceType.DESERT));
     }
 
-    // --- build() placement, inventory & resource rules ---
-    // (mirrors handle_build.feature, as JUnit so pitest can see it and kill the build() mutants)
-
-    @Test // TC-GB-01: a valid, connected road is actually placed (kills removed Edge::buildRoad)
+    @Test // TC-GB-01
     public void build_validConnectedRoad_placesRoadForPlayer() {
         game.setCurrPhase(GamePhase.NORMAL_PLAY);
         player0.addResources(roadCost());
@@ -283,7 +279,7 @@ public class GameTests {
         assertEquals(player0, game.getBoard().getEdge(1).getEdgeOccupant());
     }
 
-    @Test // TC-GB-02: a successful build consumes one inventory item (kills removed useInventoryItem)
+    @Test // TC-GB-02
     public void build_validRoad_decrementsRoadInventory() {
         game.setCurrPhase(GamePhase.NORMAL_PLAY);
         player0.addResources(roadCost());
@@ -295,7 +291,7 @@ public class GameTests {
         assertEquals(before - 1, (int) player0.getInventory().get("roads"));
     }
 
-    @Test // TC-GB-03: a successful build deducts the resource cost (kills removed useResources)
+    @Test // TC-GB-03
     public void build_validRoad_deductsResourceCost() {
         game.setCurrPhase(GamePhase.NORMAL_PLAY);
         player0.addResources(roadCost());
@@ -308,7 +304,7 @@ public class GameTests {
         assertEquals(0, (int) resources.getOrDefault(ResourceType.WOOD, 0));
     }
 
-    @Test // TC-GB-04: zero inventory is rejected before placement (kills the "<= 0" boundary)
+    @Test // TC-GB-04
     public void build_zeroRoadInventory_rejectedBeforePlacement() {
         game.setCurrPhase(GamePhase.NORMAL_PLAY);
         player0.addResources(roadCost());
@@ -319,16 +315,16 @@ public class GameTests {
         assertNull(game.getBoard().getEdge(1).getEdgeOccupant());
     }
 
-    @Test // TC-GB-05: insufficient resources rejected before placement (kills resource conditional)
+    @Test // TC-GB-05
     public void build_noResources_rejectedBeforePlacement() {
         game.setCurrPhase(GamePhase.NORMAL_PLAY);
-        game.getBoard().getEdge(1).getNodeA().buildSettlement(player0); // connected, but no resources
+        game.getBoard().getEdge(1).getNodeA().buildSettlement(player0);
 
         assertThrows(IllegalStateException.class, () -> game.build(player0, InfraType.ROAD, 1));
         assertNull(game.getBoard().getEdge(1).getEdgeOccupant());
     }
 
-    @Test // TC-GB-06: regular road not connected to own network is rejected (kills removed validateRegularRoad)
+    @Test // TC-GB-06
     public void build_roadNotConnectedToOwnNetwork_rejected() {
         game.setCurrPhase(GamePhase.NORMAL_PLAY);
         player0.addResources(roadCost());
@@ -337,7 +333,7 @@ public class GameTests {
         assertNull(game.getBoard().getEdge(1).getEdgeOccupant());
     }
 
-    @Test // TC-GB-07: settlement violating the distance rule is rejected (kills removed validateSettlementPlacement)
+    @Test // TC-GB-07
     public void build_settlementViolatesDistanceRule_rejectedAndNotPlaced() {
         game.setCurrPhase(GamePhase.NORMAL_PLAY);
         player0.addResources(settlementCost());
@@ -348,9 +344,8 @@ public class GameTests {
         assertNull(target.getNodeOccupant());
     }
 
-    @Test // TC-GB-08: setup road must connect to the just-placed settlement (kills removed validateInitialRoad)
+    @Test // TC-GB-08
     public void build_setupInitialRoad_unconnectedRejected_connectedSucceeds() {
-        // game defaults to GamePhase.SETUP
         game.build(player0, InfraType.SETTLEMENT, 0);
 
         int unconnected = edgeNotTouchingNode(game.getBoard(), 0);
@@ -444,7 +439,7 @@ public class GameTests {
         int firstEdge = connectedEdges.get(0).getId();
         int secondEdge = connectedEdges.get(1).getId();
 
-        game.build(player0, InfraType.ROAD, firstEdge); // clears setupSettlements for player0
+        game.build(player0, InfraType.ROAD, firstEdge);
 
         assertThrows(IllegalStateException.class,
                 () -> game.build(player0, InfraType.ROAD, secondEdge));
@@ -471,7 +466,6 @@ public class GameTests {
                 validator.validateSettlementPlacement(node);
                 return node.getId();
             } catch (IllegalPlacementException ignored) {
-                // try next node
             }
         }
         throw new IllegalStateException("No valid settlement node found.");
@@ -494,7 +488,6 @@ public class GameTests {
                 validator.validateSettlementPlacement(node);
                 return node.getId();
             } catch (IllegalPlacementException ignored) {
-                // try next node
             }
         }
         throw new IllegalStateException("No valid desert-adjacent settlement node found.");

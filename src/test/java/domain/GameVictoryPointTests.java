@@ -18,8 +18,7 @@ public class GameVictoryPointTests {
         Game game = createGame(board, player);
 
         player.addResources(roadCost());
-        board.getEdge(1).getNodeA().buildSettlement(player); // give the road something to connect to
-
+        board.getEdge(1).getNodeA().buildSettlement(player);
         game.build(player, InfraType.ROAD, 1);
 
         assertEquals(0, player.getVictoryPoints());
@@ -92,8 +91,6 @@ public class GameVictoryPointTests {
         TurnManager turnManager = new TurnManager(1);
 
         Game game = new Game(board, List.of(player), dice, turnManager);
-        // These cases exercise normal-play building (resource checks + VP changes),
-        // so move past the free SETUP phase.
         game.setCurrPhase(GamePhase.NORMAL_PLAY);
         return game;
     }

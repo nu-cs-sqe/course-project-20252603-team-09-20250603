@@ -133,8 +133,7 @@ public class GameLongestRoadTests {
         assertEquals(2, otherPlayer.getVictoryPoints());
     }
 
-    // Kills: isBlockedByOtherPlayer() "negated conditional" (was NO_COVERAGE).
-    // An enemy settlement mid-path breaks the player's road at that node.
+
     @Test
     void calculateLongestRoad_PathRunsThroughEnemySettlement_StopsAtEnemyNode() {
         Board board = new Board();
@@ -148,13 +147,9 @@ public class GameLongestRoadTests {
 
         board.getNode(2).buildSettlement(otherPlayer);
 
-        // Without the block the path would be 3; the enemy node caps it at 2.
         assertEquals(2, game.calculateLongestRoad(player));
     }
 
-    // Kills: updateLongestRoadBonus() "changed conditional boundary"
-    // (roadLength > candidateLength -> >=). When two players tie at five roads,
-    // the first one evaluated must keep the bonus; >= would hand it to the second.
     @Test
     void updateLongestRoadBonus_TwoPlayersTiedAtFiveRoads_FirstPlayerKeepsBonus() {
         Board board = new Board();

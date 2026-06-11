@@ -1,11 +1,6 @@
 ## Class: `PlacementValidator`
-**Responsibilities:** Enforces distance and adjacency rules.
+Enforces distance and adjacency rules.
 
-# PlacementValidator BVA
-
-**Responsibilities:** Enforces distance and adjacency rules for settlement placement.
-
----
 
 ## Method under test: `validateSettlementPlacement(Node targetNode)`
 

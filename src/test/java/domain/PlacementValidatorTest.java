@@ -25,7 +25,7 @@ public class PlacementValidatorTest {
         }
 
         assertNotNull(node0);
-        node0.buildSettlement(mockPlayer); // Occupy the target node itself
+        node0.buildSettlement(mockPlayer);
 
         EasyMock.replay(mockPlayer);
 
@@ -56,7 +56,7 @@ public class PlacementValidatorTest {
         }
 
         assertNotNull(node1);
-        node1.buildSettlement(mockPlayer); // Occupy the adjacent node
+        node1.buildSettlement(mockPlayer);
 
         EasyMock.replay(mockPlayer);
 
@@ -147,7 +147,6 @@ public class PlacementValidatorTest {
                     break;
                 }
             } catch (IllegalArgumentException ignored) {
-                // Ignore invalid IDs while searching
             }
         }
 

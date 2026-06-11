@@ -25,7 +25,6 @@ buildRoad(int playerId) (setter for edge occupant)
     - **Expected output**: player1
 
 ### Method under test: `buildRoad(int playerId)`
-TODO: validation of cases for edge placement (e.g. floating road, going through opponent infra, etc.)
 #### Inputs:
 - State of the node -> if Edge.playerId is currently null or not
     - Type: boolean
