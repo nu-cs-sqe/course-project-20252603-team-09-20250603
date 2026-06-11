@@ -100,18 +100,31 @@ public class PlayerActionView extends VBox {
         Label actionsTitle = new Label(I18n.text("playerAction.actions"));
         actionsTitle.getStyleClass().add("resources-title");
 
+        boolean actionsDisabled = controller != null && !controller.canTakeNormalPlayActions();
+
+        Button buildButton = createActionButton(PlayerAction.BUILD);
+        Button buyDevCardButton = createActionButton(PlayerAction.BUY_DEV_CARD);
+        Button useDevCardButton = createActionButton(PlayerAction.USE_DEV_CARD);
+        Button tradeWithPlayerButton = createActionButton(PlayerAction.TRADE_WITH_PLAYER);
+        Button tradeWithBankButton = createActionButton(PlayerAction.TRADE_WITH_BANK);
+        Button endTurnButton = createActionButton(PlayerAction.END_TURN);
+
+        applyActionAvailability(buildButton, actionsDisabled);
+        applyActionAvailability(buyDevCardButton, actionsDisabled);
+        applyActionAvailability(useDevCardButton, actionsDisabled);
+        applyActionAvailability(tradeWithPlayerButton, actionsDisabled);
+        applyActionAvailability(tradeWithBankButton, actionsDisabled);
+        applyActionAvailability(endTurnButton, actionsDisabled);
+
         VBox actions = new VBox(6);
         actions.getChildren().addAll(
-                createActionButton(PlayerAction.BUILD),
-                createActionButton(PlayerAction.BUY_DEV_CARD),
-                createActionButton(PlayerAction.USE_DEV_CARD),
-                createActionButton(PlayerAction.TRADE_WITH_PLAYER),
-                createActionButton(PlayerAction.TRADE_WITH_BANK),
-                createActionButton(PlayerAction.END_TURN)
+                buildButton,
+                buyDevCardButton,
+                useDevCardButton,
+                tradeWithPlayerButton,
+                tradeWithBankButton,
+                endTurnButton
         );
-
-        boolean actionsDisabled = controller != null && !controller.canTakeNormalPlayActions();
-        actions.setDisable(actionsDisabled);
 
         getChildren().addAll(title, playerTurn, promptLabel, actionsTitle, actions);
     }
@@ -329,6 +342,11 @@ public class PlayerActionView extends VBox {
             }
         });
         return button;
+    }
+
+    private void applyActionAvailability(Button button, boolean disabled) {
+        button.setDisable(disabled);
+        button.setMouseTransparent(disabled);
     }
 
     private Button createInfraButton(String label, InfraType infraType) {
